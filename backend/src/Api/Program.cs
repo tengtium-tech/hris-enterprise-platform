@@ -2,7 +2,7 @@ using Hris.Application;
 using Hris.Foundation.Configuration;
 using Hris.Infrastructure;
 using Hris.Infrastructure.Persistence;
-using Microsoft.Extensions.Diagnostics.HealthChecks;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 
 var builder = WebApplication.CreateBuilder(args);
 
