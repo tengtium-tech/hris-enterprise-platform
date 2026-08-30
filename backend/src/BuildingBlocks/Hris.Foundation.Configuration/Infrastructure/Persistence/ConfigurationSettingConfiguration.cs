@@ -18,7 +18,7 @@ namespace Hris.Foundation.Configuration.Infrastructure.Persistence;
 /// <c>DependencyInjection.cs</c> for where this assembly registers itself. Table
 /// naming follows database-design-principles.md's stated rule (singular, PascalCase)
 /// at the EF model level; the global <c>UseSnakeCaseNamingConvention()</c> configured
-/// in <c>Hris.Infrastructure.DependencyInjection</c> lowers that to the physical
+/// in <c>Hris.Infrastructure.ServiceCollectionExtensions</c> lowers that to the physical
 /// snake_case identifier naming-conventions.md's own finding recommends -- this class
 /// never calls <c>ToTable</c> itself, per dbcontext-design.md's "no inline mapping
 /// configuration" read together with "configure [table naming] once, globally."
@@ -27,6 +27,8 @@ public sealed class ConfigurationSettingConfiguration : IEntityTypeConfiguration
 {
     public void Configure(EntityTypeBuilder<ConfigurationSetting> builder)
     {
+        ArgumentNullException.ThrowIfNull(builder);
+
         builder.HasKey(setting => setting.Id);
 
         builder.Property(setting => setting.Id)

@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using MediatR;
 
 namespace Hris.Application.Abstractions;
@@ -13,4 +14,12 @@ namespace Hris.Application.Abstractions;
 /// a Query is never wrapped in a transaction by construction, not by a convention a
 /// future handler could forget to follow.
 /// </summary>
+[SuppressMessage(
+    "Design",
+    "CA1040:Avoid empty interfaces",
+    Justification = "Deliberately empty: used as a generic type constraint " +
+        "(TransactionBehavior<TRequest,TResponse> where TRequest : ICommand<TResponse>) so " +
+        "Microsoft.Extensions.DependencyInjection's open-generic resolution can filter Commands " +
+        "from Queries structurally. An attribute -- CA1040's usual suggested alternative to a " +
+        "marker interface -- cannot be used as a generic constraint, so it cannot do this job.")]
 public interface ICommand<TResponse> : IRequest<TResponse>;

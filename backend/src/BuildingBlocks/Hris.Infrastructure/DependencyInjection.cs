@@ -19,8 +19,12 @@ namespace Hris.Infrastructure;
 /// here as a plain gap-filling default per CLAUDE.md's "do not manufacture decision
 /// points... if a question has an obvious answer, answer it and say what you did,"
 /// not as a claim the environment strategy document already says this.
+///
+/// Named <see cref="ServiceCollectionExtensions"/>, not <c>DependencyInjection</c>, per
+/// CA1724 -- see <c>Hris.Application.ServiceCollectionExtensions</c>'s own remarks for
+/// why; the file keeps the module-registration.md-documented name regardless.
 /// </summary>
-public static class DependencyInjection
+public static class ServiceCollectionExtensions
 {
     public const string ConnectionStringName = "HrisDatabase";
 

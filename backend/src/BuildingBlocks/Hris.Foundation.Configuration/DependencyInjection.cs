@@ -25,8 +25,12 @@ namespace Hris.Foundation.Configuration;
 /// <c>AddValidatorsFromAssembly</c>, which MediatR and FluentValidation both support
 /// being called once per assembly without the registrations from an earlier call being
 /// lost or duplicated.
+///
+/// Named <see cref="ServiceCollectionExtensions"/>, not <c>DependencyInjection</c>, per
+/// CA1724 -- see <c>Hris.Application.ServiceCollectionExtensions</c>'s own remarks for
+/// why; the file keeps the module-registration.md-documented name regardless.
 /// </summary>
-public static class DependencyInjection
+public static class ServiceCollectionExtensions
 {
     public static IServiceCollection AddConfigurationFramework(this IServiceCollection services)
     {

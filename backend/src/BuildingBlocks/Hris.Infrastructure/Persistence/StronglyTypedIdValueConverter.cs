@@ -24,5 +24,6 @@ public sealed class StronglyTypedIdValueConverter<TId> : ValueConverter<TId, Gui
     public StronglyTypedIdValueConverter(Func<Guid, TId> fromGuid)
         : base(id => id.Value, value => fromGuid(value))
     {
+        ArgumentNullException.ThrowIfNull(fromGuid);
     }
 }

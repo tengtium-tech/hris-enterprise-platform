@@ -47,6 +47,9 @@ public sealed class TransactionBehavior<TRequest, TResponse> : IPipelineBehavior
         RequestHandlerDelegate<TResponse> next,
         CancellationToken cancellationToken)
     {
+        ArgumentNullException.ThrowIfNull(request);
+        ArgumentNullException.ThrowIfNull(next);
+
         var response = await next().ConfigureAwait(false);
 
         if (response is Hris.SharedKernel.Result { IsFailure: true })

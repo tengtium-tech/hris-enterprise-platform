@@ -42,6 +42,8 @@ public sealed class HrisDbContext : DbContext, IUnitOfWork
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        ArgumentNullException.ThrowIfNull(modelBuilder);
+
         base.OnModelCreating(modelBuilder);
 
         foreach (var assembly in PersistenceAssemblyRegistry.Assemblies)
