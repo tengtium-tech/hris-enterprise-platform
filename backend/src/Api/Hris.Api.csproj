@@ -1,0 +1,36 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <!--
+    Hris.Api
+    The platform's single deployable ASP.NET Core project, per ADR-0001 and
+    docs/08-devops/containerization.md's "Image Strategy": "One application image,
+    built from backend/'s single deployable ASP.NET Core project, containing every
+    business module compiled into it." Every Foundation framework and every business
+    module's Presentation layer registers into this host; this project itself should
+    stay thin (Program.cs wiring, health endpoints, middleware pipeline) — business
+    logic belongs in the Application/Domain layers of the module or framework it
+    concerns, per docs/08-devops/coding-standards.md's Presentation Layer convention.
+  -->
+
+  <PropertyGroup>
+    <RootNamespace>Hris.Api</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- Sprint 3 kernel frameworks. Module ProjectReferences are added as each
+         module's own Sprint begins (docs/04-modules/README.md's build order,
+         reflected in IMPLEMENTATION-PLAN.md) — do not add a module reference here
+         ahead of its own Sprint. -->
+    <ProjectReference Include="..\BuildingBlocks\Hris.SharedKernel\Hris.SharedKernel.csproj" />
+    <ProjectReference Include="..\BuildingBlocks\Hris.Foundation.Configuration\Hris.Foundation.Configuration.csproj" />
+    <ProjectReference Include="..\BuildingBlocks\Hris.Foundation.Logging\Hris.Foundation.Logging.csproj" />
+    <ProjectReference Include="..\BuildingBlocks\Hris.Foundation.Identity\Hris.Foundation.Identity.csproj" />
+    <ProjectReference Include="..\BuildingBlocks\Hris.Foundation.Events\Hris.Foundation.Events.csproj" />
+    <ProjectReference Include="..\BuildingBlocks\Hris.Foundation.Authorization\Hris.Foundation.Authorization.csproj" />
+    <ProjectReference Include="..\BuildingBlocks\Hris.Foundation.Audit\Hris.Foundation.Audit.csproj" />
+    <ProjectReference Include="..\BuildingBlocks\Hris.Foundation.RulesEngine\Hris.Foundation.RulesEngine.csproj" />
+    <ProjectReference Include="..\BuildingBlocks\Hris.Foundation.Validation\Hris.Foundation.Validation.csproj" />
+    <ProjectReference Include="..\BuildingBlocks\Hris.Foundation.Localization\Hris.Foundation.Localization.csproj" />
+  </ItemGroup>
+
+</Project>

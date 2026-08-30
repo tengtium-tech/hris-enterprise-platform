@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    Hris.Foundation.Validation
+    Sprint 3 (Core Kernel) scope, per IMPLEMENTATION-PLAN.md Phase 1.
+    Source specification: docs/03-foundation/validation-framework.md
+    Note: technology-stack.md's Backend table names FluentValidation as the
+    Validation standard; coding-standards.md's Application Layer convention states
+    validation "run before the handler executes, not interleaved with handler logic."
+    Domain layer implemented against that document; see Domain/ for the per-class
+    citations.
+  -->
+
+  <PropertyGroup>
+    <RootNamespace>Hris.Foundation.Validation</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Hris.SharedKernel\Hris.SharedKernel.csproj" />
+  </ItemGroup>
+
+</Project>

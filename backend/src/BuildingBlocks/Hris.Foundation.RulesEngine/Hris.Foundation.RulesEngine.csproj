@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    Hris.Foundation.RulesEngine
+    Sprint 3 (Core Kernel) scope, per IMPLEMENTATION-PLAN.md Phase 1.
+    Source specification: docs/03-foundation/rules-engine.md
+    Domain layer implemented against that document; see Domain/ for the per-class
+    citations.
+  -->
+
+  <PropertyGroup>
+    <RootNamespace>Hris.Foundation.RulesEngine</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Hris.SharedKernel\Hris.SharedKernel.csproj" />
+    <!-- Identity Framework is one of this framework's own stated Upstream
+         Dependencies and already exists: referenced concretely for UserAccountId,
+         who authored/published a rule version (CTR-ARC-002). -->
+    <ProjectReference Include="..\Hris.Foundation.Identity\Hris.Foundation.Identity.csproj" />
+  </ItemGroup>
+
+</Project>

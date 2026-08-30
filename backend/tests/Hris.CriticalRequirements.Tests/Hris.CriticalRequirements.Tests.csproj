@@ -1,0 +1,59 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    Hris.CriticalRequirements.Tests
+    One stub test per Critical Test Requirement in
+    docs/09-testing/critical-test-requirements.md (59 requirements, confirmed by
+    direct count against that document — the project's own tracker had drifted to
+    "58" and was corrected alongside this scaffold).
+
+    Every test below is [Fact(Skip = "...")] — none is implemented, because none
+    can be until the module or framework it exercises exists. Removing a Skip
+    attribute without also implementing the corresponding module/framework code
+    would make the suite lie about coverage; the CTR ID in each test name and each
+    Skip message is what keeps this file honest as a checklist rather than a
+    finished suite. docs/09-testing/README.md §9's own stated test order
+    (Compilation -> Architecture tests -> Unit tests -> Integration tests ->
+    Contract tests -> Coverage evaluation) governs the *pipeline*; this project is
+    where the *Critical Test Requirement* layer of that order lives, per
+    docs/08-devops/coding-standards.md's Static Analysis and Linting table.
+
+    Per technology-stack.md's Testing table: xUnit, NSubstitute, FluentAssertions.
+  -->
+
+  <PropertyGroup>
+    <RootNamespace>Hris.CriticalRequirements.Tests</RootNamespace>
+    <IsPackable>false</IsPackable>
+
+    <!-- CA1707 (identifiers should not contain underscores) is suppressed only in
+         this project. Every test method name embeds its Critical Test Requirement
+         ID verbatim (CTR_AUD_001_..., CTR_ISO_002_...) by design, per this file's
+         own header comment above — that is the checklist mechanism, not a naming
+         defect. No other project in this solution suppresses any analyzer rule. -->
+    <NoWarn>$(NoWarn);CA1707</NoWarn>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.11.1" />
+    <PackageReference Include="xunit" Version="2.9.0" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.8.2" />
+    <PackageReference Include="NSubstitute" Version="5.1.0" />
+    <PackageReference Include="FluentAssertions" Version="6.12.0" />
+    <!-- CTR-AUT-001's own Verification is "Architecture or static analysis test";
+         coding-standards.md separately names "a custom Roslyn analyzer or
+         static-analysis rule" as the mechanism. This package is that mechanism used
+         as a source-tree scanner (CSharpSyntaxTree.ParseText over backend/src/),
+         not a build-time DiagnosticAnalyzer; see AuthorizationTests.cs. -->
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.11.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\BuildingBlocks\Hris.SharedKernel\Hris.SharedKernel.csproj" />
+    <!-- CTR_AUT_001_NoRoleNameComparisonInCode derives the prohibited string list
+         from the real Role enum rather than duplicating the ten names by hand, so
+         the test cannot silently drift from authorization-framework.md's own
+         canonical list. -->
+    <ProjectReference Include="..\..\src\BuildingBlocks\Hris.Foundation.Authorization\Hris.Foundation.Authorization.csproj" />
+  </ItemGroup>
+
+</Project>

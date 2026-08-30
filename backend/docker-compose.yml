@@ -1,0 +1,41 @@
+# Local development only -- per docs/08-devops/environment-strategy.md's own
+# scoping note: "A fourth environment -- an individual developer's local machine,
+# running the application against a local or containerized PostgreSQL instance --
+# exists but is out of this document's scope, since it is not part of the
+# deployment pipeline ci-cd-pipeline.md describes." This file is that local
+# machine's own tooling, not a Development/Staging/Production deployment
+# definition -- do not reuse it as one.
+#
+# containerization.md, "Kubernetes Usage": "Development and Staging: a simpler
+# container host (a managed container service, or Docker Compose for local/CI
+# validation) is sufficient." This file is that simpler local target.
+#
+# Postgres and Redis per technology-stack.md's Database and Caching tables.
+
+services:
+  postgres:
+    image: postgres:16
+    environment:
+      POSTGRES_DB: hris_dev
+      POSTGRES_USER: hris_dev
+      # Local-only development password. Never a real secret, never reused for
+      # Staging or Production -- environment-strategy.md's Secrets Management
+      # rules govern those, not this file.
+      POSTGRES_PASSWORD: hris_dev_local_only
+    ports:
+      - "5432:5432"
+    volumes:
+      - hris-postgres-data:/var/lib/postgresql/data
+
+  redis:
+    image: redis:7
+    ports:
+      - "6379:6379"
+
+  # TODO(once Hris.Api has a Dockerfile-buildable dependency graph beyond the
+  # health checks): add the api service itself here, pointed at postgres/redis via
+  # environment variables per environment-strategy.md's Configuration Management
+  # section -- never a literal connection string in this file.
+
+volumes:
+  hris-postgres-data:

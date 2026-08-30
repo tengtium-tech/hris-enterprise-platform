@@ -1,0 +1,56 @@
+# Repository root .editorconfig, added now that backend/ exists, per
+# docs/08-devops/coding-standards.md's Static Analysis and Linting table:
+# ".editorconfig (checked into the repository root once backend/ exists) —
+# Formatting: indentation, brace style, `using` ordering, file-scoped namespaces —
+# Formatting violations fail `dotnet format --verify-no-changes` in CI."
+#
+# Nullable reference types, implicit usings, and file-scoped namespaces are
+# enforced at the project level via backend/Directory.Build.props, not here --
+# this file governs formatting only, per coding-standards.md's own scoping of what
+# .editorconfig is responsible for versus what the Roslyn analyzers and
+# TreatWarningsAsErrors setting cover.
+
+root = true
+
+[*]
+indent_style = space
+end_of_line = lf
+insert_final_newline = true
+trim_trailing_whitespace = true
+charset = utf-8
+
+[*.cs]
+indent_size = 4
+# coding-standards.md, Language and Runtime: "file-scoped namespaces are used
+# throughout, since [it reduces] boilerplate a reviewer would otherwise have to
+# read past to find the actual change."
+csharp_style_namespace_declarations = file_scoped:error
+
+# coding-standards.md, Naming Conventions: ".NET framework design guidelines
+# (PascalCase for types and public members, camelCase for locals and parameters,
+# _camelCase for private fields)."
+dotnet_naming_rule.private_fields_underscore_camel_case.severity = error
+dotnet_naming_rule.private_fields_underscore_camel_case.symbols = private_fields
+dotnet_naming_rule.private_fields_underscore_camel_case.style = underscore_camel_case
+dotnet_naming_symbols.private_fields.applicable_kinds = field
+dotnet_naming_symbols.private_fields.applicable_accessibilities = private
+dotnet_naming_style.underscore_camel_case.required_prefix = _
+dotnet_naming_style.underscore_camel_case.capitalization = camel_case
+
+dotnet_naming_rule.types_pascal_case.severity = error
+dotnet_naming_rule.types_pascal_case.symbols = types
+dotnet_naming_rule.types_pascal_case.style = pascal_case
+dotnet_naming_symbols.types.applicable_kinds = class, struct, interface, enum, record
+dotnet_naming_style.pascal_case.capitalization = pascal_case
+
+# coding-standards.md, Domain Layer: "Aggregate Roots and Entities expose behavior
+# through methods that enforce invariants, not through public property setters."
+# This cannot be a naming-style rule -- it is enforced by architecture test
+# (backend/tests, once written) and by code review (coding-standards.md's own
+# Code Review Requirements), not by .editorconfig.
+
+[*.{json,yml,yaml}]
+indent_size = 2
+
+[*.md]
+trim_trailing_whitespace = false

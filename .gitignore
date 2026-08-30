@@ -1,0 +1,23 @@
+# OS
+Thumbs.db
+.DS_Store
+desktop.ini
+
+# .NET (backend/) — added 2026-08-23 alongside the Sprint 1 solution scaffold,
+# per docs/08-devops/coding-standards.md and docs/08-devops/environment-strategy.md
+# (secrets and local overrides must never reach source control)
+backend/**/bin/
+backend/**/obj/
+backend/**/.vs/
+*.user
+*.userosscache
+*.suo
+appsettings.*.local.json
+
+# Frontend (frontend/) — not yet built (later Sprint), ignored preemptively so an
+# accidental `npm install` before this repo's own tooling is finalized doesn't
+# commit node_modules
+frontend/node_modules/
+frontend/dist/
+frontend/.env
+frontend/.env.local

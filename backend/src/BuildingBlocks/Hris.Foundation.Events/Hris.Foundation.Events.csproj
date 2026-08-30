@@ -1,0 +1,29 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    Hris.Foundation.Events
+    Sprint 3 (Core Kernel) scope, per IMPLEMENTATION-PLAN.md Phase 1.
+    Source specification: docs/03-foundation/event-framework.md
+    Domain layer implemented against that document; see Domain/ for the per-class
+    citations.
+    Note: technology-stack.md's Messaging table names an in-process event bus for
+    internal events today, with a future message broker (RabbitMQ) as a later
+    option — this project's initial shape should reflect the in-process bus only.
+  -->
+
+  <PropertyGroup>
+    <RootNamespace>Hris.Foundation.Events</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Hris.SharedKernel\Hris.SharedKernel.csproj" />
+    <!-- Identity Framework is one of this framework's own stated Upstream
+         Dependencies and was already built earlier in the same Sprint 3 bootstrap
+         order (Configuration, Logging, Identity, then Event): referenced
+         concretely for UserAccountId, EventEnvelope's own Actor field
+         (CTR-ARC-002: reference by identity, never a raw Guid, once the real type
+         exists, and here it already did when this framework was built). -->
+    <ProjectReference Include="..\Hris.Foundation.Identity\Hris.Foundation.Identity.csproj" />
+  </ItemGroup>
+
+</Project>

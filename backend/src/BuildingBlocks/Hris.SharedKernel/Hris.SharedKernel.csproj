@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    Hris.SharedKernel
+    Purpose: primitives every other project depends on and that belong to no single
+    module or Foundation framework on their own — strongly typed IDs chief among them.
+    Grounded in: docs/02-architecture/05-data-architecture/strongly-typed-id-mapping.md
+    (the mapping strategy) and docs/08-devops/coding-standards.md's Domain Layer
+    convention: "Strongly typed IDs (EmployeeId, EmploymentId, and so on) are used at
+    every aggregate boundary ... a raw Guid parameter on a method that conceptually
+    takes an EmployeeId is not a style preference, it is the missing compiler check."
+    This project must never reference Entity Framework Core, ASP.NET Core, or any
+    other infrastructure package (CTR-ARC-001) — it is consumed by the Domain layer
+    of every module and Foundation framework, and a Domain-layer dependency on
+    infrastructure is exactly what CTR-ARC-001 exists to prevent.
+  -->
+
+  <PropertyGroup>
+    <RootNamespace>Hris.SharedKernel</RootNamespace>
+  </PropertyGroup>
+
+</Project>

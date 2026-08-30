@@ -1,0 +1,29 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    Hris.Foundation.Authorization
+    Sprint 3 (Core Kernel) scope, per IMPLEMENTATION-PLAN.md Phase 1.
+    Source specification: docs/03-foundation/authorization-framework.md
+    Binding ADR: docs/15-adr/0002-centralized-authorization.md — every authorization
+    decision in the platform routes through this framework; CTR-AUT-001 prohibits
+    any role-name string comparison anywhere in business logic, enforced by a
+    dedicated static-analysis rule per coding-standards.md, not by convention alone.
+    Domain layer implemented against that document; see Domain/ for the per-class
+    citations.
+  -->
+
+  <PropertyGroup>
+    <RootNamespace>Hris.Foundation.Authorization</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Hris.SharedKernel\Hris.SharedKernel.csproj" />
+    <!-- Identity Framework is this framework's own #1 stated Upstream Dependency
+         (authorization-framework.md) and now exists (built earlier in this same
+         Sprint 3): referenced concretely for UserAccountId, the strongly typed
+         principal identity RoleAssignment grants a role to (CTR-ARC-002: reference
+         by identity, never a raw Guid, once the real type exists). -->
+    <ProjectReference Include="..\Hris.Foundation.Identity\Hris.Foundation.Identity.csproj" />
+  </ItemGroup>
+
+</Project>

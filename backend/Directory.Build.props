@@ -1,0 +1,27 @@
+<Project>
+  <!--
+    Solution-wide settings for every project under backend/.
+    Grounded in docs/08-devops/coding-standards.md's "Language and Runtime" section:
+    "C# on .NET 9 ... Nullable reference types are enabled solution-wide ...
+    Implicit usings are enabled; file-scoped namespaces are used throughout."
+    A per-project .csproj should not repeat these settings; it inherits them from here.
+  -->
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <LangVersion>latest</LangVersion>
+
+    <!-- coding-standards.md, Static Analysis and Linting: "Roslyn analyzers
+         (Microsoft.CodeAnalysis.NetAnalyzers, enabled at AnalysisLevel=latest-all)
+         ... Configured as build errors, not warnings." -->
+    <AnalysisLevel>latest-all</AnalysisLevel>
+    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+
+    <!-- Every project belongs to the HRIS Enterprise Platform product; RootNamespace
+         is set per-project below where a project's own namespace should differ from
+         its assembly name. -->
+    <Company>HRIS Enterprise Platform</Company>
+  </PropertyGroup>
+</Project>

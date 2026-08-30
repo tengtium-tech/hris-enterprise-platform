@@ -1,0 +1,93 @@
+name: Main Pipeline
+
+# Grounded in docs/08-devops/ci-cd-pipeline.md's "Main Pipeline" section (id: cicd03)
+# and "Environment Promotion Sequence" (id: cicd04). Runs on every merge to main --
+# a separate workflow file from the PR Pipeline, for the same branch-protection
+# clarity reason stated in pr-pipeline.yml.
+#
+# "The Development deployment is automatic and unattended: environment-strategy.md
+# defines Development as the environment where a broken deployment costs nothing
+# beyond re-running the pipeline, so gating it on manual approval would only slow
+# feedback without reducing risk." Staging and Production promotion are NOT
+# implemented in this file yet -- environment-strategy.md's Staging soak period and
+# Production's payroll-window-aware manual approval gate both require real
+# infrastructure (a registry, a deployment target, tenant payroll calendar data)
+# that does not exist during Sprint 1. Implement those promotion stages once that
+# infrastructure exists; do not stub them out with a fake approval step now.
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  build-test-and-package:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15 # NFR-MT-002, same bound as the PR Pipeline
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET 9
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "9.0.x"
+
+      # "Every commit that reaches main has already passed the full PR Pipeline
+      # once. The Main Pipeline ... re-runs them anyway, against the actual merge
+      # commit rather than the pre-merge branch tip, because a squash merge can
+      # combine two individually passing branches into a combination that was
+      # never itself tested."
+      - name: Restore dependencies (NuGet)
+        working-directory: backend
+        run: dotnet restore Hris.sln
+
+      - name: Build (backend)
+        working-directory: backend
+        run: dotnet build Hris.sln --no-restore --configuration Release
+
+      - name: Static analysis — dotnet format
+        working-directory: backend
+        run: dotnet format Hris.sln --verify-no-changes --no-restore
+
+      - name: Test suite
+        working-directory: backend
+        run: dotnet test Hris.sln --no-build --configuration Release --logger "trx"
+
+      # containerization.md, "Image Strategy": one backend image, multi-stage build,
+      # tagged with the Git commit SHA (Image Tagging and Provenance) -- never
+      # `latest` as the deployment reference.
+      - name: Build container image (backend)
+        working-directory: backend
+        run: docker build -t hris-api:${{ github.sha }} -f Dockerfile .
+
+      # containerization.md, "Image Security": "security-operations.md's
+      # vulnerability scan runs against the built image before it is pushed to the
+      # registry ... an image with a critical vulnerability does not reach the
+      # registry, let alone Production."
+      # TODO(Sprint 1, once a scanner is selected in security-operations.md's own
+      # tooling choice): replace this placeholder with the real scan step and fail
+      # the build on a critical finding, per that document.
+      - name: Vulnerability scan (placeholder — scanner not yet selected)
+        run: echo "Vulnerability scan against hris-api:${{ github.sha }} runs here once security-operations.md's scanning tool is wired in. Must fail the build on a critical finding before any push step runs."
+
+      # TODO(Sprint 1, once a registry target is chosen): push the built image,
+      # tagged by commit SHA per containerization.md's Image Tagging and
+      # Provenance section, and a semantic version "where applicable."
+      - name: Push image to registry (placeholder — registry target not yet chosen)
+        run: echo "docker push <registry>/hris-api:${{ github.sha }} runs here once environment-strategy.md's Secrets Management (registry credentials via GitHub Actions Secrets) and a concrete registry target are both in place."
+
+      # ADR-0006: "documentation generated from the implementation, not maintained
+      # by hand." Swashbuckle/OpenAPI per technology-stack.md's Backend table.
+      - name: Generate OpenAPI specification
+        working-directory: backend
+        run: echo "dotnet run --project src/Api -- --generate-openapi (or equivalent Swashbuckle CLI invocation) runs here once Hris.Api exposes at least one endpoint beyond the health checks."
+
+      # "Deploy to Development environment (automatic, no approval gate)."
+      # TODO(Sprint 1, once a Development deployment target exists per
+      # environment-strategy.md): implement the actual deployment step. Migrations
+      # must be applied before this step per ci-cd-pipeline.md's "Migration
+      # Handling" -- do not reorder that once a real EF Core model and a real
+      # target both exist.
+      - name: Deploy to Development (placeholder — no deployment target yet)
+        run: echo "Automatic deployment to Development runs here once environment-strategy.md's Development target exists. Order per ci-cd-pipeline.md: migrations, then application deployment, then /health/ready verification."

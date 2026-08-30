@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    Hris.Foundation.Audit
+    Sprint 3 (Core Kernel) scope, per IMPLEMENTATION-PLAN.md Phase 1.
+    Source specification: docs/03-foundation/audit-framework.md
+    Relevant CTRs: CTR-AUD-001 through CTR-AUD-005 (docs/09-testing/critical-test-requirements.md).
+    Domain layer implemented against that document; see Domain/ for the per-class
+    citations.
+  -->
+
+  <PropertyGroup>
+    <RootNamespace>Hris.Foundation.Audit</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Hris.SharedKernel\Hris.SharedKernel.csproj" />
+    <!-- Identity Framework is this framework's own #1 stated Upstream Dependency
+         (audit-framework.md) and already exists: referenced concretely for
+         UserAccountId, the actor every AuditRecord names (CTR-ARC-002). -->
+    <ProjectReference Include="..\Hris.Foundation.Identity\Hris.Foundation.Identity.csproj" />
+  </ItemGroup>
+
+</Project>

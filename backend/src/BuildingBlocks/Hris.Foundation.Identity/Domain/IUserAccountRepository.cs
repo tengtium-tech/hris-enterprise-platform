@@ -1,0 +1,26 @@
+namespace Hris.Foundation.Identity.Domain;
+
+/// <summary>
+/// Persistence abstraction for the <see cref="UserAccount"/> Aggregate Root, per
+/// repositories.md's "interface in the Domain layer... implementation in
+/// Infrastructure" split. No Infrastructure implementation exists yet
+/// (backend/README.md).
+///
+/// <see cref="GetByUsernameAsync"/> is what an Application-layer login handler calls
+/// before invoking any <see cref="UserAccount"/> method -- a <c>null</c> result and a
+/// found-account-with-wrong-password both become the identical generic authentication
+/// failure at that layer, per identity-framework.md's "Never confirm whether an
+/// account exists in a failed authentication response." This interface cannot enforce
+/// that by itself; it is recorded here so the Application layer that eventually calls
+/// it is not the first place the rule is written down.
+/// </summary>
+public interface IUserAccountRepository
+{
+    Task<UserAccount?> GetByIdAsync(UserAccountId id, Guid tenantId, CancellationToken cancellationToken);
+
+    Task<UserAccount?> GetByUsernameAsync(Username username, Guid tenantId, CancellationToken cancellationToken);
+
+    Task<bool> ExistsAsync(Username username, Guid tenantId, CancellationToken cancellationToken);
+
+    Task AddAsync(UserAccount account, CancellationToken cancellationToken);
+}

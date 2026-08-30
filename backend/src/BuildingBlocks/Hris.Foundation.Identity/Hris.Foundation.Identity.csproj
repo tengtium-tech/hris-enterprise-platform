@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    Hris.Foundation.Identity
+    Sprint 3 (Core Kernel) scope, per IMPLEMENTATION-PLAN.md Phase 1.
+    Source specification: docs/03-foundation/identity-framework.md
+    Domain layer implemented against that document; see Domain/ for the per-class
+    citations.
+    Note: technology-stack.md's Backend table names ASP.NET Core Identity as the
+    Authentication standard — the Infrastructure-layer implementation of this
+    framework depends on that package; this project itself (Domain/Application
+    shape of the framework) must not, per CTR-ARC-001.
+  -->
+
+  <PropertyGroup>
+    <RootNamespace>Hris.Foundation.Identity</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Hris.SharedKernel\Hris.SharedKernel.csproj" />
+  </ItemGroup>
+
+</Project>

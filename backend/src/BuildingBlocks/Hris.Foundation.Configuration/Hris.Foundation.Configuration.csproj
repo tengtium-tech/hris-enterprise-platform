@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    Hris.Foundation.Configuration
+    Sprint 3 (Core Kernel) scope, per IMPLEMENTATION-PLAN.md Phase 1.
+    Source specification: docs/03-foundation/configuration-framework.md
+    Domain layer implemented against that document; see Domain/ for the per-class
+    citations.
+  -->
+
+  <PropertyGroup>
+    <RootNamespace>Hris.Foundation.Configuration</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Hris.SharedKernel\Hris.SharedKernel.csproj" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    Hris.Foundation.Localization
+    Sprint 3 (Core Kernel) scope, per IMPLEMENTATION-PLAN.md Phase 1.
+    Source specification: docs/03-foundation/localization-framework.md
+    Domain layer implemented against that document; see Domain/ for the per-class
+    citations.
+  -->
+
+  <PropertyGroup>
+    <RootNamespace>Hris.Foundation.Localization</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Hris.SharedKernel\Hris.SharedKernel.csproj" />
+    <!-- Identity Framework already exists: referenced concretely for
+         UserAccountId, who last changed a translation or country configuration
+         (CTR-ARC-002). Not one of this framework's own stated Upstream
+         Dependencies, but a strictly smaller, already-built addition in the same
+         spirit as every other framework's actor-tracking fields this Sprint. -->
+    <ProjectReference Include="..\Hris.Foundation.Identity\Hris.Foundation.Identity.csproj" />
+  </ItemGroup>
+
+</Project>
