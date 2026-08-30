@@ -80,4 +80,21 @@ public static class ConfigurationErrors
         "Configuration.CannotActivateBeforeEffectiveDate",
         "A configuration version cannot be activated before its own effective date.",
         ErrorCategory.Conflict);
+
+    /// <summary>
+    /// Added alongside the Application layer's <c>CreateConfigurationSettingCommandHandler</c>
+    /// (Sprint 3), per configuration-framework.md's Configuration Principles: "Single
+    /// Source of Truth." A key/scope pair identifies one logical setting; a second
+    /// <see cref="ConfigurationSetting"/> sharing both would make "the" value for that
+    /// pair ambiguous.
+    /// </summary>
+    public static readonly Error SettingAlreadyExistsForKeyAndScope = new(
+        "Configuration.SettingAlreadyExistsForKeyAndScope",
+        "A configuration setting already exists for this key at this scope.",
+        ErrorCategory.Conflict);
+
+    public static readonly Error SettingNotFound = new(
+        "Configuration.SettingNotFound",
+        "The requested configuration setting does not exist.",
+        ErrorCategory.NotFound);
 }
