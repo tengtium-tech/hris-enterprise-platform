@@ -1,28 +1,29 @@
 name: Main Pipeline
 
-# Grounded in docs/08-devops/ci-cd-pipeline.md's "Main Pipeline" section (id: cicd03)
-# and "Environment Promotion Sequence" (id: cicd04). Runs on every merge to main --
-# a separate workflow file from the PR Pipeline, for the same branch-protection
-# clarity reason stated in pr-pipeline.yml.
+# Runs on every push to main -- a separate workflow file from the PR Pipeline so
+# each has its own clear status-check identity for branch protection.
 #
-# "The Development deployment is automatic and unattended: environment-strategy.md
-# defines Development as the environment where a broken deployment costs nothing
-# beyond re-running the pipeline, so gating it on manual approval would only slow
-# feedback without reducing risk." Staging and Production promotion are NOT
-# implemented in this file yet -- environment-strategy.md's Staging soak period and
-# Production's payroll-window-aware manual approval gate both require real
-# infrastructure (a registry, a deployment target, tenant payroll calendar data)
-# that does not exist during Sprint 1. Implement those promotion stages once that
-# infrastructure exists; do not stub them out with a fake approval step now.
+# The Development deployment step below is intentionally automatic and
+# unattended: a broken deployment to a throwaway Development environment costs
+# nothing beyond re-running the pipeline, so gating it on manual approval would
+# only slow feedback without reducing risk. Staging and Production promotion are
+# NOT implemented in this file -- both need real infrastructure (a deployment
+# target, tenant payroll calendar data for Production's payroll-window-aware
+# approval gate) that doesn't exist yet. Implement those stages once that
+# infrastructure exists; don't stub them out with a fake approval step now.
 
 on:
   push:
     branches: [main]
 
+permissions:
+  contents: read
+  packages: write
+
 jobs:
   build-test-and-package:
     runs-on: ubuntu-latest
-    timeout-minutes: 15 # NFR-MT-002, same bound as the PR Pipeline
+    timeout-minutes: 15
 
     steps:
       - name: Checkout
@@ -33,11 +34,11 @@ jobs:
         with:
           dotnet-version: "9.0.x"
 
-      # "Every commit that reaches main has already passed the full PR Pipeline
-      # once. The Main Pipeline ... re-runs them anyway, against the actual merge
-      # commit rather than the pre-merge branch tip, because a squash merge can
-      # combine two individually passing branches into a combination that was
-      # never itself tested."
+      # Every commit that reaches main has already passed the PR Pipeline once,
+      # against the pre-merge branch tip. This re-runs the same checks against
+      # the actual commit on main, because a squash merge can combine two
+      # individually passing branches into a combination that was never itself
+      # tested.
       - name: Restore dependencies (NuGet)
         working-directory: backend
         run: dotnet restore Hris.sln
@@ -54,40 +55,48 @@ jobs:
         working-directory: backend
         run: dotnet test Hris.sln --no-build --configuration Release --logger "trx"
 
-      # containerization.md, "Image Strategy": one backend image, multi-stage build,
-      # tagged with the Git commit SHA (Image Tagging and Provenance) -- never
-      # `latest` as the deployment reference.
+      # One backend image, multi-stage build, tagged with the Git commit SHA --
+      # never `latest` as the deployment reference, so a running container can
+      # always be traced back to the exact commit it was built from.
       - name: Build container image (backend)
         working-directory: backend
         run: docker build -t hris-api:${{ github.sha }} -f Dockerfile .
 
-      # containerization.md, "Image Security": "security-operations.md's
-      # vulnerability scan runs against the built image before it is pushed to the
-      # registry ... an image with a critical vulnerability does not reach the
-      # registry, let alone Production."
-      # TODO(Sprint 1, once a scanner is selected in security-operations.md's own
-      # tooling choice): replace this placeholder with the real scan step and fail
-      # the build on a critical finding, per that document.
-      - name: Vulnerability scan (placeholder — scanner not yet selected)
-        run: echo "Vulnerability scan against hris-api:${{ github.sha }} runs here once security-operations.md's scanning tool is wired in. Must fail the build on a critical finding before any push step runs."
+      # Scans the image built above and fails the job on a CRITICAL finding,
+      # before the push step below ever runs -- an image with a critical
+      # vulnerability must not reach the registry, let alone a real environment.
+      - name: Vulnerability scan (Trivy)
+        uses: aquasecurity/trivy-action@0.24.0
+        with:
+          image-ref: hris-api:${{ github.sha }}
+          format: table
+          severity: CRITICAL
+          exit-code: "1"
+          ignore-unfixed: true
 
-      # TODO(Sprint 1, once a registry target is chosen): push the built image,
-      # tagged by commit SHA per containerization.md's Image Tagging and
-      # Provenance section, and a semantic version "where applicable."
-      - name: Push image to registry (placeholder — registry target not yet chosen)
-        run: echo "docker push <registry>/hris-api:${{ github.sha }} runs here once environment-strategy.md's Secrets Management (registry credentials via GitHub Actions Secrets) and a concrete registry target are both in place."
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
-      # ADR-0006: "documentation generated from the implementation, not maintained
-      # by hand." Swashbuckle/OpenAPI per technology-stack.md's Backend table.
+      - name: Tag image for registry
+        run: docker tag hris-api:${{ github.sha }} ghcr.io/${{ github.repository_owner }}/hris-api:${{ github.sha }}
+
+      - name: Push image to GitHub Container Registry
+        run: docker push ghcr.io/${{ github.repository_owner }}/hris-api:${{ github.sha }}
+
+      # OpenAPI is meant to be generated from the implementation, not hand
+      # maintained, via Swashbuckle. Left as a placeholder until Hris.Api exposes
+      # at least one endpoint beyond the health checks -- there's nothing to
+      # generate a meaningful spec from yet.
       - name: Generate OpenAPI specification
         working-directory: backend
         run: echo "dotnet run --project src/Api -- --generate-openapi (or equivalent Swashbuckle CLI invocation) runs here once Hris.Api exposes at least one endpoint beyond the health checks."
 
-      # "Deploy to Development environment (automatic, no approval gate)."
-      # TODO(Sprint 1, once a Development deployment target exists per
-      # environment-strategy.md): implement the actual deployment step. Migrations
-      # must be applied before this step per ci-cd-pipeline.md's "Migration
-      # Handling" -- do not reorder that once a real EF Core model and a real
-      # target both exist.
+      # TODO(once a Development deployment target exists): implement the actual
+      # deployment step. Migrations must be applied before this step once a real
+      # EF Core model and a real target both exist -- don't reorder that.
       - name: Deploy to Development (placeholder — no deployment target yet)
-        run: echo "Automatic deployment to Development runs here once environment-strategy.md's Development target exists. Order per ci-cd-pipeline.md -- migrations, then application deployment, then /health/ready verification."
+        run: echo "Automatic deployment to Development runs here once a Development target exists. Order -- migrations, then application deployment, then /health/ready verification."
