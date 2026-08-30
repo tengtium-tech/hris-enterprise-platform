@@ -90,4 +90,4 @@ jobs:
       # Handling" -- do not reorder that once a real EF Core model and a real
       # target both exist.
       - name: Deploy to Development (placeholder — no deployment target yet)
-        run: echo "Automatic deployment to Development runs here once environment-strategy.md's Development target exists. Order per ci-cd-pipeline.md: migrations, then application deployment, then /health/ready verification."
+        run: echo "Automatic deployment to Development runs here once environment-strategy.md's Development target exists. Order per ci-cd-pipeline.md -- migrations, then application deployment, then /health/ready verification."
