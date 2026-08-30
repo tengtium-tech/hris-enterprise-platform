@@ -36,7 +36,7 @@
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.4" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="9.0.4" />
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.0.4" />
-    <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="9.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="9.0.4" />
     <!-- naming-conventions.md's own "Table Naming" finding: the built docs/04-modules/
          catalog is not uniform (singular PascalCase, plural PascalCase, and snake_case
          all coexist across different modules' own persistence.md files), and that same

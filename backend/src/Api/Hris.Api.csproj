@@ -38,7 +38,7 @@
   <ItemGroup>
     <!-- AddDbContextCheck<HrisDbContext> in Program.cs, backing the /health/ready
          "ready"-tagged database connectivity check. -->
-    <PackageReference Include="Microsoft.Extensions.Diagnostics.HealthChecks.EntityFrameworkCore" Version="9.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Diagnostics.HealthChecks.EntityFrameworkCore" Version="9.0.4" />
   </ItemGroup>
 
 </Project>
