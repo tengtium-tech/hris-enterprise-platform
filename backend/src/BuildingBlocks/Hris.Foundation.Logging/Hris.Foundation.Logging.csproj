@@ -5,7 +5,12 @@
     Sprint 3 (Core Kernel) scope, per IMPLEMENTATION-PLAN.md Phase 1.
     Source specification: docs/03-foundation/logging-framework.md
     Domain layer implemented against that document; see Domain/ for the per-class
-    citations.
+    citations. Application/Infrastructure layers added in a follow-on pass — see
+    Application/ and Infrastructure/ for their own citations, and note this framework's
+    shape deliberately differs from Configuration Framework's (no MediatR
+    commands/queries of its own, no EF Core persistence): logging-framework.md
+    describes no user-driven business command lifecycle, and ILogSink's own remarks
+    state it is "write-only by design."
   -->
 
   <PropertyGroup>
@@ -13,7 +18,22 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <!-- MediatR: LoggingService issues ResolveConfigurationValueQuery against
+         Configuration Framework (its own Upstream Dependency, concretely wired here)
+         via ISender — not because Logging defines any MediatR requests of its own. -->
+    <PackageReference Include="MediatR" Version="12.4.1" />
+    <!-- Serilog: technology-stack.md's Monitoring & Observability table names this
+         directly as the platform's logging technology, not an illustrative example —
+         see SerilogLogSink's own remarks. -->
+    <PackageReference Include="Serilog" Version="4.2.0" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\Hris.SharedKernel\Hris.SharedKernel.csproj" />
+    <!-- Configuration Framework: logging-framework.md's own Dependencies section
+         lists it as an Upstream Dependency; LoggingService resolves its own minimum
+         severity threshold through it, per that framework's own remarks. -->
+    <ProjectReference Include="..\Hris.Foundation.Configuration\Hris.Foundation.Configuration.csproj" />
   </ItemGroup>
 
 </Project>
