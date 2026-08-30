@@ -11,7 +11,7 @@
     building blocks every Foundation framework's and business module's own
     Infrastructure layer depends on (strongly-typed-id value conversion, audit shadow
     properties, assembly-scanned entity configuration discovery). It deliberately does
-    NOT reference any Hris.Foundation.* or Hris.Modules.* project -- dbcontext-design.md's
+    NOT reference any Hris.Foundation.* or Hris.Modules.* project - dbcontext-design.md's
     own Model Configuration section requires configuration classes to be "discovered
     through assembly scanning," not referenced directly, so this project never takes a
     compile-time dependency on the frameworks/modules whose entities it persists
@@ -26,7 +26,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Hris.SharedKernel\Hris.SharedKernel.csproj" />
     <!-- For Hris.Application.Abstractions.IUnitOfWork, which HrisDbContext implements
-         directly -- dbcontext-design.md's own "DbContext = Unit of Work" standard,
+         directly - dbcontext-design.md's own "DbContext = Unit of Work" standard,
          expressed as the Application layer's own abstraction so
          Hris.Application.Behaviors.TransactionBehavior never references EF Core. -->
     <ProjectReference Include="..\Hris.Application\Hris.Application.csproj" />
@@ -40,14 +40,14 @@
     <!-- naming-conventions.md's own "Table Naming" finding: the built docs/04-modules/
          catalog is not uniform (singular PascalCase, plural PascalCase, and snake_case
          all coexist across different modules' own persistence.md files), and that same
-         document tells the implementer generating the first migration -- this one -- to
+         document tells the implementer generating the first migration - this one - to
          "choose one physical convention... configure it once, globally... most likely:
          configure EF Core's UseSnakeCaseNamingConvention() or equivalent, since 11 of 19
          modules' own documentation already assumes snake_case output." This package is
          the "or equivalent" that method requires. FINDING, not yet reflected in
          docs/02-architecture/02-solution-architecture/technology-stack.md's own
          Approved NuGet Packages list: that list does not name this package. Recorded
-         here rather than silently added -- technology-stack.md should be updated to
+         here rather than silently added - technology-stack.md should be updated to
          include it in the same change that closes this finding. -->
     <PackageReference Include="EFCore.NamingConventions" Version="9.0.0" />
   </ItemGroup>

@@ -55,7 +55,7 @@
          canonical list. -->
     <ProjectReference Include="..\..\src\BuildingBlocks\Hris.Foundation.Authorization\Hris.Foundation.Authorization.csproj" />
     <!-- CTR_DAT_005_EffectiveDatedConfigurationSelectsTheVersionInForceOnTheEvaluationDate
-         exercises ConfigurationSetting.GetValueAsOf directly -- the first Sprint 3
+         exercises ConfigurationSetting.GetValueAsOf directly - the first Sprint 3
          framework with real Application/Infrastructure layers behind its Domain
          layer, per IMPLEMENTATION-PLAN.md's bootstrap order. -->
     <ProjectReference Include="..\..\src\BuildingBlocks\Hris.Foundation.Configuration\Hris.Foundation.Configuration.csproj" />

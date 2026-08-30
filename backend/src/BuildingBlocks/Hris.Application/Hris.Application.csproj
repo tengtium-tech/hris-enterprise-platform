@@ -14,11 +14,11 @@
     that persists anything without it: application-pipeline.md's Transaction Behavior
     ("Begin transaction, Execute handler, Save changes, Commit transaction") and
     Common Anti-Patterns ("Manual transaction management in handlers") together mean a
-    handler must never call SaveChanges itself -- that has to live in a shared pipeline
+    handler must never call SaveChanges itself - that has to live in a shared pipeline
     behavior every framework's and module's commands go through identically, not
     something Configuration Framework's own Application layer would own privately.
 
-    Depends only on Hris.SharedKernel and MediatR/FluentValidation -- never on
+    Depends only on Hris.SharedKernel and MediatR/FluentValidation - never on
     Hris.Infrastructure or Entity Framework Core. <see cref="Abstractions.IUnitOfWork"/>
     is the abstraction that keeps the dependency direction correct: Application defines
     the interface a persistence concern must satisfy, Infrastructure (which references

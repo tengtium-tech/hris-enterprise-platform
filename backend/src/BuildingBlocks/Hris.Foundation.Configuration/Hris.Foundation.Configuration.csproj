@@ -6,7 +6,7 @@
     Source specification: docs/03-foundation/configuration-framework.md
     Domain layer implemented against that document; see Domain/ for the per-class
     citations. Application and Infrastructure layers added in a later Sprint 3
-    increment -- see Application/ and Infrastructure/ for their own citations.
+    increment - see Application/ and Infrastructure/ for their own citations.
   -->
 
   <PropertyGroup>
