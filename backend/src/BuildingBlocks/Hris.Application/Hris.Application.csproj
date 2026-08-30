@@ -1,0 +1,45 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    Hris.Application
+    Sprint 3 (Core Kernel) scope, per IMPLEMENTATION-PLAN.md Phase 1.
+    Source specifications: docs/02-architecture/03-application-architecture/application-pipeline.md
+    ("Pipeline Behaviors... Logging, Performance Monitoring, Authorization, Validation,
+    Transaction, Handler, Domain Events") and docs/08-devops/coding-standards.md's
+    Application Layer conventions.
+
+    Built now, ahead of any one framework's own Application layer, because
+    Hris.Foundation.Configuration's Application layer (the first Sprint 3 framework to
+    need one, per IMPLEMENTATION-PLAN.md's bootstrap order) cannot dispatch a command
+    that persists anything without it: application-pipeline.md's Transaction Behavior
+    ("Begin transaction, Execute handler, Save changes, Commit transaction") and
+    Common Anti-Patterns ("Manual transaction management in handlers") together mean a
+    handler must never call SaveChanges itself -- that has to live in a shared pipeline
+    behavior every framework's and module's commands go through identically, not
+    something Configuration Framework's own Application layer would own privately.
+
+    Depends only on Hris.SharedKernel and MediatR/FluentValidation -- never on
+    Hris.Infrastructure or Entity Framework Core. <see cref="Abstractions.IUnitOfWork"/>
+    is the abstraction that keeps the dependency direction correct: Application defines
+    the interface a persistence concern must satisfy, Infrastructure (which references
+    Application, never the reverse) provides it via HrisDbContext. Coding-standards.md
+    states this rule explicitly for the Domain layer only ("Domain code has no
+    reference to Entity Framework Core... CTR-ARC-001"); this project extends the same
+    reasoning one layer up for Clean Architecture's inward dependency rule to hold
+    end-to-end, not because CTR-ARC-001 itself names the Application layer.
+  -->
+
+  <PropertyGroup>
+    <RootNamespace>Hris.Application</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Hris.SharedKernel\Hris.SharedKernel.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MediatR" Version="12.4.1" />
+    <PackageReference Include="FluentValidation" Version="11.11.0" />
+  </ItemGroup>
+
+</Project>

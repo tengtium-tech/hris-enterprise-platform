@@ -22,6 +22,8 @@
          reflected in IMPLEMENTATION-PLAN.md) — do not add a module reference here
          ahead of its own Sprint. -->
     <ProjectReference Include="..\BuildingBlocks\Hris.SharedKernel\Hris.SharedKernel.csproj" />
+    <ProjectReference Include="..\BuildingBlocks\Hris.Application\Hris.Application.csproj" />
+    <ProjectReference Include="..\BuildingBlocks\Hris.Infrastructure\Hris.Infrastructure.csproj" />
     <ProjectReference Include="..\BuildingBlocks\Hris.Foundation.Configuration\Hris.Foundation.Configuration.csproj" />
     <ProjectReference Include="..\BuildingBlocks\Hris.Foundation.Logging\Hris.Foundation.Logging.csproj" />
     <ProjectReference Include="..\BuildingBlocks\Hris.Foundation.Identity\Hris.Foundation.Identity.csproj" />
@@ -31,6 +33,12 @@
     <ProjectReference Include="..\BuildingBlocks\Hris.Foundation.RulesEngine\Hris.Foundation.RulesEngine.csproj" />
     <ProjectReference Include="..\BuildingBlocks\Hris.Foundation.Validation\Hris.Foundation.Validation.csproj" />
     <ProjectReference Include="..\BuildingBlocks\Hris.Foundation.Localization\Hris.Foundation.Localization.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- AddDbContextCheck<HrisDbContext> in Program.cs, backing the /health/ready
+         "ready"-tagged database connectivity check. -->
+    <PackageReference Include="Microsoft.Extensions.Diagnostics.HealthChecks.EntityFrameworkCore" Version="9.0.0" />
   </ItemGroup>
 
 </Project>

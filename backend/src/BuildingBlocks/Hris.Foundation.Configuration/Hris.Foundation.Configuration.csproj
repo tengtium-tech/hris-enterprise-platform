@@ -5,7 +5,8 @@
     Sprint 3 (Core Kernel) scope, per IMPLEMENTATION-PLAN.md Phase 1.
     Source specification: docs/03-foundation/configuration-framework.md
     Domain layer implemented against that document; see Domain/ for the per-class
-    citations.
+    citations. Application and Infrastructure layers added in a later Sprint 3
+    increment -- see Application/ and Infrastructure/ for their own citations.
   -->
 
   <PropertyGroup>
@@ -14,6 +15,16 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Hris.SharedKernel\Hris.SharedKernel.csproj" />
+    <ProjectReference Include="..\Hris.Application\Hris.Application.csproj" />
+    <ProjectReference Include="..\Hris.Infrastructure\Hris.Infrastructure.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MediatR" Version="12.4.1" />
+    <PackageReference Include="FluentValidation" Version="11.11.0" />
+    <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.11.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.0" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.0" />
   </ItemGroup>
 
 </Project>
