@@ -29,7 +29,10 @@
          this project. Every test method name embeds its Critical Test Requirement
          ID verbatim (CTR_AUD_001_..., CTR_ISO_002_...) by design, per this file's
          own header comment above — that is the checklist mechanism, not a naming
-         defect. No other project in this solution suppresses any analyzer rule. -->
+         defect. Directory.Build.props separately suppresses CA1812 solution-wide, for
+         an unrelated reason (see that file's own comment) — this remains the only
+         project-specific suppression, and CA1707 remains specific to this project's own
+         naming convention, not a repository-wide relaxation. -->
     <NoWarn>$(NoWarn);CA1707</NoWarn>
   </PropertyGroup>
 

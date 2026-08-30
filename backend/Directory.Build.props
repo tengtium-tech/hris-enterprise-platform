@@ -23,5 +23,19 @@
          is set per-project below where a project's own namespace should differ from
          its assembly name. -->
     <Company>HRIS Enterprise Platform</Company>
+
+    <!-- CA1812 ("internal class is apparently never instantiated") is a solution-wide
+         false positive for this codebase's own architecture, not a one-off to suppress
+         per class: coding-standards.md's Application Layer convention keeps every
+         MediatR command/query handler internal (it is invoked only through MediatR's
+         own DI-resolved dispatch, never called directly by other code in its
+         assembly), and aggregate-persistence.md's Repository Responsibilities keeps
+         every repository implementation internal the same way, behind its Domain-owned
+         public interface. Both are constructed by the DI container via reflection,
+         which this analyzer's static reachability check cannot see — it is not a
+         defect in either type, and disabling it per-class in every one of what will be
+         dozens of handlers across every future framework and module would be the exact
+         repetition Directory.Build.props exists to avoid, per this file's own header. -->
+    <NoWarn>$(NoWarn);CA1812</NoWarn>
   </PropertyGroup>
 </Project>
