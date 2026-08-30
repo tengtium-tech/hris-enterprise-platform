@@ -1,184 +1,33 @@
-# HRIS Enterprise Platform Documentation
+# HRIS Enterprise Platform
 
-> **Version:** 1.0 (Draft)
->
-> This repository contains the official product, business, architecture, engineering, and technical documentation for the **HRIS Enterprise Platform (HEP)**.
+Enterprise-grade, Philippines-first HRIS platform built as a modular monolith on .NET 9, PostgreSQL, and EF Core, using Domain-Driven Design.
 
----
+## About this project
 
-# Purpose
+This is a personal project built end-to-end: product concept, market research, business requirements, system design, and implementation. The code in this repository is the implementation side of that work.
 
-The purpose of this repository is to serve as the **single source of truth** for the HRIS Enterprise Platform.
+The product thinking behind it — the market research, the features pulled from existing HR/payroll platforms and why, the domain modeling decisions, and the system design rationale — is written up separately as a blog series rather than kept in this repository. This repo is the codebase; the write-ups are the story of how it got designed and built.
 
-It documents the product vision, business requirements, software architecture, engineering standards, database design, APIs, UI/UX, deployment strategy, and implementation decisions.
+## Tech stack
 
-Every member of the project—including product owners, architects, developers, QA engineers, DevOps engineers, UI/UX designers, and technical writers—should use this repository as the authoritative reference.
+- .NET 9 / C#
+- PostgreSQL
+- Entity Framework Core
+- Domain-Driven Design (aggregates, value objects, domain events)
+- Modular monolith architecture
 
----
+## Architecture
 
-# Project Overview
+The backend is organized as a modular monolith:
 
-The HRIS Enterprise Platform is a modern, enterprise-grade Human Resource Information System (HRIS) designed to support organizations through a secure, scalable, configurable, and intelligent workforce management platform.
+- **SharedKernel** — common building blocks used across every module: the `Result` pattern for error handling, strongly-typed IDs, and base `AggregateRoot`/`Entity`/`ValueObject` types.
+- **Core Kernel frameworks** — nine foundation frameworks every business module depends on: Configuration, Logging, Identity, Events, Authorization, Audit, Rules Engine, Validation, and Localization.
+- **Business modules** (not yet built) — Employee, Payroll, Leave, Attendance, Recruitment, and the rest of the HR domain, layered on top of the Core Kernel once it's complete.
 
-The initial release targets organizations operating in the Philippines while providing an architecture that supports future expansion into multiple countries.
+## Status
 
-The platform is designed using modern software engineering principles, including:
+Actively in progress. The Core Kernel foundation frameworks are implemented at the domain layer. Business modules come next, in dependency order, per the project's implementation roadmap. A suite of Critical Test Requirements (59 in total, covering authorization, tenant isolation, audit, payroll correctness, and more) is tracked as stub tests and gets filled in as each requirement becomes implementable.
 
-- Domain-Driven Design (DDD)
-- Event-Driven Architecture (EDA)
-- API-First Development
-- Cloud-Native Architecture
-- Multi-Tenant SaaS
-- Modular Architecture
-- AI-Ready Platform
+## Getting started
 
----
-
-# Repository Structure
-
-```
-docs/
-│
-├── 00-project/
-├── 01-business/
-├── 02-architecture/
-├── 03-foundation/
-├── 04-modules/
-├── 05-database/
-├── 06-api/
-├── 07-ui-ux/
-├── 08-devops/
-└── 09-adr/
-```
-
-Each section documents a specific aspect of the platform.
-
----
-
-# Documentation Principles
-
-The documentation follows these principles:
-
-- Single source of truth
-- Documentation first
-- Architecture before implementation
-- Consistent terminology
-- Version-controlled
-- Reviewable and maintainable
-- Technology-agnostic where appropriate
-
----
-
-# Intended Audience
-
-This documentation is intended for:
-
-- Product Owners
-- Business Analysts
-- Solution Architects
-- Software Architects
-- Backend Developers
-- Frontend Developers
-- Mobile Developers
-- DevOps Engineers
-- QA Engineers
-- UI/UX Designers
-- Technical Writers
-- Project Managers
-
----
-
-# Documentation Organization
-
-## 00 – Project
-
-Project vision, goals, scope, roadmap, terminology, and guiding principles.
-
-## 01 – Business
-
-Business processes, organizational structure, employment models, and compliance.
-
-## 02 – Architecture
-
-System architecture, design decisions, technology stack, deployment architecture, security, AI architecture, and multi-tenancy.
-
-## 03 – Foundation
-
-Platform capabilities shared across all modules, including identity, workflow, notifications, audit, configuration, and integrations.
-
-## 04 – Business Modules
-
-Functional specifications for Employee Core, Attendance, Leave, Payroll, Recruitment, Performance, Learning, Analytics, and AI.
-
-## 05 – Database
-
-Database standards, entity catalog, naming conventions, relationships, and enterprise data model.
-
-## 06 – API
-
-API standards, authentication, versioning, error handling, and OpenAPI specifications.
-
-## 07 – UI/UX
-
-Navigation, design system, screen catalog, layouts, accessibility, and user experience standards.
-
-## 08 – DevOps
-
-Development standards, Git workflow, CI/CD, monitoring, logging, backup, and disaster recovery.
-
-## 09 – Architecture Decision Records (ADR)
-
-Records documenting significant architectural and engineering decisions made throughout the project lifecycle.
-
----
-
-# Guiding Philosophy
-
-The platform is designed as an extensible workforce management platform rather than a collection of independent HR modules.
-
-Every feature should align with the following objectives:
-
-- Simplicity
-- Security
-- Scalability
-- Configurability
-- Maintainability
-- Extensibility
-- Compliance
-- Reliability
-
----
-
-# Documentation Lifecycle
-
-Documentation should evolve alongside the product.
-
-Every significant business, architectural, or technical decision must be reflected in this repository before implementation whenever practical.
-
----
-
-# Versioning
-
-This documentation follows semantic versioning.
-
-| Version | Description |
-|----------|-------------|
-| 0.x | Draft and planning |
-| 1.x | Production-ready documentation |
-| 2.x | Major architectural revisions |
-
----
-
-# Related Documents
-
-- `00-project/vision.md`
-- `00-project/goals.md`
-- `00-project/product-principles.md`
-- `02-architecture/architecture-overview.md`
-- `03-foundation/README.md`
-
----
-
-# License
-
-This documentation is proprietary and intended for internal project use unless otherwise specified.
+See [`backend/README.md`](backend/README.md) for build instructions and the current development conventions.
