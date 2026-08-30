@@ -1,15 +1,13 @@
 name: PR Pipeline
 
-# Grounded in docs/08-devops/ci-cd-pipeline.md's "PR Pipeline" section (id: cicd02).
-# A separate workflow file from the Main Pipeline, per that document's own AI
-# Implementation Guidance: "Implement the PR Pipeline and Main Pipeline as separate
-# workflow files triggered on pull_request and push to main respectively, not as
-# branches within one workflow -- this keeps the required-status-check
-# configuration on branch protection simple and unambiguous."
+# Runs on every pull request targeting main. A separate workflow file from the
+# Main Pipeline (which runs on push to main), so branch protection's required
+# status check configuration stays simple and unambiguous -- one job name per
+# trigger, not two triggers sharing one workflow.
 #
-# All stages must complete within 15 minutes per NFR-MT-002 (job-level timeout below
-# enforces this). Any failing stage fails the build -- per docs/09-testing/README.md
-# §9, "there is no category of test that may fail without blocking."
+# All stages must complete within 15 minutes (job-level timeout below enforces
+# this). Any failing stage fails the build -- there is no category of test that
+# may fail without blocking a merge.
 
 on:
   pull_request:
@@ -22,7 +20,7 @@ concurrency:
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
-    timeout-minutes: 15 # NFR-MT-002
+    timeout-minutes: 15
 
     steps:
       - name: Checkout
@@ -33,10 +31,9 @@ jobs:
         with:
           dotnet-version: "9.0.x"
 
-      # TODO(Sprint 1): add a corresponding Node/npm setup + build step once
-      # frontend/ exists (its own later Sprint) -- containerization.md and this
-      # pipeline both currently describe a two-image world (backend, frontend);
-      # only the backend half is buildable today.
+      # TODO(once frontend/ exists, its own later development phase): add a
+      # corresponding Node/npm setup + build step. Only the backend half of the
+      # solution is buildable today.
       - name: Restore dependencies (NuGet)
         working-directory: backend
         run: dotnet restore Hris.sln
@@ -45,37 +42,32 @@ jobs:
         working-directory: backend
         run: dotnet build Hris.sln --no-restore --configuration Release
 
-      # docs/08-devops/coding-standards.md, Static Analysis and Linting table:
-      # ".editorconfig ... Formatting violations fail `dotnet format --verify-no-changes`
-      # in CI." Roslyn analyzers are configured as build errors via
-      # Directory.Build.props (TreatWarningsAsErrors), so a failing analyzer already
-      # fails the Build step above; this step catches formatting specifically.
+      # Formatting violations fail dotnet format --verify-no-changes in CI.
+      # Roslyn analyzers are configured as build errors via Directory.Build.props
+      # (TreatWarningsAsErrors), so a failing analyzer already fails the Build
+      # step above; this step catches formatting specifically.
       - name: Static analysis — dotnet format
         working-directory: backend
         run: dotnet format Hris.sln --verify-no-changes --no-restore
 
-      # TODO(Sprint 3+): add the CTR-AUT-001 custom Roslyn analyzer / static-analysis
-      # rule coding-standards.md's Static Analysis table names once it exists —
-      # "no role-name string comparison in business logic," verified by static
-      # analysis, not code review alone.
+      # TODO(once a module needs it): add the custom Roslyn analyzer that
+      # enforces "no role-name string comparison in business logic" as a static
+      # analysis rule, not code review alone.
 
-      # docs/09-testing/README.md §9's stated order: Compilation -> Architecture
-      # tests -> Unit tests -> Integration tests -> Contract tests -> Coverage
-      # evaluation against NFR-MT-001. `dotnet test` runs whatever test classes
-      # exist; today that is only Hris.CriticalRequirements.Tests' Skip-marked
-      # stubs, which report as skipped, not passed -- a green run here means "no
-      # regression," not "CTRs are satisfied." That distinction stays true until
-      # each stub is implemented alongside its own module/framework.
+      # dotnet test runs whatever test classes exist; today that's only
+      # Hris.CriticalRequirements.Tests' Skip-marked stubs, which report as
+      # skipped, not passed -- a green run here means "no regression," not "the
+      # Critical Test Requirements are satisfied." That distinction stays true
+      # until each stub is implemented alongside its own module/framework.
       - name: Test suite
         working-directory: backend
         run: dotnet test Hris.sln --no-build --configuration Release --logger "trx"
 
-      # ci-cd-pipeline.md, "Migration Handling": "A PR that changes the EF Core
-      # model runs a migration dry-run in the PR Pipeline (`dotnet ef migrations
-      # script` generated and inspected for destructive operations) before the PR
-      # can merge." No EF Core model exists yet (Phase 2 onward) -- this step is a
-      # placeholder until one does; do not remove it, implement it when the first
-      # DbContext is added.
+      # A PR that changes the EF Core model should run a migration dry-run
+      # (dotnet ef migrations script, generated and inspected for destructive
+      # operations) before it can merge. No EF Core model exists yet -- this
+      # step is a placeholder until one does; implement it when the first
+      # DbContext is added, don't remove it in the meantime.
       - name: Migration dry-run (placeholder — no EF Core model exists yet)
         working-directory: backend
-        run: echo "No EF Core model yet; migration dry-run will run 'dotnet ef migrations script' and fail the check on an unacknowledged destructive operation once one exists (see ci-cd-pipeline.md)."
+        run: echo "No EF Core model yet. Once one exists, this step generates a migration script and fails the check on an unacknowledged destructive operation."
