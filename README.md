@@ -26,7 +26,7 @@ The backend is organized as a modular monolith:
 
 ## Status
 
-Actively in progress. The Core Kernel foundation frameworks are implemented at the domain layer. Business modules come next, in dependency order, per the project's implementation roadmap. A suite of Critical Test Requirements (59 in total, covering authorization, tenant isolation, audit, payroll correctness, and more) is tracked as stub tests and gets filled in as each requirement becomes implementable.
+Actively in progress. The Core Kernel foundation frameworks are implemented at the domain layer; the first of the nine (Configuration) also has a working application and persistence layer end to end, along with the shared CQRS/EF Core infrastructure the remaining eight will reuse. Business modules come next, in dependency order, per the project's implementation roadmap. A suite of Critical Test Requirements (59 in total, covering authorization, tenant isolation, audit, payroll correctness, and more) is tracked as stub tests and gets filled in as each requirement becomes implementable.
 
 ## Getting started
 

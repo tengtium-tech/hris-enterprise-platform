@@ -29,7 +29,10 @@
          this project. Every test method name embeds its Critical Test Requirement
          ID verbatim (CTR_AUD_001_..., CTR_ISO_002_...) by design, per this file's
          own header comment above — that is the checklist mechanism, not a naming
-         defect. No other project in this solution suppresses any analyzer rule. -->
+         defect. Directory.Build.props separately suppresses CA1812 solution-wide, for
+         an unrelated reason (see that file's own comment) — this remains the only
+         project-specific suppression, and CA1707 remains specific to this project's own
+         naming convention, not a repository-wide relaxation. -->
     <NoWarn>$(NoWarn);CA1707</NoWarn>
   </PropertyGroup>
 
@@ -54,6 +57,11 @@
          the test cannot silently drift from authorization-framework.md's own
          canonical list. -->
     <ProjectReference Include="..\..\src\BuildingBlocks\Hris.Foundation.Authorization\Hris.Foundation.Authorization.csproj" />
+    <!-- CTR_DAT_005_EffectiveDatedConfigurationSelectsTheVersionInForceOnTheEvaluationDate
+         exercises ConfigurationSetting.GetValueAsOf directly - the first Sprint 3
+         framework with real Application/Infrastructure layers behind its Domain
+         layer, per IMPLEMENTATION-PLAN.md's bootstrap order. -->
+    <ProjectReference Include="..\..\src\BuildingBlocks\Hris.Foundation.Configuration\Hris.Foundation.Configuration.csproj" />
   </ItemGroup>
 
 </Project>
