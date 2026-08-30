@@ -39,6 +39,13 @@
     <!-- AddDbContextCheck<HrisDbContext> in Program.cs, backing the /health/ready
          "ready"-tagged database connectivity check. -->
     <PackageReference Include="Microsoft.Extensions.Diagnostics.HealthChecks.EntityFrameworkCore" Version="9.0.4" />
+    <!-- Serilog host bootstrap for Logging Framework's SerilogLogSink (see that
+         class's own remarks) — Serilog.Sinks.Console is this Sprint's one configured
+         sink, since no log-aggregation platform is chosen yet; environment-strategy.md
+         governs adding a production sink (e.g. a structured file or collector sink)
+         later without this framework's own code changing. -->
+    <PackageReference Include="Serilog.AspNetCore" Version="8.0.3" />
+    <PackageReference Include="Serilog.Sinks.Console" Version="6.0.0" />
   </ItemGroup>
 
 </Project>
