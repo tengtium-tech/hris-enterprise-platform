@@ -65,8 +65,16 @@ jobs:
       # Scans the image built above and fails the job on a CRITICAL finding,
       # before the push step below ever runs -- an image with a critical
       # vulnerability must not reach the registry, let alone a real environment.
+      # v0.24.0 was never a real tag on aquasecurity/trivy-action -- GitHub could
+      # not resolve it, so this step (and every step after it: registry push)
+      # failed in this workflow's own setup phase on every push to main since this
+      # step was first added, before the job's runner even started. v0.36.0 is the
+      # current latest release, an immutable tag (cannot be silently repointed to
+      # different content later, per GitHub's own tag protection on this
+      # repository), matching the version-tag pinning convention already used below
+      # for docker/login-action and docker/build-push-action.
       - name: Vulnerability scan (Trivy)
-        uses: aquasecurity/trivy-action@0.24.0
+        uses: aquasecurity/trivy-action@v0.36.0
         with:
           image-ref: hris-api:${{ github.sha }}
           format: table
