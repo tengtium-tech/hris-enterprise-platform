@@ -5,7 +5,8 @@
     Sprint 3 (Core Kernel) scope, per IMPLEMENTATION-PLAN.md Phase 1.
     Source specification: docs/03-foundation/rules-engine.md
     Domain layer implemented against that document; see Domain/ for the per-class
-    citations.
+    citations. Application and Infrastructure layers added in a later Sprint 3
+    increment — see Application/ and Infrastructure/ for their own citations.
   -->
 
   <PropertyGroup>
@@ -14,10 +15,24 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Hris.SharedKernel\Hris.SharedKernel.csproj" />
+    <ProjectReference Include="..\Hris.Application\Hris.Application.csproj" />
+    <ProjectReference Include="..\Hris.Infrastructure\Hris.Infrastructure.csproj" />
     <!-- Identity Framework is one of this framework's own stated Upstream
          Dependencies and already exists: referenced concretely for UserAccountId,
          who authored/published a rule version (CTR-ARC-002). -->
     <ProjectReference Include="..\Hris.Foundation.Identity\Hris.Foundation.Identity.csproj" />
+    <!-- Authorization Framework: also a stated Upstream Dependency; every
+         rule-management command gates through it, per rules-engine.md's own "Only
+         authorized users should publish or modify business rules." -->
+    <ProjectReference Include="..\Hris.Foundation.Authorization\Hris.Foundation.Authorization.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MediatR" Version="12.4.1" />
+    <PackageReference Include="FluentValidation" Version="11.11.0" />
+    <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.11.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.4" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.4" />
   </ItemGroup>
 
 </Project>

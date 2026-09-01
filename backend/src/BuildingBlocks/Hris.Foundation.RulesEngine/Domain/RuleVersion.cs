@@ -54,6 +54,34 @@ public sealed class RuleVersion : Entity<RuleVersionId>
     }
 
     /// <summary>
+    /// EF Core materialization only -- never called by application code, which always
+    /// goes through the constructor above via <see cref="RuleDefinition"/>. EF Core's
+    /// own constructor-binding convention cannot bind <c>conditions</c>/<c>actions</c>
+    /// through a constructor parameter because both are owned-collection navigations,
+    /// not scalar or converted properties ("navigations to related entities, including
+    /// references to owned types, cannot be bound," per that convention's own
+    /// documented rule); every other parameter above binds fine. Rather than change
+    /// the constructor application code actually calls, this second constructor gives
+    /// EF Core one that satisfies its own binding rule -- every parameter here maps to
+    /// a scalar or converted property -- and it selects this one automatically for
+    /// materialization, since it is the best fully-bindable match. EF Core then
+    /// populates <see cref="_conditions"/>/<see cref="_actions"/> the same way it
+    /// already populates every other configured navigation here: through the field
+    /// access mode <c>RuleDefinitionConfiguration</c> already declares for both.
+    /// </summary>
+    private RuleVersion(RuleVersionId id, int versionNumber, LogicalOperator conditionOperator, RulePriority priority, UserAccountId createdByUserId)
+        : base(id)
+    {
+        VersionNumber = versionNumber;
+        _conditions = [];
+        ConditionOperator = conditionOperator;
+        _actions = [];
+        Priority = priority;
+        CreatedByUserId = createdByUserId;
+        State = RuleLifecycleState.Draft;
+    }
+
+    /// <summary>
     /// Evaluates <see cref="Conditions"/> against <paramref name="context"/>,
     /// combined by <see cref="ConditionOperator"/>. Pure and deterministic -- no I/O,
     /// no ambient state -- per this document's own Implementation Guidance ("Make
