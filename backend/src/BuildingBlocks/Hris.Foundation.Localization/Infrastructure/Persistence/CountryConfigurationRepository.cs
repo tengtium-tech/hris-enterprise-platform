@@ -28,10 +28,12 @@ internal sealed class CountryConfigurationRepository : ICountryConfigurationRepo
     {
         Guard.AgainstNull(country, nameof(country));
 
-        // UNVERIFIED: this Value Object equality comparison translates to a correct
-        // SQL WHERE clause the same way ConfigurationSettingRepository's own
-        // GetByKeyAsync remarks flag for its own Key == key comparison -- flagged
-        // here rather than silently assumed correct.
+        // VERIFIED (HEP-38): this Value Object equality comparison translates to a
+        // correct SQL WHERE clause, confirmed against a real, disposable PostgreSQL
+        // 16 instance via Testcontainers -- see
+        // Hris.Infrastructure.IntegrationTests.ValueObjectComparisonTranslationTests.CountryConfigurationRepository_GetByCountryAsync_TranslatesCountryComparison,
+        // and ConfigurationSettingRepository's own identical remarks for the
+        // Key == key comparison this shares its shape with.
         return _dbContext.Set<CountryConfiguration>()
             .FirstOrDefaultAsync(configuration => configuration.Country == country, cancellationToken);
     }
