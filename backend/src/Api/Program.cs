@@ -1,5 +1,6 @@
 using System.Globalization;
 using Hris.Application;
+using Hris.Foundation.Authorization;
 using Hris.Foundation.Configuration;
 using Hris.Foundation.Events;
 using Hris.Foundation.Identity;
@@ -44,28 +45,32 @@ builder.Host.UseSerilog((_, loggerConfiguration) =>
 // LoggingService issues a MediatR query against it (see that class's own remarks) --
 // DI resolution itself is order-independent, but this ordering keeps the file
 // readable as "each framework's own upstream dependencies are registered before it."
-// Authorization, Audit, RulesEngine, Validation, and Localization frameworks join this
-// list in the same bootstrap order as their own Application/Infrastructure layers are
-// built, per IMPLEMENTATION-PLAN.md -- none of the remaining five has one yet
-// (backend/README.md), so Configuration, Logging, Identity, and now Event appear
-// below. AddEventFramework() runs after AddIdentityFramework() and
-// AddConfigurationFramework() for the same reason AddIdentityFramework() itself does:
-// OutboxDispatcherBackgroundService issues a MediatR query against Configuration
-// Framework, and EventEnvelope's own Actor field is a Hris.Foundation.Identity type
-// (see those classes' own remarks). Event Framework's own stated Upstream Dependencies
-// also list Authorization Framework and Audit Framework, both of which come after it
-// in this same bootstrap order -- IMPLEMENTATION-PLAN.md's own "Nine Foundation
-// Frameworks Form a Genuine Dependency Cycle" finding covers this: the nine are
-// mutually dependent at runtime and built together as one kernel, with the two
-// not-yet-built integrations (Event publishing an audit-relevant record, Event
-// checking authorization) wired in once those siblings exist later in this Sprint,
-// not stubbed here.
+// Audit, RulesEngine, Validation, and Localization frameworks join this list in the
+// same bootstrap order as their own Application/Infrastructure layers are built, per
+// IMPLEMENTATION-PLAN.md -- none of the remaining four has one yet (backend/README.md),
+// so Configuration, Logging, Identity, Event, and now Authorization appear below.
+// AddEventFramework() runs after AddIdentityFramework() and AddConfigurationFramework()
+// for the same reason AddIdentityFramework() itself does: OutboxDispatcherBackgroundService
+// issues a MediatR query against Configuration Framework, and EventEnvelope's own Actor
+// field is a Hris.Foundation.Identity type (see those classes' own remarks).
+// AddAuthorizationFramework() runs after AddIdentityFramework() for the same reference
+// reason (RoleAssignment.PrincipalId is a Hris.Foundation.Identity type) -- it does not
+// need to run after AddEventFramework() itself, since CheckAuthorizationQueryHandler
+// deliberately does not publish through Event Framework yet (see that handler's own
+// remarks: publishing an authorization decision on every evaluation would work against
+// this framework's own stated performance NFR, and Audit Framework, the framework that
+// would actually consume it, does not exist yet either). Authorization Framework's own
+// stated Upstream Dependencies also list Audit Framework, which comes after it in this
+// same bootstrap order -- IMPLEMENTATION-PLAN.md's own "Nine Foundation Frameworks Form
+// a Genuine Dependency Cycle" finding covers this the same way it already does for
+// Event Framework's own not-yet-built integrations.
 builder.Services.AddSingleton(TimeProvider.System);
 builder.Services.AddHrisApplicationBehaviors();
 builder.Services.AddConfigurationFramework();
 builder.Services.AddLoggingFramework();
 builder.Services.AddIdentityFramework();
 builder.Services.AddEventFramework();
+builder.Services.AddAuthorizationFramework();
 builder.Services.AddHrisInfrastructure(builder.Configuration);
 
 // naming-conventions.md aside: this is a "readiness" check on the connection, not a
