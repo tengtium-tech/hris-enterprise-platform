@@ -6,6 +6,7 @@ using Hris.Foundation.Configuration;
 using Hris.Foundation.Events;
 using Hris.Foundation.Identity;
 using Hris.Foundation.Logging;
+using Hris.Foundation.RulesEngine;
 using Hris.Infrastructure;
 using Hris.Infrastructure.Persistence;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
@@ -46,22 +47,29 @@ builder.Host.UseSerilog((_, loggerConfiguration) =>
 // LoggingService issues a MediatR query against it (see that class's own remarks) --
 // DI resolution itself is order-independent, but this ordering keeps the file
 // readable as "each framework's own upstream dependencies are registered before it."
-// RulesEngine, Validation, and Localization frameworks join this list in the same
-// bootstrap order as their own Application/Infrastructure layers are built, per
-// IMPLEMENTATION-PLAN.md -- none of the remaining three has one yet
-// (backend/README.md), so Configuration, Logging, Identity, Event, Authorization, and
-// now Audit appear below. AddEventFramework() runs after AddIdentityFramework() and
-// AddConfigurationFramework() for the same reason AddIdentityFramework() itself does:
-// OutboxDispatcherBackgroundService issues a MediatR query against Configuration
-// Framework, and EventEnvelope's own Actor field is a Hris.Foundation.Identity type
-// (see those classes' own remarks). AddAuthorizationFramework() runs after
-// AddIdentityFramework() for the same reference reason (RoleAssignment.PrincipalId is
-// a Hris.Foundation.Identity type). AddAuditFramework() runs last of the six: its own
-// AuditRecorder publishes through Event Framework's own IEventPublisher, and its own
-// SearchAuditRecordsQueryHandler/GetAuditRecordByIdQueryHandler issue a MediatR query
-// against both Authorization Framework (the access-gating check) and Configuration
-// Framework (the max search page size) -- all three upstream frameworks must already
-// be registered.
+// Validation and Localization frameworks join this list in the same bootstrap order
+// as their own Application/Infrastructure layers are built, per IMPLEMENTATION-PLAN.md
+// -- neither has one yet (backend/README.md), so Configuration, Logging, Identity,
+// Event, Authorization, Audit, and now RulesEngine appear below. AddEventFramework()
+// runs after AddIdentityFramework() and AddConfigurationFramework() for the same
+// reason AddIdentityFramework() itself does: OutboxDispatcherBackgroundService issues
+// a MediatR query against Configuration Framework, and EventEnvelope's own Actor field
+// is a Hris.Foundation.Identity type (see those classes' own remarks).
+// AddAuthorizationFramework() runs after AddIdentityFramework() for the same reference
+// reason (RoleAssignment.PrincipalId is a Hris.Foundation.Identity type).
+// AddAuditFramework() runs after both: its own AuditRecorder publishes through Event
+// Framework's own IEventPublisher, and its own SearchAuditRecordsQueryHandler/
+// GetAuditRecordByIdQueryHandler issue a MediatR query against both Authorization
+// Framework and Configuration Framework. AddRulesEngineFramework() runs last of the
+// seven: every rule-management command issues a MediatR query against Authorization
+// Framework's own CheckAuthorizationQuery, per rules-engine.md's own "Only authorized
+// users should publish or modify business rules" -- unlike Audit Framework,
+// RulesEngine deliberately does not publish through Event Framework for its own
+// RuleCreated/RulePublished/RuleDeprecated/RuleArchived domain events (see
+// CreateRuleDefinitionCommand's own remarks: doing so would need a tenant-context
+// field this Domain layer's own event records do not carry, the same class of gap
+// already deferred elsewhere in this Sprint), so it does not need to run after
+// AddEventFramework() for that reason -- only after AddAuthorizationFramework().
 builder.Services.AddSingleton(TimeProvider.System);
 builder.Services.AddHrisApplicationBehaviors();
 builder.Services.AddConfigurationFramework();
@@ -70,6 +78,7 @@ builder.Services.AddIdentityFramework();
 builder.Services.AddEventFramework();
 builder.Services.AddAuthorizationFramework();
 builder.Services.AddAuditFramework();
+builder.Services.AddRulesEngineFramework();
 builder.Services.AddHrisInfrastructure(builder.Configuration);
 
 // naming-conventions.md aside: this is a "readiness" check on the connection, not a
