@@ -33,7 +33,7 @@ namespace Hris.Foundation.Configuration.Infrastructure.Persistence;
 /// a real, disposable PostgreSQL 16 instance via Testcontainers, not the EF Core
 /// InMemory provider (whose more permissive client-evaluation fallback would not
 /// have proven anything about the real provider) --
-/// <c>Hris.Infrastructure.IntegrationTests.ValueObjectComparisonTranslationTests.ConfigurationSettingRepository_GetByKeyAndScopeAsync_TranslatesKeyComparison</c>
+/// <c>Hris.Infrastructure.IntegrationTests.RepositoryQueryTranslationTests.ConfigurationSettingRepository_GetByKeyAndScopeAsync_TranslatesKeyComparison</c>
 /// inserts a real row and reads it back through exactly this predicate, in a fresh
 /// <c>HrisDbContext</c>/change-tracker scope so the read genuinely round-trips
 /// through Npgsql. Passes: the operator overload resolves to a normal SQL equality

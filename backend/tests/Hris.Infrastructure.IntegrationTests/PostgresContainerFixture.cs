@@ -1,7 +1,13 @@
 using System.Diagnostics.CodeAnalysis;
 using Hris.Application;
+using Hris.Foundation.Audit;
+using Hris.Foundation.Authorization;
 using Hris.Foundation.Configuration;
+using Hris.Foundation.Events;
+using Hris.Foundation.Identity;
 using Hris.Foundation.Localization;
+using Hris.Foundation.Logging;
+using Hris.Foundation.RulesEngine;
 using Hris.Infrastructure;
 using Hris.Infrastructure.Persistence;
 using Microsoft.Extensions.Configuration;
@@ -22,24 +28,24 @@ namespace Hris.Infrastructure.IntegrationTests;
 /// discards its own container per job, per ci-cd-pipeline.md) and on any
 /// contributor's own machine without a manual setup step.
 ///
-/// Registers only the frameworks the tests in this project actually need
-/// (Configuration, Localization) rather than every Sprint 3 Core Kernel framework --
+/// Registers every Sprint 3 Core Kernel framework except Validation (which persists
+/// nothing of its own -- see that framework's own csproj header), the same
+/// bootstrap-order registration list <c>Hris.Api</c>'s own <c>Program.cs</c> uses --
 /// <see cref="PersistenceAssemblyRegistry"/> only ever sees the assemblies an
 /// <c>AddXFramework()</c> call here registers, so <see cref="HrisDbContext"/>'s own
-/// model here contains only <c>ConfigurationSetting</c>/<c>ConfigurationVersion</c>
-/// and <c>CountryConfiguration</c>/<c>TranslationEntry</c> -- deliberately narrow,
-/// matching this project's own deliberately narrow scope (see its own csproj header).
-///
+/// model here matches production's, not a partial subset that could hide a mapping
+/// conflict between two frameworks that only surfaces once both are registered
+/// together.
 /// </summary>
 [SuppressMessage(
     "Performance",
     "CA1515:Consider making public types internal",
     Justification = "Must be public: xUnit1000 requires every IClassFixture<T> test "
         + "class to be public, and a public class cannot expose a less-accessible "
-        + "constructor parameter type -- ValueObjectComparisonTranslationTests's own "
-        + "constructor takes this fixture directly. Not externally consumed; the "
-        + "visibility is forced by xUnit's own fixture-sharing mechanism, not by any "
-        + "cross-assembly API surface.")]
+        + "constructor parameter type -- this project's own test classes take this "
+        + "fixture directly. Not externally consumed; the visibility is forced by "
+        + "xUnit's own fixture-sharing mechanism, not by any cross-assembly API "
+        + "surface.")]
 public sealed class PostgresContainerFixture : IAsyncLifetime
 {
     private PostgreSqlContainer? _container;
@@ -69,6 +75,12 @@ public sealed class PostgresContainerFixture : IAsyncLifetime
         services.AddSingleton(TimeProvider.System);
         services.AddHrisApplicationBehaviors();
         services.AddConfigurationFramework();
+        services.AddLoggingFramework();
+        services.AddIdentityFramework();
+        services.AddEventFramework();
+        services.AddAuthorizationFramework();
+        services.AddAuditFramework();
+        services.AddRulesEngineFramework();
         services.AddLocalizationFramework();
         services.AddHrisInfrastructure(configuration);
 
