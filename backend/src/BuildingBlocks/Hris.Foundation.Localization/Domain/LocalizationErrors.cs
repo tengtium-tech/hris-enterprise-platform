@@ -62,4 +62,24 @@ public static class LocalizationErrors
         "Localization.NoTranslationAvailable",
         "No translation is available for the requested locale, and no fallback resolved one either.",
         ErrorCategory.NotFound);
+
+    public static readonly Error CountryConfigurationAlreadyExists = new(
+        "Localization.CountryConfigurationAlreadyExists",
+        "A country configuration already exists for this country.",
+        ErrorCategory.Conflict);
+
+    public static readonly Error CountryConfigurationNotFound = new(
+        "Localization.CountryConfigurationNotFound",
+        "No country configuration exists for this country.",
+        ErrorCategory.NotFound);
+
+    public static readonly Error TranslationKeyAlreadyExists = new(
+        "Localization.TranslationKeyAlreadyExists",
+        "A translation entry already exists for this key.",
+        ErrorCategory.Conflict);
+
+    public static readonly Error TranslationEntryNotFound = new(
+        "Localization.TranslationEntryNotFound",
+        "No translation entry exists for this key.",
+        ErrorCategory.NotFound);
 }

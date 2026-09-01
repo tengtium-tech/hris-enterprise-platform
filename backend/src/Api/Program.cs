@@ -5,6 +5,7 @@ using Hris.Foundation.Authorization;
 using Hris.Foundation.Configuration;
 using Hris.Foundation.Events;
 using Hris.Foundation.Identity;
+using Hris.Foundation.Localization;
 using Hris.Foundation.Logging;
 using Hris.Foundation.RulesEngine;
 using Hris.Foundation.Validation;
@@ -48,10 +49,10 @@ builder.Host.UseSerilog((_, loggerConfiguration) =>
 // LoggingService issues a MediatR query against it (see that class's own remarks) --
 // DI resolution itself is order-independent, but this ordering keeps the file
 // readable as "each framework's own upstream dependencies are registered before it."
-// Localization Framework joins this list once its own Application/Infrastructure
-// layers are built, per IMPLEMENTATION-PLAN.md -- it does not have one yet
-// (backend/README.md), so Configuration, Logging, Identity, Event, Authorization,
-// Audit, RulesEngine, and now Validation appear below. AddEventFramework()
+// All nine Sprint 3 Core Kernel frameworks are wired below: Configuration, Logging,
+// Identity, Event, Authorization, Audit, RulesEngine, Validation, and now
+// Localization -- the same bootstrap order IMPLEMENTATION-PLAN.md's own dependency-
+// cycle resolution states. AddEventFramework()
 // runs after AddIdentityFramework() and AddConfigurationFramework() for the same
 // reason AddIdentityFramework() itself does: OutboxDispatcherBackgroundService issues
 // a MediatR query against Configuration Framework, and EventEnvelope's own Actor field
@@ -76,10 +77,22 @@ builder.Host.UseSerilog((_, loggerConfiguration) =>
 // Localization, Audit) it actually calls through MediatR today -- ValidationService
 // resolves its own ValidationPolicy through it, the identical integration
 // LoggingService's own remarks establish for its sibling minimum-severity lookup.
-// Localization Framework, also listed as an Upstream Dependency, is not built yet
-// (IMPLEMENTATION-PLAN.md's own bootstrap order places it last of the nine); nothing
-// in this framework's Application layer references it -- see ValidationService's own
-// remarks for where that integration point will land once Localization exists.
+// Localization Framework, also listed as Validation's own Upstream Dependency, was
+// not built yet at that point (IMPLEMENTATION-PLAN.md's own bootstrap order places
+// it last of the nine); nothing in Validation's own Application layer references it
+// -- see ValidationService's own remarks for where that integration point will land
+// now that Localization exists. AddLocalizationFramework() itself runs after
+// AddConfigurationFramework(), the one of its own three Upstream Dependencies
+// (Configuration, Audit, Logging) it actually calls through MediatR --
+// ResolveTranslationQuery resolves its own configurable fallback-locale chain
+// through it, the identical integration ValidationService's own remarks establish
+// for its sibling policy lookup. Audit Framework, also a stated Upstream Dependency,
+// is deliberately not wired: IAuditRecorder.RecordAsync requires a real tenant id to
+// populate the Event Framework envelope it also publishes (CTR-ISO-004), and neither
+// CountryConfiguration nor TranslationEntry carries a tenant field in this Sprint's
+// own built shape -- see DependencyInjection's own remarks for the full reasoning.
+// With Localization now wired, all nine Sprint 3 Core Kernel frameworks are
+// registered; Sprint 4's own eight frameworks each depend only on this kernel.
 builder.Services.AddSingleton(TimeProvider.System);
 builder.Services.AddHrisApplicationBehaviors();
 builder.Services.AddConfigurationFramework();
@@ -90,6 +103,7 @@ builder.Services.AddAuthorizationFramework();
 builder.Services.AddAuditFramework();
 builder.Services.AddRulesEngineFramework();
 builder.Services.AddValidationFramework();
+builder.Services.AddLocalizationFramework();
 builder.Services.AddHrisInfrastructure(builder.Configuration);
 
 // naming-conventions.md aside: this is a "readiness" check on the connection, not a
