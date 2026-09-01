@@ -27,4 +27,20 @@ public static class AuthorizationErrors
         "Authorization.AuditorCannotHoldMutationPermission",
         "The Auditor role must not hold a mutation permission (Create, Update, Delete, Approve, Reject, Import, or Configure) on any resource (CTR-AUT-003).",
         ErrorCategory.Validation);
+
+    /// <summary>
+    /// Added alongside this framework's Application layer, for
+    /// <c>IRoleAssignmentRepository.GetByIdAsync</c> returning <c>null</c> against an
+    /// id a command was given -- e.g. <c>RevokeRoleAssignmentCommand</c> targeting an
+    /// assignment that no longer exists.
+    /// </summary>
+    public static readonly Error RoleAssignmentNotFound = new(
+        "Authorization.RoleAssignmentNotFound",
+        "The requested role assignment does not exist.",
+        ErrorCategory.NotFound);
+
+    public static readonly Error RolePermissionGrantNotFound = new(
+        "Authorization.RolePermissionGrantNotFound",
+        "The requested role permission grant does not exist.",
+        ErrorCategory.NotFound);
 }

@@ -9,7 +9,8 @@
     any role-name string comparison anywhere in business logic, enforced by a
     dedicated static-analysis rule per coding-standards.md, not by convention alone.
     Domain layer implemented against that document; see Domain/ for the per-class
-    citations.
+    citations. Application and Infrastructure layers added in a later Sprint 3
+    increment — see Application/ and Infrastructure/ for their own citations.
   -->
 
   <PropertyGroup>
@@ -18,12 +19,22 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Hris.SharedKernel\Hris.SharedKernel.csproj" />
+    <ProjectReference Include="..\Hris.Application\Hris.Application.csproj" />
+    <ProjectReference Include="..\Hris.Infrastructure\Hris.Infrastructure.csproj" />
     <!-- Identity Framework is this framework's own #1 stated Upstream Dependency
          (authorization-framework.md) and now exists (built earlier in this same
          Sprint 3): referenced concretely for UserAccountId, the strongly typed
          principal identity RoleAssignment grants a role to (CTR-ARC-002: reference
          by identity, never a raw Guid, once the real type exists). -->
     <ProjectReference Include="..\Hris.Foundation.Identity\Hris.Foundation.Identity.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MediatR" Version="12.4.1" />
+    <PackageReference Include="FluentValidation" Version="11.11.0" />
+    <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.11.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.4" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.4" />
   </ItemGroup>
 
 </Project>
