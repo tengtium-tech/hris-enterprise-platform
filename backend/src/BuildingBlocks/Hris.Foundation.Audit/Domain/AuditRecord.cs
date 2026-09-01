@@ -86,7 +86,16 @@ public sealed class AuditRecord : Entity<AuditRecordId>
         string? ipAddress,
         string? deviceInformation,
         CorrelationId? correlationId,
-        AuditResult result,
+        // Named to match the mapped property (Outcome), not Create's own `result`
+        // parameter -- EF Core's constructor-binding convention matches a constructor
+        // parameter to a property by name, and a parameter named `result` has no
+        // `Result` property to bind to (AuditRecordConfiguration maps `Outcome`, per
+        // this class's own AuditResult-is-an-enum shape, no owned-type navigation
+        // involved). Unlike this file's four sibling fixes elsewhere in this Sprint
+        // (ConfigurationSetting.Scope and similar), this one is a plain rename, not an
+        // additive second constructor -- the parameter was always scalar-bindable,
+        // just misnamed.
+        AuditResult outcome,
         IReadOnlyDictionary<string, string> metadata)
         : base(id)
     {
@@ -103,7 +112,7 @@ public sealed class AuditRecord : Entity<AuditRecordId>
         IpAddress = ipAddress;
         DeviceInformation = deviceInformation;
         CorrelationId = correlationId;
-        Outcome = result;
+        Outcome = outcome;
         Metadata = metadata;
     }
 
