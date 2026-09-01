@@ -24,20 +24,23 @@ namespace Hris.Foundation.Configuration.Infrastructure.Persistence;
 /// history.
 /// </summary>
 /// <remarks>
-/// UNVERIFIED (backend/README.md, "What hasn't been verified yet" -- no
-/// <c>dotnet build</c>/<c>dotnet test</c> has run against this solution in a real .NET
-/// environment): every <c>setting.Key == key</c> predicate below compares a
-/// <see cref="ConfigurationKey"/> Value Object mapped through <c>HasConversion</c>.
-/// EF Core's own documentation shows this exact "converted property compared to a
-/// constant of the unconverted type" pattern as supported, but <see cref="ValueObject"/>
-/// overloads <c>==</c> with a custom operator rather than relying on default reference
-/// equality, and this sandbox has no .NET SDK to compile and run an integration test
-/// confirming EF Core's SQL translator accepts that overload rather than throwing
-/// "could not be translated." Confirm with a real query against PostgreSQL as this
-/// repository's own first test, per docs/02-architecture/05-data-architecture/dbcontext-design.md's
-/// Testing section ("PostgreSQL integration tests... Avoid relying solely on the EF
-/// Core InMemory provider") -- InMemory's more permissive client-evaluation fallback
-/// would not actually prove this translates against the real provider.
+/// VERIFIED (HEP-38): every <c>setting.Key == key</c> predicate below compares a
+/// <see cref="ConfigurationKey"/> Value Object mapped through <c>HasConversion</c>,
+/// and <see cref="ValueObject"/> overloads <c>==</c> with a custom operator rather
+/// than relying on default reference equality -- reasonable grounds to doubt EF
+/// Core's SQL translator would accept that overload rather than throwing "could not
+/// be translated," or silently falling back to client evaluation. Confirmed against
+/// a real, disposable PostgreSQL 16 instance via Testcontainers, not the EF Core
+/// InMemory provider (whose more permissive client-evaluation fallback would not
+/// have proven anything about the real provider) --
+/// <c>Hris.Infrastructure.IntegrationTests.ValueObjectComparisonTranslationTests.ConfigurationSettingRepository_GetByKeyAndScopeAsync_TranslatesKeyComparison</c>
+/// inserts a real row and reads it back through exactly this predicate, in a fresh
+/// <c>HrisDbContext</c>/change-tracker scope so the read genuinely round-trips
+/// through Npgsql. Passes: the operator overload resolves to a normal SQL equality
+/// predicate on the converted column, per
+/// docs/02-architecture/05-data-architecture/dbcontext-design.md's own Testing
+/// section ("PostgreSQL integration tests... Avoid relying solely on the EF Core
+/// InMemory provider").
 /// </remarks>
 internal sealed class ConfigurationSettingRepository : IConfigurationSettingRepository
 {
