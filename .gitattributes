@@ -1,0 +1,32 @@
+# Repository root .gitattributes, added per docs/08-devops/coding-standards.md's own
+# Static Analysis and Linting table naming .editorconfig as the formatting authority --
+# that file's own [*] section sets `end_of_line = lf` for every file in this
+# repository, with no override for any extension. Without this file, a checkout on a
+# machine whose local `core.autocrlf` setting (or a git client's own default, e.g.
+# Git for Windows) converts LF to CRLF on checkout silently drifts the working tree
+# away from that policy -- every file `dotnet format` or an editor then touches shows
+# as "modified" in git status/diff with zero actual content change, which is exactly
+# the noise that showed up across the Configuration, Logging, Identity, and Event
+# Framework pull requests. This file makes the LF policy structural (git enforces it on
+# every checkout, on every machine) rather than something each developer's own local
+# git configuration has to happen to already agree with -- the same "prefer structure
+# over discipline" principle the rest of this repository already follows.
+#
+# `text=auto` still lets git detect genuinely binary files by content and leave them
+# alone; the explicit `binary` declarations below are the same safety net every
+# `.gitattributes` file carries for the file types most likely to be added to this
+# repository's own docs/ and future frontend/ trees, even though none are tracked yet.
+
+* text=auto eol=lf
+
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.pdf binary
+*.woff binary
+*.woff2 binary
+*.ttf binary
+*.dll binary
+*.exe binary
