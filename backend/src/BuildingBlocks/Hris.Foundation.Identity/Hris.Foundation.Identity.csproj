@@ -5,11 +5,12 @@
     Sprint 3 (Core Kernel) scope, per IMPLEMENTATION-PLAN.md Phase 1.
     Source specification: docs/03-foundation/identity-framework.md
     Domain layer implemented against that document; see Domain/ for the per-class
-    citations.
+    citations. Application and Infrastructure layers added in a later Sprint 3
+    increment — see Application/ and Infrastructure/ for their own citations.
     Note: technology-stack.md's Backend table names ASP.NET Core Identity as the
-    Authentication standard — the Infrastructure-layer implementation of this
-    framework depends on that package; this project itself (Domain/Application
-    shape of the framework) must not, per CTR-ARC-001.
+    Authentication standard — Infrastructure/Security/AspNetIdentityPasswordHasher.cs
+    is the one place this project depends on that package; Domain/Application stay
+    free of it, per CTR-ARC-001.
   -->
 
   <PropertyGroup>
@@ -18,6 +19,27 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Hris.SharedKernel\Hris.SharedKernel.csproj" />
+    <ProjectReference Include="..\Hris.Application\Hris.Application.csproj" />
+    <ProjectReference Include="..\Hris.Infrastructure\Hris.Infrastructure.csproj" />
+    <!-- Configuration Framework: identity-framework.md's own Dependencies section
+         lists it as an Upstream Dependency; AuthenticateCommandHandler resolves
+         session/lockout policy defaults through it, per that handler's own remarks —
+         the identical wiring Hris.Foundation.Logging.csproj documents for the same
+         reason. -->
+    <ProjectReference Include="..\Hris.Foundation.Configuration\Hris.Foundation.Configuration.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MediatR" Version="12.4.1" />
+    <PackageReference Include="FluentValidation" Version="11.11.0" />
+    <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.11.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.4" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.4" />
+    <!-- ASP.NET Core Identity's password hashing primitives (PasswordHasher<TUser>,
+         PasswordVerificationResult) — technology-stack.md's Backend table names this
+         directly as the platform's Password Hashing standard, not an illustrative
+         example. Referenced only by Infrastructure/Security/AspNetIdentityPasswordHasher.cs. -->
+    <PackageReference Include="Microsoft.Extensions.Identity.Core" Version="9.0.4" />
   </ItemGroup>
 
 </Project>

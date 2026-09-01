@@ -1,6 +1,7 @@
 using System.Globalization;
 using Hris.Application;
 using Hris.Foundation.Configuration;
+using Hris.Foundation.Identity;
 using Hris.Foundation.Logging;
 using Hris.Infrastructure;
 using Hris.Infrastructure.Persistence;
@@ -42,15 +43,18 @@ builder.Host.UseSerilog((_, loggerConfiguration) =>
 // LoggingService issues a MediatR query against it (see that class's own remarks) --
 // DI resolution itself is order-independent, but this ordering keeps the file
 // readable as "each framework's own upstream dependencies are registered before it."
-// Identity, Events, Authorization, Audit, RulesEngine, Validation, and Localization
-// frameworks join this list in the same bootstrap order as their own
-// Application/Infrastructure layers are built, per IMPLEMENTATION-PLAN.md -- none of
-// the remaining seven has one yet (backend/README.md), so only Configuration and
-// Logging appear below today.
+// Events, Authorization, Audit, RulesEngine, Validation, and Localization frameworks
+// join this list in the same bootstrap order as their own Application/Infrastructure
+// layers are built, per IMPLEMENTATION-PLAN.md -- none of the remaining six has one
+// yet (backend/README.md), so only Configuration, Logging, and now Identity appear
+// below. AddIdentityFramework() runs after AddConfigurationFramework() for the same
+// reason AddLoggingFramework() does: AuthenticateCommandHandler issues a MediatR query
+// against Configuration Framework (see that handler's own remarks).
 builder.Services.AddSingleton(TimeProvider.System);
 builder.Services.AddHrisApplicationBehaviors();
 builder.Services.AddConfigurationFramework();
 builder.Services.AddLoggingFramework();
+builder.Services.AddIdentityFramework();
 builder.Services.AddHrisInfrastructure(builder.Configuration);
 
 // naming-conventions.md aside: this is a "readiness" check on the connection, not a
