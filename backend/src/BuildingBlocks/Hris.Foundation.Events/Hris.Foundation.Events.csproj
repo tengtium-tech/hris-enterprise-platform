@@ -5,7 +5,8 @@
     Sprint 3 (Core Kernel) scope, per IMPLEMENTATION-PLAN.md Phase 1.
     Source specification: docs/03-foundation/event-framework.md
     Domain layer implemented against that document; see Domain/ for the per-class
-    citations.
+    citations. Application and Infrastructure layers added in a later Sprint 3
+    increment — see Application/ and Infrastructure/ for their own citations.
     Note: technology-stack.md's Messaging table names an in-process event bus for
     internal events today, with a future message broker (RabbitMQ) as a later
     option — this project's initial shape should reflect the in-process bus only.
@@ -17,6 +18,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Hris.SharedKernel\Hris.SharedKernel.csproj" />
+    <ProjectReference Include="..\Hris.Application\Hris.Application.csproj" />
+    <ProjectReference Include="..\Hris.Infrastructure\Hris.Infrastructure.csproj" />
     <!-- Identity Framework is one of this framework's own stated Upstream
          Dependencies and was already built earlier in the same Sprint 3 bootstrap
          order (Configuration, Logging, Identity, then Event): referenced
@@ -24,6 +27,24 @@
          (CTR-ARC-002: reference by identity, never a raw Guid, once the real type
          exists, and here it already did when this framework was built). -->
     <ProjectReference Include="..\Hris.Foundation.Identity\Hris.Foundation.Identity.csproj" />
+    <!-- Configuration Framework: also a stated Upstream Dependency;
+         OutboxDispatcherBackgroundService resolves its own batch-size/poll-interval
+         policy through it, the identical wiring Hris.Foundation.Identity.csproj
+         documents for AuthenticateCommandHandler's own policy resolution. -->
+    <ProjectReference Include="..\Hris.Foundation.Configuration\Hris.Foundation.Configuration.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MediatR" Version="12.4.1" />
+    <PackageReference Include="FluentValidation" Version="11.11.0" />
+    <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.11.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.4" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.4" />
+    <!-- BackgroundService/IHostedService/AddHostedService for
+         OutboxDispatcherBackgroundService — outbox-pattern.md's own Background
+         Publisher section. Hris.Api already gets this transitively as an ASP.NET Core
+         Web SDK project; this plain class library needs it explicitly. -->
+    <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="9.0.4" />
   </ItemGroup>
 
 </Project>
