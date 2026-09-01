@@ -19,14 +19,13 @@ namespace Hris.Foundation.Identity.Infrastructure.Persistence;
 /// that section reserves full-Aggregate loads for.
 /// </summary>
 /// <remarks>
-/// UNVERIFIED (backend/README.md, "What hasn't been verified yet" -- no
-/// <c>dotnet build</c>/<c>dotnet test</c> has run against this solution in a real .NET
-/// environment): both <c>account.Username == username</c> and
+/// VERIFIED: both <c>account.Username == username</c> and
 /// <c>account.TenantId == tenantId</c> below compare a converted property to a
-/// constant -- the identical unverified translation concern
-/// <c>ConfigurationSettingRepository</c>'s own remarks already state for its own
-/// <c>ConfigurationKey</c> comparisons. Confirm with a real query against PostgreSQL as
-/// this repository's own first test.
+/// constant -- the identical shape <c>ConfigurationSettingRepository</c>'s own
+/// remarks already confirmed (HEP-38). Confirmed here too, against a real,
+/// disposable PostgreSQL 16 instance via Testcontainers -- see
+/// <c>Hris.Infrastructure.IntegrationTests.RepositoryQueryTranslationTests.UserAccountRepository_GetByUsernameAsync_TranslatesUsernameAndTenantIdComparison</c>.
+/// Passes: no fix needed.
 /// </remarks>
 internal sealed class UserAccountRepository : IUserAccountRepository
 {

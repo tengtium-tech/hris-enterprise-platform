@@ -13,12 +13,13 @@ namespace Hris.Foundation.RulesEngine.Infrastructure.Persistence;
 /// mirrors.
 /// </summary>
 /// <remarks>
-/// UNVERIFIED (backend/README.md, "What hasn't been verified yet"): both
-/// <c>definition.Key == key</c> comparisons below compare a converted
-/// <see cref="RuleKey"/> Value Object to a constant -- the identical unverified
-/// translation concern <c>ConfigurationSettingRepository</c>'s own remarks state for
-/// its own Value Object comparisons, not yet run against a real PostgreSQL instance in
-/// this sandbox.
+/// VERIFIED: the <c>definition.Key == key</c> comparison below compares a converted
+/// <see cref="RuleKey"/> Value Object to a constant -- the identical shape
+/// <c>ConfigurationSettingRepository</c>'s own remarks already confirmed (HEP-38).
+/// Confirmed here too, against a real, disposable PostgreSQL 16 instance via
+/// Testcontainers -- see
+/// <c>Hris.Infrastructure.IntegrationTests.RepositoryQueryTranslationTests.RuleDefinitionRepository_GetByKeyAsync_TranslatesKeyComparison</c>.
+/// Passes: no fix needed.
 /// </remarks>
 internal sealed class RuleDefinitionRepository : IRuleDefinitionRepository
 {

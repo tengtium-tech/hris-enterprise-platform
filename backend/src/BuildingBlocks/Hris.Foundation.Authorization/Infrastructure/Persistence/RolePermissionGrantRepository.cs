@@ -9,11 +9,14 @@ namespace Hris.Foundation.Authorization.Infrastructure.Persistence;
 /// EF Core implementation of <see cref="IRolePermissionGrantRepository"/>.
 /// </summary>
 /// <remarks>
-/// UNVERIFIED (backend/README.md, "What hasn't been verified yet"): <see cref="GetActiveGrantsForRolesAsync"/>'s
+/// VERIFIED: <see cref="GetActiveGrantsForRolesAsync"/>'s
 /// <c>roles.Contains(grant.Role)</c> translates a client-side collection into a SQL
 /// <c>IN</c> clause over a plain enum column -- a simpler translation than the Value
-/// Object comparisons <c>ConfigurationSettingRepository</c>'s own remarks flag as
-/// unverified, but still not run against a real PostgreSQL instance in this sandbox.
+/// Object comparisons this Sprint's own HEP-38 work verified, but confirmed rather
+/// than skipped as "obviously fine": run against a real, disposable PostgreSQL 16
+/// instance via Testcontainers -- see
+/// <c>Hris.Infrastructure.IntegrationTests.RepositoryQueryTranslationTests.RolePermissionGrantRepository_GetActiveGrantsForRolesAsync_TranslatesRolesContains</c>.
+/// Passes: no fix needed.
 /// </remarks>
 internal sealed class RolePermissionGrantRepository : IRolePermissionGrantRepository
 {

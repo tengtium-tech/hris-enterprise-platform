@@ -31,7 +31,7 @@ internal sealed class CountryConfigurationRepository : ICountryConfigurationRepo
         // VERIFIED (HEP-38): this Value Object equality comparison translates to a
         // correct SQL WHERE clause, confirmed against a real, disposable PostgreSQL
         // 16 instance via Testcontainers -- see
-        // Hris.Infrastructure.IntegrationTests.ValueObjectComparisonTranslationTests.CountryConfigurationRepository_GetByCountryAsync_TranslatesCountryComparison,
+        // Hris.Infrastructure.IntegrationTests.RepositoryQueryTranslationTests.CountryConfigurationRepository_GetByCountryAsync_TranslatesCountryComparison,
         // and ConfigurationSettingRepository's own identical remarks for the
         // Key == key comparison this shares its shape with.
         return _dbContext.Set<CountryConfiguration>()

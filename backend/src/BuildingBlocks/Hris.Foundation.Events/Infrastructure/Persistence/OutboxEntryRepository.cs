@@ -12,14 +12,16 @@ namespace Hris.Foundation.Events.Infrastructure.Persistence;
 /// <c>UserAccountRepository</c> already establish.
 /// </summary>
 /// <remarks>
-/// UNVERIFIED (backend/README.md, "What hasn't been verified yet"): the owned
-/// <see cref="EventEnvelope.Category"/>/<see cref="EventEnvelope.TenantId"/> filters in
-/// <see cref="GetDeadLetteredAsync"/> reach into an owned-type navigation from a LINQ
-/// predicate -- EF Core's own documentation shows this pattern (filtering on an owned
-/// type's property) as supported, but this sandbox has no .NET SDK to compile and run
-/// an integration test confirming the translation against the real PostgreSQL
-/// provider, the identical caveat <c>ConfigurationSettingRepository</c>'s own remarks
-/// state for its own Value Object comparisons.
+/// VERIFIED: the owned <see cref="EventEnvelope.TenantId"/> filter in
+/// <see cref="GetDeadLetteredAsync"/> reaches into an owned-type navigation from a
+/// LINQ predicate -- a different risk shape from the other Value Object comparisons
+/// this Sprint verified (HEP-38 and its own follow-up): EF Core's own documentation
+/// shows filtering on an owned type's property as supported, but "documented as
+/// supported" and "confirmed against the real provider" are not the same claim.
+/// Confirmed against a real, disposable PostgreSQL 16 instance via Testcontainers --
+/// see
+/// <c>Hris.Infrastructure.IntegrationTests.RepositoryQueryTranslationTests.OutboxEntryRepository_GetDeadLetteredAsync_TranslatesOwnedEnvelopeTenantIdComparison</c>.
+/// Passes: no fix needed.
 /// </remarks>
 internal sealed class OutboxEntryRepository : IOutboxEntryRepository
 {

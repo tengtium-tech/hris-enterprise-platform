@@ -10,15 +10,13 @@
     Testcontainers... the PR Pipeline provisions this container as part of the job,
     discarding it afterward."
 
-    First project of this kind in the repository. HEP-38 named the specific gap
-    that created it (EF Core's own LINQ translation of a Value Object's overloaded
-    equality operator, compared through a HasConversion-mapped property, had never
-    been checked against a real PostgreSQL instance) rather than a general push for
-    integration coverage, which is its own separate, larger, and still-open item
-    (HEP-33). Scope here stays intentionally narrow to that one class of query:
-    every already-merged repository sharing the same "Property == valueObjectInstance"
-    shape, not full command/query/persistence/transaction coverage per
-    unit-and-integration-testing.md section 3.2, which HEP-33 owns.
+    First project of this kind in the repository, started under HEP-38 (Configuration,
+    Localization) and extended to cover every other already-merged repository sharing
+    the same "compare a converted property, or reach into an owned-type navigation,
+    from a LINQ predicate" shape (RulesEngine, Audit, Identity, Events, Authorization).
+    Scope stays intentionally narrow to that one class of query, not full
+    command/query/persistence/transaction coverage per unit-and-integration-testing.md
+    section 3.2, which HEP-33 owns as its own separate, larger, still-open item.
   -->
 
   <PropertyGroup>
@@ -52,8 +50,21 @@
   </ItemGroup>
 
   <ItemGroup>
+    <!-- One ProjectReference per Sprint 3 Core Kernel framework this project's own
+         tests exercise, every framework except Validation, which has no
+         EF Core-mapped Aggregate of its own to test this way (see that framework's
+         own csproj header: "no EF Core persistence of its own"). Mirrors
+         Hris.Api's own Program.cs registration list, so PostgresContainerFixture's
+         own AddXFramework() calls build the identical HrisDbContext model shape
+         production does. -->
     <ProjectReference Include="..\..\src\BuildingBlocks\Hris.Infrastructure\Hris.Infrastructure.csproj" />
     <ProjectReference Include="..\..\src\BuildingBlocks\Hris.Foundation.Configuration\Hris.Foundation.Configuration.csproj" />
+    <ProjectReference Include="..\..\src\BuildingBlocks\Hris.Foundation.Logging\Hris.Foundation.Logging.csproj" />
+    <ProjectReference Include="..\..\src\BuildingBlocks\Hris.Foundation.Identity\Hris.Foundation.Identity.csproj" />
+    <ProjectReference Include="..\..\src\BuildingBlocks\Hris.Foundation.Events\Hris.Foundation.Events.csproj" />
+    <ProjectReference Include="..\..\src\BuildingBlocks\Hris.Foundation.Authorization\Hris.Foundation.Authorization.csproj" />
+    <ProjectReference Include="..\..\src\BuildingBlocks\Hris.Foundation.Audit\Hris.Foundation.Audit.csproj" />
+    <ProjectReference Include="..\..\src\BuildingBlocks\Hris.Foundation.RulesEngine\Hris.Foundation.RulesEngine.csproj" />
     <ProjectReference Include="..\..\src\BuildingBlocks\Hris.Foundation.Localization\Hris.Foundation.Localization.csproj" />
   </ItemGroup>
 

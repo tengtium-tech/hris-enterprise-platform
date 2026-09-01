@@ -23,12 +23,13 @@ namespace Hris.Foundation.Audit.Infrastructure.Persistence;
 /// results that are not actually scoped by it, which is a real, load-bearing gap this
 /// comment exists so the next implementer does not miss.
 ///
-/// UNVERIFIED (backend/README.md, "What hasn't been verified yet"): the
-/// <c>record.CorrelationId == correlationId</c> predicate compares a converted
-/// <see cref="CorrelationId"/> Value Object to a constant -- the identical unverified
-/// translation concern <c>ConfigurationSettingRepository</c>'s own remarks state for
-/// its own Value Object comparisons, not yet run against a real PostgreSQL instance in
-/// this sandbox.
+/// VERIFIED: the <c>record.CorrelationId == correlationId</c> predicate compares a
+/// converted <see cref="CorrelationId"/> Value Object to a constant -- the identical
+/// shape <c>ConfigurationSettingRepository</c>'s own remarks already confirmed
+/// (HEP-38). Confirmed here too, against a real, disposable PostgreSQL 16 instance
+/// via Testcontainers -- see
+/// <c>Hris.Infrastructure.IntegrationTests.RepositoryQueryTranslationTests.AuditSearchService_SearchAsync_TranslatesCorrelationIdComparison</c>.
+/// Passes: no fix needed.
 /// </remarks>
 internal sealed class AuditSearchService : IAuditSearchService
 {
