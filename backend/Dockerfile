@@ -16,6 +16,16 @@ COPY Directory.Build.props .
 COPY Hris.sln .
 COPY src/Api/Hris.Api.csproj src/Api/
 COPY src/BuildingBlocks/Hris.SharedKernel/Hris.SharedKernel.csproj src/BuildingBlocks/Hris.SharedKernel/
+# Hris.Application and Hris.Infrastructure: the shared CQRS/EF Core scaffolding
+# every Foundation framework's own .csproj below references (ICommand/IQuery,
+# IUnitOfWork, HrisDbContext) -- missing from this selective copy since the
+# Sprint that introduced them, which is why `dotnet restore` on line 30 below
+# silently never restored either one: their own .csproj files were not yet
+# present in the build context at that point, only appearing later via the
+# `COPY . .` on line 32, by which time `dotnet publish --no-restore` needed
+# their restore output to already exist.
+COPY src/BuildingBlocks/Hris.Application/Hris.Application.csproj src/BuildingBlocks/Hris.Application/
+COPY src/BuildingBlocks/Hris.Infrastructure/Hris.Infrastructure.csproj src/BuildingBlocks/Hris.Infrastructure/
 COPY src/BuildingBlocks/Hris.Foundation.Configuration/Hris.Foundation.Configuration.csproj src/BuildingBlocks/Hris.Foundation.Configuration/
 COPY src/BuildingBlocks/Hris.Foundation.Logging/Hris.Foundation.Logging.csproj src/BuildingBlocks/Hris.Foundation.Logging/
 COPY src/BuildingBlocks/Hris.Foundation.Identity/Hris.Foundation.Identity.csproj src/BuildingBlocks/Hris.Foundation.Identity/
