@@ -6,7 +6,8 @@
     Source specification: docs/03-foundation/audit-framework.md
     Relevant CTRs: CTR-AUD-001 through CTR-AUD-005 (docs/09-testing/critical-test-requirements.md).
     Domain layer implemented against that document; see Domain/ for the per-class
-    citations.
+    citations. Application and Infrastructure layers added in a later Sprint 3
+    increment — see Application/ and Infrastructure/ for their own citations.
   -->
 
   <PropertyGroup>
@@ -15,10 +16,36 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Hris.SharedKernel\Hris.SharedKernel.csproj" />
+    <ProjectReference Include="..\Hris.Application\Hris.Application.csproj" />
+    <ProjectReference Include="..\Hris.Infrastructure\Hris.Infrastructure.csproj" />
     <!-- Identity Framework is this framework's own #1 stated Upstream Dependency
          (audit-framework.md) and already exists: referenced concretely for
          UserAccountId, the actor every AuditRecord names (CTR-ARC-002). -->
     <ProjectReference Include="..\Hris.Foundation.Identity\Hris.Foundation.Identity.csproj" />
+    <!-- Authorization Framework: also a stated Upstream Dependency;
+         SearchAuditRecordsQueryHandler/GetAuditRecordByIdQueryHandler gate access
+         through it, per audit-framework.md's own "Only authorized users should
+         access audit information." -->
+    <ProjectReference Include="..\Hris.Foundation.Authorization\Hris.Foundation.Authorization.csproj" />
+    <!-- Event Framework: also a stated Upstream Dependency; AuditRecorder publishes
+         AuditRecordCreated through its own IEventPublisher, the same "same
+         transaction, for free" mechanism OutboxEventPublisher's own remarks
+         document. -->
+    <ProjectReference Include="..\Hris.Foundation.Events\Hris.Foundation.Events.csproj" />
+    <!-- Configuration Framework: also a stated Upstream Dependency;
+         SearchAuditRecordsQueryHandler resolves its own max search page size through
+         it, the identical wiring AuthenticateCommandHandler and
+         OutboxDispatcherBackgroundService already establish for their own policy
+         values. -->
+    <ProjectReference Include="..\Hris.Foundation.Configuration\Hris.Foundation.Configuration.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MediatR" Version="12.4.1" />
+    <PackageReference Include="FluentValidation" Version="11.11.0" />
+    <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.11.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.4" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.4" />
   </ItemGroup>
 
 </Project>
