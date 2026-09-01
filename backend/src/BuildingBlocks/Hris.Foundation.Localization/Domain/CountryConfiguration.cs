@@ -56,6 +56,47 @@ public sealed class CountryConfiguration : AggregateRoot<CountryConfigurationId>
         PhoneFormat = phoneFormat;
     }
 
+    /// <summary>
+    /// EF Core materialization only -- never called by application code, which
+    /// always goes through the constructor above via <see cref="Create"/>. EF
+    /// Core's own constructor-binding convention cannot bind <c>workingDays</c>
+    /// through the constructor above despite <see cref="WorkingDays"/> being mapped
+    /// through <c>HasConversion</c> (a scalar mapping, not an owned type): the
+    /// constructor parameter's own type, <see cref="IReadOnlyCollection{T}"/>, does
+    /// not match the mapped property's own type, <see cref="IReadOnlySet{T}"/> --
+    /// EF Core requires an exact type match to bind a parameter to a property, and
+    /// these are two different interfaces even though <c>IReadOnlySet&lt;T&gt;</c>
+    /// implements <c>IReadOnlyCollection&lt;T&gt;</c>. A different failure mode from
+    /// this Sprint's own owned-type constructor-binding fix (RuleVersion and five
+    /// other aggregates), but the identical remedy: a second, additive,
+    /// EF-Core-only constructor omitting the one parameter EF Core cannot bind,
+    /// selected automatically for materialization as the best fully-bindable match.
+    /// EF Core then populates <see cref="WorkingDays"/> through this get-only
+    /// property's own backing field, per <c>CountryConfigurationConfiguration</c>'s
+    /// own explicit <c>PropertyAccessMode.Field</c> declaration -- needed here,
+    /// unlike <c>ConfigurationSetting.Scope</c>'s own equivalent fix, because this
+    /// property's getter is an expression body reading a named field directly
+    /// rather than a plain compiler-generated auto-property backing field.
+    /// </summary>
+    private CountryConfiguration(
+        CountryConfigurationId id,
+        CountryCode country,
+        CurrencyCode defaultCurrency,
+        LanguageCode defaultLanguage,
+        TimeZoneId defaultTimeZone,
+        string addressFormat,
+        string phoneFormat)
+        : base(id)
+    {
+        Country = country;
+        DefaultCurrency = defaultCurrency;
+        DefaultLanguage = defaultLanguage;
+        DefaultTimeZone = defaultTimeZone;
+        _workingDays = [];
+        AddressFormat = addressFormat;
+        PhoneFormat = phoneFormat;
+    }
+
     public static Result<CountryConfiguration> Create(
         CountryCode country,
         CurrencyCode defaultCurrency,
