@@ -7,6 +7,7 @@ using Hris.Foundation.Events;
 using Hris.Foundation.Identity;
 using Hris.Foundation.Logging;
 using Hris.Foundation.RulesEngine;
+using Hris.Foundation.Validation;
 using Hris.Infrastructure;
 using Hris.Infrastructure.Persistence;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
@@ -47,10 +48,10 @@ builder.Host.UseSerilog((_, loggerConfiguration) =>
 // LoggingService issues a MediatR query against it (see that class's own remarks) --
 // DI resolution itself is order-independent, but this ordering keeps the file
 // readable as "each framework's own upstream dependencies are registered before it."
-// Validation and Localization frameworks join this list in the same bootstrap order
-// as their own Application/Infrastructure layers are built, per IMPLEMENTATION-PLAN.md
-// -- neither has one yet (backend/README.md), so Configuration, Logging, Identity,
-// Event, Authorization, Audit, and now RulesEngine appear below. AddEventFramework()
+// Localization Framework joins this list once its own Application/Infrastructure
+// layers are built, per IMPLEMENTATION-PLAN.md -- it does not have one yet
+// (backend/README.md), so Configuration, Logging, Identity, Event, Authorization,
+// Audit, RulesEngine, and now Validation appear below. AddEventFramework()
 // runs after AddIdentityFramework() and AddConfigurationFramework() for the same
 // reason AddIdentityFramework() itself does: OutboxDispatcherBackgroundService issues
 // a MediatR query against Configuration Framework, and EventEnvelope's own Actor field
@@ -70,6 +71,15 @@ builder.Host.UseSerilog((_, loggerConfiguration) =>
 // field this Domain layer's own event records do not carry, the same class of gap
 // already deferred elsewhere in this Sprint), so it does not need to run after
 // AddEventFramework() for that reason -- only after AddAuthorizationFramework().
+// AddValidationFramework() runs after AddConfigurationFramework(), the only one of
+// its own five Upstream Dependencies (Rules Engine, Configuration, Logging,
+// Localization, Audit) it actually calls through MediatR today -- ValidationService
+// resolves its own ValidationPolicy through it, the identical integration
+// LoggingService's own remarks establish for its sibling minimum-severity lookup.
+// Localization Framework, also listed as an Upstream Dependency, is not built yet
+// (IMPLEMENTATION-PLAN.md's own bootstrap order places it last of the nine); nothing
+// in this framework's Application layer references it -- see ValidationService's own
+// remarks for where that integration point will land once Localization exists.
 builder.Services.AddSingleton(TimeProvider.System);
 builder.Services.AddHrisApplicationBehaviors();
 builder.Services.AddConfigurationFramework();
@@ -79,6 +89,7 @@ builder.Services.AddEventFramework();
 builder.Services.AddAuthorizationFramework();
 builder.Services.AddAuditFramework();
 builder.Services.AddRulesEngineFramework();
+builder.Services.AddValidationFramework();
 builder.Services.AddHrisInfrastructure(builder.Configuration);
 
 // naming-conventions.md aside: this is a "readiness" check on the connection, not a

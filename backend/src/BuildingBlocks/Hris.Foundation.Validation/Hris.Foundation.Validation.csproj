@@ -8,7 +8,18 @@
     Validation standard; coding-standards.md's Application Layer convention states
     validation "run before the handler executes, not interleaved with handler logic."
     Domain layer implemented against that document; see Domain/ for the per-class
-    citations.
+    citations. Application/Infrastructure layers added in a follow-on pass; see
+    Application/ and Infrastructure/ for their own citations, and note this
+    framework's shape deliberately differs from Configuration Framework's (no
+    MediatR commands/queries or EF Core persistence of its own): this document
+    describes no persisted, runtime-configurable rule catalog of its own, which is
+    explicitly Rules Engine's job ("Business decision logic belongs to the Rules
+    Engine"; excludes "Business Rule Execution"), so its own "Validation Rule"
+    concept resolves to compiled FluentValidation validator classes, recoverable
+    through source control the same way any other code is, not a database row. The
+    same shape Logging Framework's own csproj header states for itself applies here
+    for the identical reason: no user-driven business command lifecycle exists for
+    "run this validator and get an outcome back."
   -->
 
   <PropertyGroup>
@@ -16,7 +27,25 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <!-- MediatR: ValidationService issues ResolveConfigurationValueQuery against
+         Configuration Framework (its own Upstream Dependency) via ISender to
+         resolve the ValidationPolicy in force for a given validation context, not
+         because Validation defines any MediatR requests of its own. -->
+    <PackageReference Include="MediatR" Version="12.4.1" />
+    <!-- FluentValidation: technology-stack.md's Backend table names this directly as
+         the platform's Validation standard, not an illustrative example; see
+         IValidationResultTranslator's own remarks for the boundary this framework
+         draws around it. -->
+    <PackageReference Include="FluentValidation" Version="11.11.0" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\Hris.SharedKernel\Hris.SharedKernel.csproj" />
+    <!-- Configuration Framework: validation-framework.md's own Dependencies section
+         lists it as an Upstream Dependency; ValidationService resolves its own
+         ValidationPolicy through it, the same integration LoggingService's own
+         remarks establish for its own minimum-severity threshold. -->
+    <ProjectReference Include="..\Hris.Foundation.Configuration\Hris.Foundation.Configuration.csproj" />
   </ItemGroup>
 
 </Project>
