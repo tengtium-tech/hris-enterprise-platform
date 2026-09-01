@@ -36,7 +36,11 @@ public sealed class ConfigurationSetting : AggregateRoot<ConfigurationId>
 
     public ConfigurationKey Key { get; }
 
-    public ConfigurationScope Scope { get; }
+    // null! -- valid for every caller of the public API: the application-facing
+    // constructor below always assigns a real value; only the EF-only constructor
+    // (see its own remarks) leaves this to be populated post-construction, which the
+    // compiler's definite-assignment analysis cannot see coming.
+    public ConfigurationScope Scope { get; } = null!;
 
     public ConfigurationCategory Category { get; }
 
@@ -49,6 +53,33 @@ public sealed class ConfigurationSetting : AggregateRoot<ConfigurationId>
     {
         Key = key;
         Scope = scope;
+        Category = category;
+        DataType = dataType;
+    }
+
+    /// <summary>
+    /// EF Core materialization only -- never called by application code, which always
+    /// goes through the constructor above via <see cref="Create"/>. EF Core's own
+    /// constructor-binding convention cannot bind <c>scope</c> through a constructor
+    /// parameter because <see cref="ConfigurationScope"/> is an owned-type navigation
+    /// (<c>ConfigurationSettingConfiguration</c>'s own <c>OwnsOne</c>), not a scalar or
+    /// converted property ("navigations to related entities, including references to
+    /// owned types, cannot be bound," per that convention's own documented rule);
+    /// every other parameter above binds fine. Rather than change the constructor
+    /// application code actually calls, this second constructor gives EF Core one that
+    /// satisfies its own binding rule, and it selects this one automatically for
+    /// materialization, since it is the best fully-bindable match. EF Core then
+    /// populates <see cref="Scope"/> the same way it populates any other owned
+    /// reference with no custom getter body: through the compiler-generated backing
+    /// field of this get-only auto-property, which needs no explicit
+    /// <c>UsePropertyAccessMode</c> declaration the way <see cref="Versions"/>'s own
+    /// field does, because that field is reached directly rather than through a
+    /// computed wrapper such as <c>AsReadOnly()</c>.
+    /// </summary>
+    private ConfigurationSetting(ConfigurationId id, ConfigurationKey key, ConfigurationCategory category, ConfigurationDataType dataType)
+        : base(id)
+    {
+        Key = key;
         Category = category;
         DataType = dataType;
     }

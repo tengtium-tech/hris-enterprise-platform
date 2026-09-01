@@ -39,7 +39,11 @@ public sealed class RolePermissionGrant : AggregateRoot<RolePermissionGrantId>
 
     public Role Role { get; }
 
-    public PermissionKey Permission { get; }
+    // null! -- valid for every caller of the public API: the application-facing
+    // constructor below always assigns a real value; only the EF-only constructor
+    // (see its own remarks) leaves this to be populated post-construction, which the
+    // compiler's definite-assignment analysis cannot see coming.
+    public PermissionKey Permission { get; } = null!;
 
     public DateTimeOffset GrantedAtUtc { get; }
 
@@ -50,6 +54,30 @@ public sealed class RolePermissionGrant : AggregateRoot<RolePermissionGrantId>
     {
         Role = role;
         Permission = permission;
+        GrantedAtUtc = grantedAtUtc;
+    }
+
+    /// <summary>
+    /// EF Core materialization only -- never called by application code, which always
+    /// goes through the constructor above via <see cref="Create"/>. EF Core's own
+    /// constructor-binding convention cannot bind <c>permission</c> through a
+    /// constructor parameter because <see cref="PermissionKey"/> is an owned-type
+    /// navigation (<c>RolePermissionGrantConfiguration</c>'s own <c>OwnsOne</c>), not
+    /// a scalar or converted property ("navigations to related entities, including
+    /// references to owned types, cannot be bound," per that convention's own
+    /// documented rule); every other parameter above binds fine. Rather than change
+    /// the constructor application code actually calls, this second constructor
+    /// gives EF Core one that satisfies its own binding rule, and it selects this one
+    /// automatically for materialization, since it is the best fully-bindable match.
+    /// EF Core then populates <see cref="Permission"/> through this get-only auto-
+    /// property's own compiler-generated backing field, the same as any owned
+    /// reference with no custom getter body -- see <c>ConfigurationSetting</c>'s own
+    /// identical second constructor for the full reasoning.
+    /// </summary>
+    private RolePermissionGrant(RolePermissionGrantId id, Role role, DateTimeOffset grantedAtUtc)
+        : base(id)
+    {
+        Role = role;
         GrantedAtUtc = grantedAtUtc;
     }
 

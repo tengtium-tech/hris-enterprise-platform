@@ -39,7 +39,11 @@ public sealed class UserAccount : AggregateRoot<UserAccountId>
 
     public UserAccountStatus Status { get; private set; }
 
-    public AuthenticationProvider AuthenticationProvider { get; }
+    // null! -- valid for every caller of the public API: the application-facing
+    // constructor below always assigns a real value; only the EF-only constructor
+    // (see its own remarks) leaves this to be populated post-construction, which the
+    // compiler's definite-assignment analysis cannot see coming.
+    public AuthenticationProvider AuthenticationProvider { get; } = null!;
 
     public PasswordHash? PasswordHash { get; private set; }
 
@@ -69,6 +73,43 @@ public sealed class UserAccount : AggregateRoot<UserAccountId>
         IdentityType = identityType;
         LinkedIdentityId = linkedIdentityId;
         AuthenticationProvider = authenticationProvider;
+        Status = UserAccountStatus.Invited;
+    }
+
+    /// <summary>
+    /// EF Core materialization only -- never called by application code, which always
+    /// goes through the constructor above via <see cref="Create"/>. EF Core's own
+    /// constructor-binding convention cannot bind <c>authenticationProvider</c>
+    /// through a constructor parameter because <see cref="AuthenticationProvider"/> is
+    /// an owned-type navigation (<c>UserAccountConfiguration</c>'s own
+    /// <c>OwnsOne</c>), not a scalar or converted property ("navigations to related
+    /// entities, including references to owned types, cannot be bound," per that
+    /// convention's own documented rule); every other parameter above binds fine.
+    /// Rather than change the constructor application code actually calls, this
+    /// second constructor gives EF Core one that satisfies its own binding rule, and
+    /// it selects this one automatically for materialization, since it is the best
+    /// fully-bindable match. EF Core then populates
+    /// <see cref="AuthenticationProvider"/> through this get-only auto-property's own
+    /// compiler-generated backing field, the same as any owned reference with no
+    /// custom getter body -- see <c>ConfigurationSetting</c>'s own identical second
+    /// constructor for the full reasoning.
+    /// </summary>
+    private UserAccount(
+        UserAccountId id,
+        Guid tenantId,
+        Username username,
+        EmailAddress emailAddress,
+        string displayName,
+        IdentityType identityType,
+        Guid? linkedIdentityId)
+        : base(id)
+    {
+        TenantId = tenantId;
+        Username = username;
+        EmailAddress = emailAddress;
+        DisplayName = displayName;
+        IdentityType = identityType;
+        LinkedIdentityId = linkedIdentityId;
         Status = UserAccountStatus.Invited;
     }
 
