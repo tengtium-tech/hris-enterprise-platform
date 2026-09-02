@@ -1,0 +1,39 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    Hris.Foundation.Extension
+    Sprint 4 (Kernel-Dependent Frameworks, Round 1) scope, per IMPLEMENTATION-PLAN.md
+    Phase 1: second of Sprint 4's own eight frameworks, no forced order among them.
+    Source specification: docs/03-foundation/extension-framework.md. Built entirely
+    from scratch this Sprint, matching Tenant Framework's own precedent: no Domain
+    layer existed for this one before this pass.
+
+    Deliberately narrower than the source document's own full Scope: Plugin
+    Management, and the Developed/Validated/Packaged/Installed/Activated/Updated/
+    Deprecated/Removed Extension Lifecycle, are not built here: see
+    Domain/ExtensionPoint.cs's own remarks for why (split across administration's own
+    TenantExtension aggregate, Phase 3, and Phase 8's Marketplace publishing pipeline,
+    neither of which exists in code yet). This Sprint builds the one piece with no
+    forward dependency on either: the published extension-point contract registry and
+    its Hook subscriptions.
+  -->
+
+  <PropertyGroup>
+    <RootNamespace>Hris.Foundation.Extension</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MediatR" Version="12.4.1" />
+    <PackageReference Include="FluentValidation" Version="11.11.0" />
+    <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.11.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.4" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.4" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Hris.SharedKernel\Hris.SharedKernel.csproj" />
+    <ProjectReference Include="..\Hris.Application\Hris.Application.csproj" />
+    <ProjectReference Include="..\Hris.Infrastructure\Hris.Infrastructure.csproj" />
+  </ItemGroup>
+
+</Project>
