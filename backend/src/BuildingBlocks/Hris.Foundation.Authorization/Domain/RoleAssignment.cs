@@ -81,7 +81,17 @@ public sealed class RoleAssignment : AggregateRoot<RoleAssignmentId>
     /// property's own compiler-generated backing field, the same as any owned
     /// reference with no custom getter body -- see <c>ConfigurationSetting</c>'s own
     /// identical second constructor for the full reasoning.
+    ///
+    /// Excluded from coverage measurement (NFR-MT-001's own 95% floor): this
+    /// constructor carries no logic of its own to verify -- the same field
+    /// assignments as the constructor above, minus the one parameter EF Core cannot
+    /// bind -- and reflection-only construction by EF Core's own materialization
+    /// pipeline is exactly what Hris.Infrastructure.IntegrationTests already proves
+    /// works, against a real PostgreSQL instance, not what a Domain-layer unit test
+    /// (which never constructs a real HrisDbContext) can exercise or meaningfully
+    /// verify.
     /// </summary>
+    [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     private RoleAssignment(
         RoleAssignmentId id,
         UserAccountId principalId,
