@@ -1,0 +1,60 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    Hris.Foundation.Authorization.Tests
+    docs/09-testing/unit-and-integration-testing.md Section 2: "Unit tests cover the
+    Domain layer only. They construct aggregates, entities, and value objects
+    directly and exercise their behaviour without any infrastructure... must not
+    touch a database, a file system, a network, a clock, or a container." Extended
+    here to this framework's own Application-layer command/query handlers too
+    (constructed directly against fake/substitute repositories, never a real
+    HrisDbContext; Hris.Infrastructure.IntegrationTests already covers the real
+    persistence path), per coding-standards.md's own instruction: "aggregate
+    invariants, command handler logic, and edge cases FluentValidation doesn't
+    already catch."
+
+    Authorization Framework specifically, not a general Sprint 3 unit-test push:
+    NFR-MT-001 names payroll, statutory calculation, and authorization logic by name
+    as the three areas held to a 95% line-coverage floor (the other six Core Kernel
+    frameworks sit at the platform's own 80% general floor, not this one's 95%),
+    see docs/00-project/non-functional-requirements.md. The remaining eight
+    frameworks' own unit test coverage is tracked as a separate, later item; bundling
+    it into this same pass would make Authorization's own elevated requirement no
+    easier to verify and would understate how much narrower this project's actual
+    scope is.
+  -->
+
+  <PropertyGroup>
+    <RootNamespace>Hris.Foundation.Authorization.Tests</RootNamespace>
+    <IsPackable>false</IsPackable>
+
+    <!-- CA1707 suppressed in this project only, the identical precedent
+         Hris.CriticalRequirements.Tests.csproj and Hris.Infrastructure.IntegrationTests.csproj
+         each state for themselves: descriptive underscore-separated test names
+         (Rule_Condition, per docs/09-testing/unit-and-integration-testing.md 2.3's
+         own "name tests after the rule, not the method") are this project's own
+         deliberate naming convention, not a defect. -->
+    <NoWarn>$(NoWarn);CA1707</NoWarn>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.11.1" />
+    <PackageReference Include="xunit" Version="2.9.0" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.8.2" />
+    <PackageReference Include="NSubstitute" Version="5.1.0" />
+    <PackageReference Include="FluentAssertions" Version="6.12.0" />
+    <!-- coverlet.msbuild (not the XPlat Code Coverage collector): NFR-MT-001's own
+         95% floor is scoped to "authorization logic" specifically, not this
+         solution as a whole, and the MSBuild integration is what supports the
+         /p:Include filter that scopes collection to this one assembly's own
+         Domain/Application namespaces, excluding Infrastructure, which this
+         project deliberately does not test; see this file's own remarks above,
+         and Hris.Infrastructure.IntegrationTests for that layer's own coverage. -->
+    <PackageReference Include="coverlet.msbuild" Version="6.0.4" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\BuildingBlocks\Hris.Foundation.Authorization\Hris.Foundation.Authorization.csproj" />
+  </ItemGroup>
+
+</Project>

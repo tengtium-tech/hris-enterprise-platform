@@ -14,6 +14,11 @@ backend/**/.vs/
 *.suo
 appsettings.*.local.json
 
+# coverlet.msbuild's own local output (dotnet test -p:CollectCoverage=true), per
+# NFR-MT-001 -- a generated report, not source; each contributor's own local run
+# regenerates it.
+backend/**/coverage/
+
 # Frontend (frontend/) — not yet built (later Sprint), ignored preemptively so an
 # accidental `npm install` before this repo's own tooling is finalized doesn't
 # commit node_modules

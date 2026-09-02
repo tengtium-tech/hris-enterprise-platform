@@ -43,6 +43,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hris.CriticalRequirements.T
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hris.Infrastructure.IntegrationTests", "tests\Hris.Infrastructure.IntegrationTests\Hris.Infrastructure.IntegrationTests.csproj", "{66E5A722-9C54-44CB-AA21-B979485B7C40}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hris.Foundation.Authorization.Tests", "tests\Hris.Foundation.Authorization.Tests\Hris.Foundation.Authorization.Tests.csproj", "{BFC476CA-7420-4E0E-95A8-30967F416CAF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -233,6 +235,18 @@ Global
 		{66E5A722-9C54-44CB-AA21-B979485B7C40}.Release|x64.Build.0 = Release|Any CPU
 		{66E5A722-9C54-44CB-AA21-B979485B7C40}.Release|x86.ActiveCfg = Release|Any CPU
 		{66E5A722-9C54-44CB-AA21-B979485B7C40}.Release|x86.Build.0 = Release|Any CPU
+		{BFC476CA-7420-4E0E-95A8-30967F416CAF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BFC476CA-7420-4E0E-95A8-30967F416CAF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BFC476CA-7420-4E0E-95A8-30967F416CAF}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{BFC476CA-7420-4E0E-95A8-30967F416CAF}.Debug|x64.Build.0 = Debug|Any CPU
+		{BFC476CA-7420-4E0E-95A8-30967F416CAF}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{BFC476CA-7420-4E0E-95A8-30967F416CAF}.Debug|x86.Build.0 = Debug|Any CPU
+		{BFC476CA-7420-4E0E-95A8-30967F416CAF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BFC476CA-7420-4E0E-95A8-30967F416CAF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BFC476CA-7420-4E0E-95A8-30967F416CAF}.Release|x64.ActiveCfg = Release|Any CPU
+		{BFC476CA-7420-4E0E-95A8-30967F416CAF}.Release|x64.Build.0 = Release|Any CPU
+		{BFC476CA-7420-4E0E-95A8-30967F416CAF}.Release|x86.ActiveCfg = Release|Any CPU
+		{BFC476CA-7420-4E0E-95A8-30967F416CAF}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -256,6 +270,6 @@ Global
 		{A1000004-0000-0000-0000-000000000004} = {A1000001-0000-0000-0000-000000000001}
 		{B100000C-0000-0000-0000-00000000000C} = {A1000005-0000-0000-0000-000000000005}
 		{66E5A722-9C54-44CB-AA21-B979485B7C40} = {A1000005-0000-0000-0000-000000000005}
-		{66E5A722-9C54-44CB-AA21-B979485B7C40} = {A1000005-0000-0000-0000-000000000005}
+		{BFC476CA-7420-4E0E-95A8-30967F416CAF} = {A1000005-0000-0000-0000-000000000005}
 	EndGlobalSection
 EndGlobal
