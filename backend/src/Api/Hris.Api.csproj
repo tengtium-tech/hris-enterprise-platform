@@ -33,6 +33,7 @@
     <ProjectReference Include="..\BuildingBlocks\Hris.Foundation.RulesEngine\Hris.Foundation.RulesEngine.csproj" />
     <ProjectReference Include="..\BuildingBlocks\Hris.Foundation.Validation\Hris.Foundation.Validation.csproj" />
     <ProjectReference Include="..\BuildingBlocks\Hris.Foundation.Localization\Hris.Foundation.Localization.csproj" />
+    <ProjectReference Include="..\BuildingBlocks\Hris.Foundation.Tenant\Hris.Foundation.Tenant.csproj" />
   </ItemGroup>
 
   <ItemGroup>

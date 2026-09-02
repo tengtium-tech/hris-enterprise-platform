@@ -1,0 +1,37 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    Hris.Foundation.Tenant
+    Sprint 4 (Kernel-Dependent Frameworks, Round 1) scope, per IMPLEMENTATION-PLAN.md
+    Phase 1: first of Sprint 4's own eight frameworks, no forced order among them.
+    Source specification: docs/03-foundation/tenant-framework.md. Built entirely from
+    scratch this Sprint, unlike every Sprint 3 framework: no Domain layer existed
+    for this one before this pass.
+  -->
+
+  <PropertyGroup>
+    <RootNamespace>Hris.Foundation.Tenant</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MediatR" Version="12.4.1" />
+    <PackageReference Include="FluentValidation" Version="11.11.0" />
+    <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.11.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.4" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.4" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Hris.SharedKernel\Hris.SharedKernel.csproj" />
+    <ProjectReference Include="..\Hris.Application\Hris.Application.csproj" />
+    <ProjectReference Include="..\Hris.Infrastructure\Hris.Infrastructure.csproj" />
+    <!-- Identity Framework: one of this framework's own five stated Upstream
+         Dependencies, and the one concretely wired: ActivateTenantCommand/
+         TenantActivated reference UserAccountId, and
+         GetPlatformDashboardSummaryQuery reads IUserAccountRepository directly for a
+         platform-wide count (CTR-ARC-002). See DependencyInjection.cs's own remarks
+         for the other four Upstream Dependencies' current status. -->
+    <ProjectReference Include="..\Hris.Foundation.Identity\Hris.Foundation.Identity.csproj" />
+  </ItemGroup>
+
+</Project>
