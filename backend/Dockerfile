@@ -1,3 +1,4 @@
+# syntax=docker/dockerfile:1-labs
 # Grounded in docs/08-devops/containerization.md's "Image Strategy" (id: cont01):
 # one application image, multi-stage build, non-root runtime user, .NET 9
 # ASP.NET Core *runtime* image for Stage 2 (never the SDK image -- "smaller attack
@@ -14,29 +15,27 @@ WORKDIR /src
 
 COPY Directory.Build.props .
 COPY Hris.sln .
-COPY src/Api/Hris.Api.csproj src/Api/
-COPY src/BuildingBlocks/Hris.SharedKernel/Hris.SharedKernel.csproj src/BuildingBlocks/Hris.SharedKernel/
-# Hris.Application and Hris.Infrastructure: the shared CQRS/EF Core scaffolding
-# every Foundation framework's own .csproj below references (ICommand/IQuery,
-# IUnitOfWork, HrisDbContext) -- missing from this selective copy since the
-# Sprint that introduced them, which is why `dotnet restore` on line 30 below
-# silently never restored either one: their own .csproj files were not yet
-# present in the build context at that point, only appearing later via the
-# `COPY . .` on line 32, by which time `dotnet publish --no-restore` needed
-# their restore output to already exist.
-COPY src/BuildingBlocks/Hris.Application/Hris.Application.csproj src/BuildingBlocks/Hris.Application/
-COPY src/BuildingBlocks/Hris.Infrastructure/Hris.Infrastructure.csproj src/BuildingBlocks/Hris.Infrastructure/
-COPY src/BuildingBlocks/Hris.Foundation.Configuration/Hris.Foundation.Configuration.csproj src/BuildingBlocks/Hris.Foundation.Configuration/
-COPY src/BuildingBlocks/Hris.Foundation.Logging/Hris.Foundation.Logging.csproj src/BuildingBlocks/Hris.Foundation.Logging/
-COPY src/BuildingBlocks/Hris.Foundation.Identity/Hris.Foundation.Identity.csproj src/BuildingBlocks/Hris.Foundation.Identity/
-COPY src/BuildingBlocks/Hris.Foundation.Events/Hris.Foundation.Events.csproj src/BuildingBlocks/Hris.Foundation.Events/
-COPY src/BuildingBlocks/Hris.Foundation.Authorization/Hris.Foundation.Authorization.csproj src/BuildingBlocks/Hris.Foundation.Authorization/
-COPY src/BuildingBlocks/Hris.Foundation.Audit/Hris.Foundation.Audit.csproj src/BuildingBlocks/Hris.Foundation.Audit/
-COPY src/BuildingBlocks/Hris.Foundation.RulesEngine/Hris.Foundation.RulesEngine.csproj src/BuildingBlocks/Hris.Foundation.RulesEngine/
-COPY src/BuildingBlocks/Hris.Foundation.Validation/Hris.Foundation.Validation.csproj src/BuildingBlocks/Hris.Foundation.Validation/
-COPY src/BuildingBlocks/Hris.Foundation.Localization/Hris.Foundation.Localization.csproj src/BuildingBlocks/Hris.Foundation.Localization/
-COPY src/BuildingBlocks/Hris.Foundation.Tenant/Hris.Foundation.Tenant.csproj src/BuildingBlocks/Hris.Foundation.Tenant/
-# TODO: add a COPY line per module .csproj here as each module's own Sprint adds it.
+# Every .csproj under src/, discovered by glob rather than named by hand -- this
+# used to be a per-project COPY list, and forgetting to add a new line to it broke
+# the container build twice for the identical reason (HEP-43: Hris.Application/
+# Hris.Infrastructure missing when they were introduced; HEP-54:
+# Hris.Foundation.Tenant missing when Sprint 4 introduced it). Neither `dotnet
+# build`/`test`/`format` -- this repo's own standard pre-commit checks -- ever
+# touches the Dockerfile, so a missing line had no local signal either time; a
+# hand-maintained list was always going to keep breaking the same way through the
+# rest of Sprint 4, Sprints 5-9, and eventually nineteen business modules under
+# src/Modules/.
+#
+# `--parents` (Dockerfile syntax 1-labs; stable `:1`/`:1.7` do not yet carry this
+# flag, confirmed by testing both before choosing `1-labs`) preserves each matched
+# file's own directory path under /src -- a plain wildcard COPY instead flattens
+# every match into one destination directory, which `dotnet restore` cannot resolve
+# against `Hris.sln`'s own project paths. `src/Modules/*/*.csproj` matches nothing
+# today (`src/Modules/` is empty by design, per this project's own backend/README.md,
+# until Phase 2 adds the first business module) -- confirmed by testing that a
+# zero-match glob does not fail this COPY as long as at least one glob in the same
+# command matches something, which `src/BuildingBlocks/*/*.csproj` always does.
+COPY --parents src/Api/*.csproj src/BuildingBlocks/*/*.csproj src/Modules/*/*.csproj ./
 
 RUN dotnet restore src/Api/Hris.Api.csproj
 
