@@ -48,6 +48,9 @@ internal sealed class UserAccountRepository : IUserAccountRepository
         _dbContext.Set<UserAccount>()
             .AnyAsync(account => account.Username == username && account.TenantId == tenantId, cancellationToken);
 
+    public Task<int> CountAllAsync(CancellationToken cancellationToken) =>
+        _dbContext.Set<UserAccount>().CountAsync(cancellationToken);
+
     public async Task AddAsync(UserAccount account, CancellationToken cancellationToken) =>
         await _dbContext.Set<UserAccount>()
             .AddAsync(account, cancellationToken)

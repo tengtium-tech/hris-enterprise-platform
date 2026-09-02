@@ -22,5 +22,17 @@ public interface IUserAccountRepository
 
     Task<bool> ExistsAsync(Username username, Guid tenantId, CancellationToken cancellationToken);
 
+    /// <summary>
+    /// Total account count across every tenant, with no per-tenant breakdown -- added
+    /// for Tenant Framework's own <c>GetPlatformDashboardSummaryQuery</c>
+    /// (tenant-framework.md's own Returns column: "total UserAccount count across
+    /// every tenant"). Identity Framework is one of Tenant Framework's own five
+    /// stated Upstream Dependencies; this is a strictly additive read, the same
+    /// "reference an already-built sibling framework concretely" precedent
+    /// Localization Framework's own <c>ResolveTranslationQuery</c> already
+    /// established for Configuration Framework.
+    /// </summary>
+    Task<int> CountAllAsync(CancellationToken cancellationToken);
+
     Task AddAsync(UserAccount account, CancellationToken cancellationToken);
 }
