@@ -35,6 +35,7 @@ COPY src/BuildingBlocks/Hris.Foundation.Audit/Hris.Foundation.Audit.csproj src/B
 COPY src/BuildingBlocks/Hris.Foundation.RulesEngine/Hris.Foundation.RulesEngine.csproj src/BuildingBlocks/Hris.Foundation.RulesEngine/
 COPY src/BuildingBlocks/Hris.Foundation.Validation/Hris.Foundation.Validation.csproj src/BuildingBlocks/Hris.Foundation.Validation/
 COPY src/BuildingBlocks/Hris.Foundation.Localization/Hris.Foundation.Localization.csproj src/BuildingBlocks/Hris.Foundation.Localization/
+COPY src/BuildingBlocks/Hris.Foundation.Tenant/Hris.Foundation.Tenant.csproj src/BuildingBlocks/Hris.Foundation.Tenant/
 # TODO: add a COPY line per module .csproj here as each module's own Sprint adds it.
 
 RUN dotnet restore src/Api/Hris.Api.csproj
