@@ -8,6 +8,7 @@ using Hris.Foundation.Identity;
 using Hris.Foundation.Localization;
 using Hris.Foundation.Logging;
 using Hris.Foundation.RulesEngine;
+using Hris.Foundation.Tenant;
 using Hris.Foundation.Validation;
 using Hris.Infrastructure;
 using Hris.Infrastructure.Persistence;
@@ -93,6 +94,15 @@ builder.Host.UseSerilog((_, loggerConfiguration) =>
 // own built shape -- see DependencyInjection's own remarks for the full reasoning.
 // With Localization now wired, all nine Sprint 3 Core Kernel frameworks are
 // registered; Sprint 4's own eight frameworks each depend only on this kernel.
+// AddTenantFramework() is the first of those eight (IMPLEMENTATION-PLAN.md's own
+// Sprint 4 row: "no forced order among them... all eight are equally ready"), placed
+// after every kernel framework it could plausibly call through MediatR and before
+// AddHrisInfrastructure() for the same PersistenceAssemblyRegistry-ordering reason
+// every framework above it is. Of its own five stated Upstream Dependencies
+// (Identity, Authorization, Configuration, Audit, Localization), only Identity is
+// concretely wired this Sprint -- see Hris.Foundation.Tenant's own
+// DependencyInjection.cs for why the other four are real dependencies with no
+// concrete integration point yet, not gaps.
 builder.Services.AddSingleton(TimeProvider.System);
 builder.Services.AddHrisApplicationBehaviors();
 builder.Services.AddConfigurationFramework();
@@ -104,6 +114,7 @@ builder.Services.AddAuditFramework();
 builder.Services.AddRulesEngineFramework();
 builder.Services.AddValidationFramework();
 builder.Services.AddLocalizationFramework();
+builder.Services.AddTenantFramework();
 builder.Services.AddHrisInfrastructure(builder.Configuration);
 
 // naming-conventions.md aside: this is a "readiness" check on the connection, not a
