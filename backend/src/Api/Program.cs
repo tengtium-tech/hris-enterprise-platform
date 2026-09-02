@@ -4,6 +4,7 @@ using Hris.Foundation.Audit;
 using Hris.Foundation.Authorization;
 using Hris.Foundation.Configuration;
 using Hris.Foundation.Events;
+using Hris.Foundation.Extension;
 using Hris.Foundation.Identity;
 using Hris.Foundation.Localization;
 using Hris.Foundation.Logging;
@@ -115,6 +116,13 @@ builder.Services.AddRulesEngineFramework();
 builder.Services.AddValidationFramework();
 builder.Services.AddLocalizationFramework();
 builder.Services.AddTenantFramework();
+// AddExtensionFramework() is the second of Sprint 4's own eight frameworks, no
+// forced order among them. None of its own six stated Upstream Dependencies (Event,
+// Validation, Authorization, Configuration, Logging, Audit) is concretely wired
+// through MediatR this Sprint -- see Hris.Foundation.Extension's own
+// DependencyInjection.cs for why each is a real dependency with no concrete
+// integration point yet, not a gap.
+builder.Services.AddExtensionFramework();
 builder.Services.AddHrisInfrastructure(builder.Configuration);
 
 // naming-conventions.md aside: this is a "readiness" check on the connection, not a
