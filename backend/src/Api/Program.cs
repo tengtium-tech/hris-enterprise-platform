@@ -11,6 +11,7 @@ using Hris.Foundation.Localization;
 using Hris.Foundation.Logging;
 using Hris.Foundation.Numbering;
 using Hris.Foundation.RulesEngine;
+using Hris.Foundation.Scheduling;
 using Hris.Foundation.Search;
 using Hris.Foundation.Tenant;
 using Hris.Foundation.Validation;
@@ -147,6 +148,15 @@ builder.Services.AddNumberingFramework();
 // DependencyInjection.cs for why each is a real dependency with no concrete
 // integration point yet, not a gap.
 builder.Services.AddSearchFramework();
+// AddSchedulingFramework() is the sixth of Sprint 4's own eight frameworks, no forced
+// order among them. Like Search Framework above, its own AI Implementation Guidance
+// names a tenant-isolation CTR explicitly (CTR-ISO-004, "establish explicit tenant
+// context in every scheduled execution") -- tenant context is concretely wired this
+// Sprint, not deferred; of its own four stated Upstream Dependencies (Configuration,
+// Event, Audit, Logging), none is concretely wired through MediatR yet -- see
+// DependencyInjection.cs for why each is a real dependency with no concrete
+// integration point yet, not a gap.
+builder.Services.AddSchedulingFramework();
 builder.Services.AddHrisInfrastructure(builder.Configuration);
 
 // naming-conventions.md aside: this is a "readiness" check on the connection, not a

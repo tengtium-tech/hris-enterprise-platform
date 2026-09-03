@@ -1,0 +1,41 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    Hris.Foundation.Scheduling
+    Sprint 4 (Kernel-Dependent Frameworks, Round 1) scope, per IMPLEMENTATION-PLAN.md
+    Phase 1: sixth of Sprint 4's own eight frameworks, no forced order among them.
+    Source specification: docs/03-foundation/scheduling-framework.md. Built entirely
+    from scratch this Sprint, matching Tenant, Extension, File Storage, Numbering, and
+    Search Frameworks' own precedent: no Domain layer existed for this one before this
+    pass.
+
+    Deliberately narrower than the source document's own full Scope: actually
+    evaluating a ScheduleExpression (a cron expression, a calendar rule, a delay) to
+    compute a real next-run timestamp, and actually firing a trigger on a timer, are
+    both explicitly out of Scope ("Background Job Execution... scheduled work should be
+    executed through the Job Processing Framework"), a framework not yet built. This
+    Sprint builds what the document's own AI Implementation Guidance actually names as
+    non-negotiable: explicit tenant context on every scheduled execution (CTR-ISO-004),
+    an auditable lifecycle, and a real execution-history record, without inventing the
+    trigger-evaluation engine that framework doesn't yet exist to consume.
+  -->
+
+  <PropertyGroup>
+    <RootNamespace>Hris.Foundation.Scheduling</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MediatR" Version="12.4.1" />
+    <PackageReference Include="FluentValidation" Version="11.11.0" />
+    <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.11.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.4" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.4" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Hris.SharedKernel\Hris.SharedKernel.csproj" />
+    <ProjectReference Include="..\Hris.Application\Hris.Application.csproj" />
+    <ProjectReference Include="..\Hris.Infrastructure\Hris.Infrastructure.csproj" />
+  </ItemGroup>
+
+</Project>

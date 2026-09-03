@@ -38,6 +38,7 @@
     <ProjectReference Include="..\BuildingBlocks\Hris.Foundation.FileStorage\Hris.Foundation.FileStorage.csproj" />
     <ProjectReference Include="..\BuildingBlocks\Hris.Foundation.Numbering\Hris.Foundation.Numbering.csproj" />
     <ProjectReference Include="..\BuildingBlocks\Hris.Foundation.Search\Hris.Foundation.Search.csproj" />
+    <ProjectReference Include="..\BuildingBlocks\Hris.Foundation.Scheduling\Hris.Foundation.Scheduling.csproj" />
   </ItemGroup>
 
   <ItemGroup>
