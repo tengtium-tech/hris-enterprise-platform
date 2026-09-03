@@ -73,6 +73,14 @@
          concurrent-writer safety (CTR-DAT-001), which an in-process fake repository
          cannot exercise no matter how it is written. -->
     <ProjectReference Include="..\..\src\BuildingBlocks\Hris.Foundation.Numbering\Hris.Foundation.Numbering.csproj" />
+    <!-- Search Framework, added for IndexedDocumentSearchTests. Its own
+         IIndexedDocumentRepository.SearchAsync is raw SQL against PostgreSQL's own
+         native full-text search, not a LINQ predicate, so a fake repository would
+         verify the C# call shape but not whether the actual WHERE clause really
+         excludes another tenant's rows, the same "needs a real database" reasoning
+         NumberSeriesConcurrencyTests already establishes for CTR-DAT-001, applied here
+         to this framework's own explicitly-named CTR-ISO-001. -->
+    <ProjectReference Include="..\..\src\BuildingBlocks\Hris.Foundation.Search\Hris.Foundation.Search.csproj" />
   </ItemGroup>
 
 </Project>
