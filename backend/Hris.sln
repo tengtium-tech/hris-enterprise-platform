@@ -57,6 +57,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hris.Foundation.FileStorage
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hris.Foundation.FileStorage", "src\BuildingBlocks\Hris.Foundation.FileStorage\Hris.Foundation.FileStorage.csproj", "{7249B0A3-27A9-481F-AEA1-8F2BC7306D65}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hris.Foundation.Numbering", "src\BuildingBlocks\Hris.Foundation.Numbering\Hris.Foundation.Numbering.csproj", "{49165A23-BAEF-4805-9946-B7F04ED30342}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hris.Foundation.Numbering.Tests", "tests\Hris.Foundation.Numbering.Tests\Hris.Foundation.Numbering.Tests.csproj", "{1764C942-BC30-4A90-9394-3AFCDCE24CC2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -331,6 +335,30 @@ Global
 		{7249B0A3-27A9-481F-AEA1-8F2BC7306D65}.Release|x64.Build.0 = Release|Any CPU
 		{7249B0A3-27A9-481F-AEA1-8F2BC7306D65}.Release|x86.ActiveCfg = Release|Any CPU
 		{7249B0A3-27A9-481F-AEA1-8F2BC7306D65}.Release|x86.Build.0 = Release|Any CPU
+		{49165A23-BAEF-4805-9946-B7F04ED30342}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{49165A23-BAEF-4805-9946-B7F04ED30342}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{49165A23-BAEF-4805-9946-B7F04ED30342}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{49165A23-BAEF-4805-9946-B7F04ED30342}.Debug|x64.Build.0 = Debug|Any CPU
+		{49165A23-BAEF-4805-9946-B7F04ED30342}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{49165A23-BAEF-4805-9946-B7F04ED30342}.Debug|x86.Build.0 = Debug|Any CPU
+		{49165A23-BAEF-4805-9946-B7F04ED30342}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{49165A23-BAEF-4805-9946-B7F04ED30342}.Release|Any CPU.Build.0 = Release|Any CPU
+		{49165A23-BAEF-4805-9946-B7F04ED30342}.Release|x64.ActiveCfg = Release|Any CPU
+		{49165A23-BAEF-4805-9946-B7F04ED30342}.Release|x64.Build.0 = Release|Any CPU
+		{49165A23-BAEF-4805-9946-B7F04ED30342}.Release|x86.ActiveCfg = Release|Any CPU
+		{49165A23-BAEF-4805-9946-B7F04ED30342}.Release|x86.Build.0 = Release|Any CPU
+		{1764C942-BC30-4A90-9394-3AFCDCE24CC2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1764C942-BC30-4A90-9394-3AFCDCE24CC2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1764C942-BC30-4A90-9394-3AFCDCE24CC2}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{1764C942-BC30-4A90-9394-3AFCDCE24CC2}.Debug|x64.Build.0 = Debug|Any CPU
+		{1764C942-BC30-4A90-9394-3AFCDCE24CC2}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{1764C942-BC30-4A90-9394-3AFCDCE24CC2}.Debug|x86.Build.0 = Debug|Any CPU
+		{1764C942-BC30-4A90-9394-3AFCDCE24CC2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1764C942-BC30-4A90-9394-3AFCDCE24CC2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1764C942-BC30-4A90-9394-3AFCDCE24CC2}.Release|x64.ActiveCfg = Release|Any CPU
+		{1764C942-BC30-4A90-9394-3AFCDCE24CC2}.Release|x64.Build.0 = Release|Any CPU
+		{1764C942-BC30-4A90-9394-3AFCDCE24CC2}.Release|x86.ActiveCfg = Release|Any CPU
+		{1764C942-BC30-4A90-9394-3AFCDCE24CC2}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -361,5 +389,7 @@ Global
 		{504613C5-C573-4394-82B3-EBD47D1ADA65} = {A1000005-0000-0000-0000-000000000005}
 		{8FE00D2A-1EBF-445A-B730-5B20B1F12E6E} = {A1000005-0000-0000-0000-000000000005}
 		{7249B0A3-27A9-481F-AEA1-8F2BC7306D65} = {A1000002-0000-0000-0000-000000000002}
+		{49165A23-BAEF-4805-9946-B7F04ED30342} = {A1000002-0000-0000-0000-000000000002}
+		{1764C942-BC30-4A90-9394-3AFCDCE24CC2} = {A1000005-0000-0000-0000-000000000005}
 	EndGlobalSection
 EndGlobal

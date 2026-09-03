@@ -66,6 +66,13 @@
     <ProjectReference Include="..\..\src\BuildingBlocks\Hris.Foundation.Audit\Hris.Foundation.Audit.csproj" />
     <ProjectReference Include="..\..\src\BuildingBlocks\Hris.Foundation.RulesEngine\Hris.Foundation.RulesEngine.csproj" />
     <ProjectReference Include="..\..\src\BuildingBlocks\Hris.Foundation.Localization\Hris.Foundation.Localization.csproj" />
+    <!-- Numbering Framework, added for NumberSeriesConcurrencyTests. Unlike the
+         seven repositories above (all verifying a LINQ translation shape), this
+         framework's own atomic-increment repository method needs a real database to
+         verify a correctness property no LINQ-translation check covers: genuine
+         concurrent-writer safety (CTR-DAT-001), which an in-process fake repository
+         cannot exercise no matter how it is written. -->
+    <ProjectReference Include="..\..\src\BuildingBlocks\Hris.Foundation.Numbering\Hris.Foundation.Numbering.csproj" />
   </ItemGroup>
 
 </Project>

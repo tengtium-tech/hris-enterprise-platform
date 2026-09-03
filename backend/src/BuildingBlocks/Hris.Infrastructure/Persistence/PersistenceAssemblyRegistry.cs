@@ -1,3 +1,4 @@
+using System.Collections.Concurrent;
 using System.Reflection;
 
 namespace Hris.Infrastructure.Persistence;
@@ -21,19 +22,33 @@ namespace Hris.Infrastructure.Persistence;
 /// A plain static list, not a DI-resolved service: it must be fully populated before
 /// the first <see cref="HrisDbContext"/> is constructed, and constructing it through DI
 /// would only reintroduce the same ordering requirement one layer up. Registration is
-/// idempotent (<see cref="HashSet{T}"/> semantics) so a framework/module registered
-/// twice -- e.g. once by a test host, once by the real one -- does not duplicate model
-/// configuration.
+/// idempotent (<see cref="ConcurrentDictionary{TKey,TValue}"/>'s own key semantics) so a
+/// framework/module registered twice -- e.g. once by a test host, once by the real one
+/// -- does not duplicate model configuration.
+///
+/// Backed by <see cref="ConcurrentDictionary{TKey,TValue}"/>, not a plain
+/// <see cref="HashSet{T}"/>, because this static registry is genuinely written from
+/// more than one thread: <c>Hris.Infrastructure.IntegrationTests</c>' own
+/// <c>PostgresContainerFixture</c> is instantiated once per xUnit test class using it,
+/// and xUnit runs test classes in separate collections in parallel by default -- once a
+/// second fixture-using test class existed
+/// (<c>NumberSeriesConcurrencyTests</c>, alongside the pre-existing
+/// <c>RepositoryQueryTranslationTests</c>), two fixtures' own <c>InitializeAsync</c>
+/// began calling every <c>AddXFramework()</c>'s own <see cref="Register"/> concurrently
+/// for the first time, corrupting a plain <see cref="HashSet{T}"/>'s internal state --
+/// found empirically by that exact failure, not anticipated in advance. A single
+/// production host still only ever calls <see cref="Register"/> from one thread at
+/// startup, so this fix costs that path nothing.
 /// </summary>
 public static class PersistenceAssemblyRegistry
 {
-    private static readonly HashSet<Assembly> _assemblies = [];
+    private static readonly ConcurrentDictionary<Assembly, byte> _assemblies = new();
 
-    public static IReadOnlyCollection<Assembly> Assemblies => _assemblies;
+    public static IReadOnlyCollection<Assembly> Assemblies => _assemblies.Keys.ToList();
 
     public static void Register(Assembly assembly)
     {
         ArgumentNullException.ThrowIfNull(assembly);
-        _assemblies.Add(assembly);
+        _assemblies.TryAdd(assembly, 0);
     }
 }

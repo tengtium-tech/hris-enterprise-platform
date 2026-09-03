@@ -9,6 +9,7 @@ using Hris.Foundation.FileStorage;
 using Hris.Foundation.Identity;
 using Hris.Foundation.Localization;
 using Hris.Foundation.Logging;
+using Hris.Foundation.Numbering;
 using Hris.Foundation.RulesEngine;
 using Hris.Foundation.Tenant;
 using Hris.Foundation.Validation;
@@ -130,6 +131,12 @@ builder.Services.AddExtensionFramework();
 // (UserAccountId on every FileVersion) -- see DependencyInjection.cs for why the
 // other three are real dependencies with no concrete integration point yet, not a gap.
 builder.Services.AddFileStorageFramework();
+// AddNumberingFramework() is the fourth of Sprint 4's own eight frameworks, no
+// forced order among them. None of its own three stated Upstream Dependencies
+// (Configuration, Audit, Authorization) is concretely wired through MediatR this
+// Sprint -- see DependencyInjection.cs for why each is a real dependency with no
+// concrete integration point yet, not a gap.
+builder.Services.AddNumberingFramework();
 builder.Services.AddHrisInfrastructure(builder.Configuration);
 
 // naming-conventions.md aside: this is a "readiness" check on the connection, not a
