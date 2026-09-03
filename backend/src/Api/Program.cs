@@ -11,6 +11,7 @@ using Hris.Foundation.Localization;
 using Hris.Foundation.Logging;
 using Hris.Foundation.Numbering;
 using Hris.Foundation.RulesEngine;
+using Hris.Foundation.Search;
 using Hris.Foundation.Tenant;
 using Hris.Foundation.Validation;
 using Hris.Infrastructure;
@@ -137,6 +138,15 @@ builder.Services.AddFileStorageFramework();
 // Sprint -- see DependencyInjection.cs for why each is a real dependency with no
 // concrete integration point yet, not a gap.
 builder.Services.AddNumberingFramework();
+// AddSearchFramework() is the fifth of Sprint 4's own eight frameworks, no forced
+// order among them. Unlike its four siblings above, its own AI Implementation
+// Guidance names CTR-ISO-001 explicitly ("a search index is a common isolation
+// gap") -- tenant isolation is concretely wired this Sprint, not deferred; of its own
+// five stated Upstream Dependencies (Event, Configuration, Authorization, Identity,
+// Audit), none of the remaining four is concretely wired through MediatR yet -- see
+// DependencyInjection.cs for why each is a real dependency with no concrete
+// integration point yet, not a gap.
+builder.Services.AddSearchFramework();
 builder.Services.AddHrisInfrastructure(builder.Configuration);
 
 // naming-conventions.md aside: this is a "readiness" check on the connection, not a
