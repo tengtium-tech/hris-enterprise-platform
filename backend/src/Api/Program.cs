@@ -5,6 +5,7 @@ using Hris.Foundation.Authorization;
 using Hris.Foundation.Configuration;
 using Hris.Foundation.Events;
 using Hris.Foundation.Extension;
+using Hris.Foundation.FileStorage;
 using Hris.Foundation.Identity;
 using Hris.Foundation.Localization;
 using Hris.Foundation.Logging;
@@ -123,6 +124,12 @@ builder.Services.AddTenantFramework();
 // DependencyInjection.cs for why each is a real dependency with no concrete
 // integration point yet, not a gap.
 builder.Services.AddExtensionFramework();
+// AddFileStorageFramework() is the third of Sprint 4's own eight frameworks, no
+// forced order among them. Of its own four stated Upstream Dependencies (Identity,
+// Authorization, Audit, Configuration), only Identity is concretely used this Sprint
+// (UserAccountId on every FileVersion) -- see DependencyInjection.cs for why the
+// other three are real dependencies with no concrete integration point yet, not a gap.
+builder.Services.AddFileStorageFramework();
 builder.Services.AddHrisInfrastructure(builder.Configuration);
 
 // naming-conventions.md aside: this is a "readiness" check on the connection, not a
