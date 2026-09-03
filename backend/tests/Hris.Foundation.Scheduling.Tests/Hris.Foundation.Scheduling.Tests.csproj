@@ -1,0 +1,43 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    Hris.Foundation.Scheduling.Tests
+    docs/09-testing/unit-and-integration-testing.md Section 2: unit tests cover the
+    Domain layer only, constructing aggregates and Value Objects directly with no
+    infrastructure; extended here to this framework's own Application-layer command/
+    query handlers too, constructed against fake/substitute repositories, never a real
+    HrisDbContext, the identical scope every other Sprint 4 framework's own unit test
+    project already establishes.
+
+    Scheduling Framework, like Tenant, Extension, File Storage, Numbering, and Search
+    Frameworks, is not one of NFR-MT-001's three named 95%-floor areas (payroll,
+    statutory calculation, authorization). This project targets the platform's own
+    general 80% floor, built from day one per CLAUDE.md's own Coding Phase
+    traceability rule.
+  -->
+
+  <PropertyGroup>
+    <RootNamespace>Hris.Foundation.Scheduling.Tests</RootNamespace>
+    <IsPackable>false</IsPackable>
+
+    <!-- CA1707 suppressed in this project only, the identical precedent every other
+         test project in this solution states for itself: descriptive
+         underscore-separated test names (Rule_Condition) are this project's own
+         deliberate naming convention, not a defect. -->
+    <NoWarn>$(NoWarn);CA1707</NoWarn>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.11.1" />
+    <PackageReference Include="xunit" Version="2.9.0" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.8.2" />
+    <PackageReference Include="NSubstitute" Version="5.1.0" />
+    <PackageReference Include="FluentAssertions" Version="6.12.0" />
+    <PackageReference Include="coverlet.msbuild" Version="6.0.4" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\BuildingBlocks\Hris.Foundation.Scheduling\Hris.Foundation.Scheduling.csproj" />
+  </ItemGroup>
+
+</Project>
