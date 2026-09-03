@@ -1,0 +1,39 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    Hris.Foundation.Numbering
+    Sprint 4 (Kernel-Dependent Frameworks, Round 1) scope, per IMPLEMENTATION-PLAN.md
+    Phase 1: fourth of Sprint 4's own eight frameworks, no forced order among them.
+    Source specification: docs/03-foundation/numbering-framework.md. Built entirely
+    from scratch this Sprint, matching Tenant, Extension, and File Storage Frameworks'
+    own precedent: no Domain layer existed for this one before this pass.
+
+    Deliberately narrower than the source document's own full Scope: Organization-
+    Based and Department-Based sequence reset, and any per-tenant configuration
+    integration, require organizational-scope or tenant-configuration data this
+    Sprint's own build has no concrete integration point for yet, see
+    SequenceResetPolicy.cs's own remarks. This Sprint builds the provider-agnostic
+    core the document's own AI Implementation Guidance actually names as
+    non-negotiable: concurrency-safe generation (CTR-DAT-001), tenant-scoped
+    sequences once tenant context exists, and configurable, never-reused numbering.
+  -->
+
+  <PropertyGroup>
+    <RootNamespace>Hris.Foundation.Numbering</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MediatR" Version="12.4.1" />
+    <PackageReference Include="FluentValidation" Version="11.11.0" />
+    <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.11.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.4" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.4" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Hris.SharedKernel\Hris.SharedKernel.csproj" />
+    <ProjectReference Include="..\Hris.Application\Hris.Application.csproj" />
+    <ProjectReference Include="..\Hris.Infrastructure\Hris.Infrastructure.csproj" />
+  </ItemGroup>
+
+</Project>
