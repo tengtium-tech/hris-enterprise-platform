@@ -35,6 +35,7 @@
     <ProjectReference Include="..\BuildingBlocks\Hris.Foundation.Localization\Hris.Foundation.Localization.csproj" />
     <ProjectReference Include="..\BuildingBlocks\Hris.Foundation.Tenant\Hris.Foundation.Tenant.csproj" />
     <ProjectReference Include="..\BuildingBlocks\Hris.Foundation.Extension\Hris.Foundation.Extension.csproj" />
+    <ProjectReference Include="..\BuildingBlocks\Hris.Foundation.FileStorage\Hris.Foundation.FileStorage.csproj" />
   </ItemGroup>
 
   <ItemGroup>
