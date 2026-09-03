@@ -7,6 +7,7 @@ using Hris.Foundation.Events;
 using Hris.Foundation.Extension;
 using Hris.Foundation.FileStorage;
 using Hris.Foundation.Identity;
+using Hris.Foundation.JobProcessing;
 using Hris.Foundation.Localization;
 using Hris.Foundation.Logging;
 using Hris.Foundation.Numbering;
@@ -157,6 +158,14 @@ builder.Services.AddSearchFramework();
 // DependencyInjection.cs for why each is a real dependency with no concrete
 // integration point yet, not a gap.
 builder.Services.AddSchedulingFramework();
+// AddJobProcessingFramework() is the seventh of Sprint 4's own eight frameworks, no
+// forced order among them. Like Scheduling Framework above, its own AI Implementation
+// Guidance names CTR-ISO-004 explicitly, with the sharpest reason yet: "a job has no
+// request to inherit context from, which is where isolation is most often lost." Of
+// its own four stated Upstream Dependencies (Event, Configuration, Audit, Logging),
+// none is concretely wired through MediatR yet -- see DependencyInjection.cs for why
+// each is a real dependency with no concrete integration point yet, not a gap.
+builder.Services.AddJobProcessingFramework();
 builder.Services.AddHrisInfrastructure(builder.Configuration);
 
 // naming-conventions.md aside: this is a "readiness" check on the connection, not a
