@@ -1,0 +1,43 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    Hris.Foundation.JobProcessing
+    Sprint 4 (Kernel-Dependent Frameworks, Round 1) scope, per IMPLEMENTATION-PLAN.md
+    Phase 1: seventh of Sprint 4's own eight frameworks, no forced order among them.
+    Source specification: docs/03-foundation/job-processing.md. Built entirely from
+    scratch this Sprint, matching Tenant, Extension, File Storage, Numbering, Search,
+    and Scheduling Frameworks' own precedent: no Domain layer existed for this one
+    before this pass.
+
+    Deliberately narrower than the source document's own full Scope: this build records
+    job submission, queue policy, lifecycle state, and worker registration, but does
+    not build the actual worker process that dequeues and executes a job's own payload,
+    does not enforce a queue's own MaxConcurrency at dequeue time, and does not
+    integrate with Scheduling Framework's own Schedule aggregate for recurring jobs, all
+    real operational/hosting concerns this Domain-and-Application-layer build does not
+    attempt to anticipate. This Sprint builds what the document's own AI Implementation
+    Guidance actually names as non-negotiable: explicit tenant context on every job
+    (CTR-ISO-004), retries that route exhausted attempts to a dead letter queue rather
+    than looping or vanishing silently (CTR-WFL-006), and an auditable, searchable job
+    history.
+  -->
+
+  <PropertyGroup>
+    <RootNamespace>Hris.Foundation.JobProcessing</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MediatR" Version="12.4.1" />
+    <PackageReference Include="FluentValidation" Version="11.11.0" />
+    <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.11.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.4" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.4" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Hris.SharedKernel\Hris.SharedKernel.csproj" />
+    <ProjectReference Include="..\Hris.Application\Hris.Application.csproj" />
+    <ProjectReference Include="..\Hris.Infrastructure\Hris.Infrastructure.csproj" />
+  </ItemGroup>
+
+</Project>
