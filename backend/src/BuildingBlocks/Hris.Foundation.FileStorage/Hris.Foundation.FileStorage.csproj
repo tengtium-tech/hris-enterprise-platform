@@ -1,0 +1,40 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    Hris.Foundation.FileStorage
+    Sprint 4 (Kernel-Dependent Frameworks, Round 1) scope, per IMPLEMENTATION-PLAN.md
+    Phase 1: third of Sprint 4's own eight frameworks, no forced order among them.
+    Source specification: docs/03-foundation/file-storage.md. Built entirely from
+    scratch this Sprint, matching Tenant and Extension Frameworks' own precedent: no
+    Domain layer existed for this one before this pass.
+
+    Deliberately narrower than the source document's own full Scope: Encryption,
+    Replication, Backup, and Archive-as-cold-storage are storage-provider-operational
+    concerns (file-storage.md's own AI Implementation Guidance: "Make storage provider
+    selection configurable; never bind business code to a specific provider") that this
+    Sprint's own build leaves to a concrete IStorageProvider implementation, not yet
+    written. This Sprint builds the provider-agnostic aggregate and lifecycle every
+    concrete provider will sit behind, per Storage Provider's own "Storage providers
+    should be interchangeable."
+  -->
+
+  <PropertyGroup>
+    <RootNamespace>Hris.Foundation.FileStorage</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MediatR" Version="12.4.1" />
+    <PackageReference Include="FluentValidation" Version="11.11.0" />
+    <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.11.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.4" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.4" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Hris.SharedKernel\Hris.SharedKernel.csproj" />
+    <ProjectReference Include="..\Hris.Application\Hris.Application.csproj" />
+    <ProjectReference Include="..\Hris.Infrastructure\Hris.Infrastructure.csproj" />
+    <ProjectReference Include="..\Hris.Foundation.Identity\Hris.Foundation.Identity.csproj" />
+  </ItemGroup>
+
+</Project>
