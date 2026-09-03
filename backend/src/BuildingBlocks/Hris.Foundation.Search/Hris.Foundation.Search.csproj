@@ -1,0 +1,39 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    Hris.Foundation.Search
+    Sprint 4 (Kernel-Dependent Frameworks, Round 1) scope, per IMPLEMENTATION-PLAN.md
+    Phase 1: fifth of Sprint 4's own eight frameworks, no forced order among them.
+    Source specification: docs/03-foundation/search-framework.md. Built entirely from
+    scratch this Sprint, matching Tenant, Extension, File Storage, and Numbering
+    Frameworks' own precedent: no Domain layer existed for this one before this pass.
+
+    Deliberately narrower than the source document's own full Scope: Search Highlighting,
+    Auto Complete, Popular Searches, and Recent Searches are named in Scope but not
+    built this pass, each needs a query-usage history projection no aggregate this
+    Sprint tracks, see GetSearchSuggestionsQuery.cs's own remarks. This Sprint builds
+    what the document's own AI Implementation Guidance actually names as non-negotiable:
+    tenant-filtered, security-trimmed full-text search (CTR-ISO-001), soft-deleted
+    exclusion (CTR-DAT-004), and the one genuine cross-module route (GlobalSearchQuery,
+    GET /api/v1/search per api-catalog.md Section 22).
+  -->
+
+  <PropertyGroup>
+    <RootNamespace>Hris.Foundation.Search</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MediatR" Version="12.4.1" />
+    <PackageReference Include="FluentValidation" Version="11.11.0" />
+    <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.11.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.4" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.4" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Hris.SharedKernel\Hris.SharedKernel.csproj" />
+    <ProjectReference Include="..\Hris.Application\Hris.Application.csproj" />
+    <ProjectReference Include="..\Hris.Infrastructure\Hris.Infrastructure.csproj" />
+  </ItemGroup>
+
+</Project>
