@@ -1,0 +1,44 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    Hris.Foundation.StatutoryReferenceData
+    Sprint 4 (Kernel-Dependent Frameworks, Round 1) scope, per IMPLEMENTATION-PLAN.md
+    Phase 1: eighth and last of Sprint 4's own eight frameworks, no forced order among
+    them. Source specification: docs/03-foundation/statutory-reference-data.md, built
+    entirely from scratch this Sprint, matching every other Sprint 4 framework's own
+    precedent: no Domain layer existed for this one before this pass.
+
+    Unlike Search/Scheduling/Job Processing (this Sprint's own three immediately
+    preceding frameworks), this framework deliberately carries no TenantId anywhere:
+    the source document's own Security Considerations state plainly that this data "is
+    readable by every tenant; it is public information" and "is excluded from tenant
+    data export, since it is not tenant data." This build records program registration,
+    effective-dated table version publication with full provenance, and the period-based
+    selection query the document's own Selection Rule requires; it deliberately does not
+    build the actual payroll computation that interprets a version's own opaque
+    ScheduleData: SSS's own MSC/EC/MPF bracket structure, PhilHealth's own
+    percentage-of-compensation structure, Pag-IBIG's own percentage-with-ceiling
+    structure, and BIR's own progressive-tax-bracket structure are four genuinely
+    different shapes this Domain-and-Application-layer build does not attempt to
+    canonicalize; that is Payroll module's own, not-yet-built, responsibility.
+  -->
+
+  <PropertyGroup>
+    <RootNamespace>Hris.Foundation.StatutoryReferenceData</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MediatR" Version="12.4.1" />
+    <PackageReference Include="FluentValidation" Version="11.11.0" />
+    <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.11.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.4" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.4" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Hris.SharedKernel\Hris.SharedKernel.csproj" />
+    <ProjectReference Include="..\Hris.Application\Hris.Application.csproj" />
+    <ProjectReference Include="..\Hris.Infrastructure\Hris.Infrastructure.csproj" />
+  </ItemGroup>
+
+</Project>
