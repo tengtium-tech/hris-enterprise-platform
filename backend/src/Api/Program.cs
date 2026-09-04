@@ -14,6 +14,7 @@ using Hris.Foundation.Numbering;
 using Hris.Foundation.RulesEngine;
 using Hris.Foundation.Scheduling;
 using Hris.Foundation.Search;
+using Hris.Foundation.StatutoryReferenceData;
 using Hris.Foundation.Tenant;
 using Hris.Foundation.Validation;
 using Hris.Infrastructure;
@@ -166,6 +167,18 @@ builder.Services.AddSchedulingFramework();
 // none is concretely wired through MediatR yet -- see DependencyInjection.cs for why
 // each is a real dependency with no concrete integration point yet, not a gap.
 builder.Services.AddJobProcessingFramework();
+// AddStatutoryReferenceDataFramework() is the eighth and last of Sprint 4's own eight
+// frameworks. Unlike its three immediately preceding siblings above (Search, Scheduling,
+// Job Processing), this framework deliberately carries no tenant context anywhere --
+// statutory-reference-data.md's own Security Considerations state plainly that this
+// data "is readable by every tenant; it is public information" and "is excluded from
+// tenant data export, since it is not tenant data." Of its own three stated Upstream
+// Dependencies (Localization, Configuration, Audit), none is concretely wired through
+// MediatR this Sprint -- see DependencyInjection.cs for why each is a real dependency
+// with no concrete integration point yet, not a gap. With this framework registered,
+// all eight of Sprint 4's own frameworks are wired; Sprint 5 onward reads from this
+// foundation rather than building it.
+builder.Services.AddStatutoryReferenceDataFramework();
 builder.Services.AddHrisInfrastructure(builder.Configuration);
 
 // naming-conventions.md aside: this is a "readiness" check on the connection, not a
