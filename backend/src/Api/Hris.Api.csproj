@@ -40,6 +40,7 @@
     <ProjectReference Include="..\BuildingBlocks\Hris.Foundation.Search\Hris.Foundation.Search.csproj" />
     <ProjectReference Include="..\BuildingBlocks\Hris.Foundation.Scheduling\Hris.Foundation.Scheduling.csproj" />
     <ProjectReference Include="..\BuildingBlocks\Hris.Foundation.JobProcessing\Hris.Foundation.JobProcessing.csproj" />
+    <ProjectReference Include="..\BuildingBlocks\Hris.Foundation.StatutoryReferenceData\Hris.Foundation.StatutoryReferenceData.csproj" />
   </ItemGroup>
 
   <ItemGroup>
