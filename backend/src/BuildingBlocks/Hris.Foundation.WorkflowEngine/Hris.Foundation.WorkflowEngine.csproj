@@ -1,0 +1,68 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    Hris.Foundation.WorkflowEngine
+    Sprint 5 (Workflow Engine and Notification Framework) scope, per IMPLEMENTATION-PLAN.md
+    Phase 1: first of Sprint 5's own two frameworks, built as a genuine mutual
+    dependency cycle with Notification Framework but as its own separate PR, the same
+    "one framework, one PR, even within one Sprint" discipline Sprint 3's own
+    nine-framework kernel and Sprint 4's own eight frameworks already establish.
+    Source specification: docs/03-foundation/workflow-engine.md, built entirely from
+    scratch this Sprint: no Domain layer existed for this one before this pass.
+
+    Deliberately narrower than the source document's own full Scope, the same
+    "records the configuration, does not build the runtime that walks it" split every
+    Sprint 4 config-plus-occurrence framework already draws for its own out-of-scope
+    runtime concern:
+
+    - No visual, drag-and-drop Workflow Designer. That is this document's own Presentation
+      layer/frontend concern (docs/07-ui-ux/), not a backend Domain/Application/
+      Infrastructure build; this framework provides the commands/queries a future
+      designer UI calls, not the UI itself.
+    - No condition/branch/loop evaluator that reads live business data through another
+      module's public interface and decides which step runs next automatically. This
+      build records a WorkflowDefinitionVersion's own ordered step sequence and exposes
+      commands to advance a WorkflowInstance from one step to the next, but the actual
+      orchestrator that watches for trigger events, evaluates conditions against real
+      data, and calls Advance/RequestApproval/Complete unattended is a real operational
+      runtime: the identical "does not build the actual worker process" scope boundary
+      Job Processing Framework's own remarks already draw for itself, and Scheduling
+      Framework's own "does not evaluate cron expressions."
+    - No standing Delegation Rule registry (Temporary/Permanent/Out-of-Office,
+      Effective Dates) that auto-applies to every future task assigned to a user:
+      WorkflowTask.Delegate is a one-time, already-created-task redirect only (see that
+      method's own remarks).
+    - No AI-suggested workflows, natural-language authoring, simulation/dry-run testing,
+      or marketplace distribution: this document's own Future Enhancements section
+      states plainly these are "not required for initial delivery."
+    - No actual SLA-timer background job driving Expire/Escalate automatically: this
+      framework exposes those as callable commands; a real scheduler invoking them on a
+      timer is Scheduling/Job Processing Frameworks' own concern, already built.
+
+    This Sprint builds what the document's own AI Implementation Guidance actually names
+    as non-negotiable: actions as invocations of public module commands rather than
+    direct data manipulation, idempotent-by-design retryable actions, definition
+    versioning where a running instance never changes behavior mid-flight, permanent
+    workflow execution history, self-approval routing rejected at publication, and
+    canonical role names for every participant.
+  -->
+
+  <PropertyGroup>
+    <RootNamespace>Hris.Foundation.WorkflowEngine</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MediatR" Version="12.4.1" />
+    <PackageReference Include="FluentValidation" Version="11.11.0" />
+    <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.11.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.4" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.4" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Hris.SharedKernel\Hris.SharedKernel.csproj" />
+    <ProjectReference Include="..\Hris.Application\Hris.Application.csproj" />
+    <ProjectReference Include="..\Hris.Infrastructure\Hris.Infrastructure.csproj" />
+  </ItemGroup>
+
+</Project>

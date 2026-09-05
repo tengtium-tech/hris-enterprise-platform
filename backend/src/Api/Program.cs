@@ -17,6 +17,7 @@ using Hris.Foundation.Search;
 using Hris.Foundation.StatutoryReferenceData;
 using Hris.Foundation.Tenant;
 using Hris.Foundation.Validation;
+using Hris.Foundation.WorkflowEngine;
 using Hris.Infrastructure;
 using Hris.Infrastructure.Persistence;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
@@ -179,6 +180,15 @@ builder.Services.AddJobProcessingFramework();
 // all eight of Sprint 4's own frameworks are wired; Sprint 5 onward reads from this
 // foundation rather than building it.
 builder.Services.AddStatutoryReferenceDataFramework();
+// AddWorkflowEngineFramework() is the first of Sprint 5's own two frameworks
+// (Workflow Engine and Notification Framework), a genuine mutual dependency cycle per
+// IMPLEMENTATION-PLAN.md's own Sprint 5 row, built as two separate PRs the same way
+// every earlier Sprint's own multi-framework cycle (Sprint 3's nine-framework kernel,
+// Sprint 4's own eight frameworks) already was. Of its own five stated Upstream
+// Dependencies (Identity, Authorization, Rules Engine, Configuration, Notification),
+// none is concretely wired through MediatR yet -- see DependencyInjection.cs for why
+// each is a real dependency with no concrete integration point yet, not a gap.
+builder.Services.AddWorkflowEngineFramework();
 builder.Services.AddHrisInfrastructure(builder.Configuration);
 
 // naming-conventions.md aside: this is a "readiness" check on the connection, not a
