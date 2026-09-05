@@ -1,0 +1,52 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    Hris.Api.Tests
+    Sprint 7 (API Platform, HEP-85)'s own new test project: the first to actually
+    exercise Hris.Api's own middleware pipeline (correlation id, Problem Details
+    error mapping, rate limiting) and a real endpoint (OperationsEndpoints), rather
+    than a framework's own Domain/Application layer in isolation the way every prior
+    test project in this repository does. Uses Microsoft.AspNetCore.Mvc.Testing's
+    WebApplicationFactory&lt;Program&gt; against a real, disposable PostgreSQL instance
+    via Testcontainers, the identical "one real database per test class"
+    IClassFixture&lt;T&gt; pattern Hris.Infrastructure.IntegrationTests already
+    establishes. docs/09-testing/unit-and-integration-testing.md 3.1's own "An
+    in-memory provider is not acceptable" applies here identically, one layer up:
+    a middleware pipeline test against an in-memory TestServer but a fake database
+    would not actually verify OperationsEndpoints' own real GetJobQuery round trip.
+  -->
+
+  <PropertyGroup>
+    <RootNamespace>Hris.Api.Tests</RootNamespace>
+    <IsPackable>false</IsPackable>
+
+    <!-- Every other test project in this repository uses the plain Microsoft.NET.Sdk,
+         which the .NET analyzer package auto-detects as a test project (relaxing
+         CA1062 and CA2007 among others, confirmed against
+         Hris.Infrastructure.IntegrationTests's own identical IClassFixture<T>
+         constructor pattern, which needs neither suppression). Setting
+         IsTestProject explicitly here does not reproduce that relaxation for
+         Microsoft.NET.Sdk.Web (required for WebApplicationFactory, see this file's
+         own header), so both are suppressed directly instead of chasing the SDK's
+         own detection heuristic further. CA1707 is this project's own deliberate
+         naming convention, the identical precedent every other test project in
+         this repository states for itself: descriptive underscore-separated test
+         names (Rule_Condition), not a defect. -->
+    <NoWarn>$(NoWarn);CA1707;CA1062;CA2007</NoWarn>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.11.1" />
+    <PackageReference Include="xunit" Version="2.9.0" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.8.2" />
+    <PackageReference Include="FluentAssertions" Version="6.12.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="9.0.4" />
+    <PackageReference Include="Testcontainers.PostgreSql" Version="4.14.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\Api\Hris.Api.csproj" />
+    <ProjectReference Include="..\..\src\BuildingBlocks\Hris.Foundation.JobProcessing\Hris.Foundation.JobProcessing.csproj" />
+  </ItemGroup>
+
+</Project>

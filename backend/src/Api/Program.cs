@@ -1,4 +1,7 @@
 using System.Globalization;
+using Hris.Api.Endpoints;
+using Hris.Api.Http;
+using Hris.Api.Middleware;
 using Hris.Application;
 using Hris.Foundation.Audit;
 using Hris.Foundation.Authorization;
@@ -213,7 +216,31 @@ builder.Services.AddHrisInfrastructure(builder.Configuration);
 builder.Services.AddHealthChecks()
     .AddDbContextCheck<HrisDbContext>(name: "hris-database", tags: ["ready"]);
 
+// Sprint 7 (API Platform, HEP-85) -- cross-cutting Presentation-layer infrastructure
+// per api-standards.md, not a Foundation framework with its own aggregate. Registered
+// here, after every AddXFramework() call, since none of it depends on any framework's
+// own DI registration; GlobalExceptionHandler and OperationsEndpoints both dispatch
+// through MediatR/ISender the same way every framework's own handler does, but they
+// are Presentation-layer types living in this project, not a new Hris.Foundation.*
+// project.
+builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
+builder.Services.AddProblemDetails();
+builder.Services.AddApiRateLimiting();
+
 var app = builder.Build();
+
+// Runs first: every downstream middleware and endpoint executes inside this
+// middleware's own LogContext.PushProperty scope, so the correlation id is already
+// attached to the log entry UseSerilogRequestLogging() emits below, and to a Problem
+// Details body GlobalExceptionHandler or an endpoint's own ToHttpResult() produces
+// further downstream still.
+app.UseCorrelationId();
+
+// api-standards.md's Error Response Format section, wired end to end: any exception
+// (including a thrown FluentValidation.ValidationException -- "Invalid requests never
+// reach the handler," application-pipeline.md) becomes the RFC 7807 Problem Details
+// shape GlobalExceptionHandler builds, never a bare ASP.NET Core default error page.
+app.UseExceptionHandler();
 
 // logging-framework.md's own Log Categories section names "API Logs" (HTTP Method,
 // Endpoint, Status Code, Duration) as one of the framework's five log categories;
@@ -221,6 +248,11 @@ var app = builder.Build();
 // exactly that category, emitted through the same Serilog pipeline
 // UseSerilog() configured above -- not a second, parallel logging mechanism.
 app.UseSerilogRequestLogging();
+
+// Enforces every RequireRateLimiting(...) policy name registered by
+// AddApiRateLimiting() above -- without this middleware, an endpoint's own
+// .RequireRateLimiting() call has no effect.
+app.UseRateLimiter();
 
 // docs/08-devops/monitoring-and-alerting.md, "Health Monitoring (NFR-OB-003)":
 // liveness and readiness are distinct endpoints with distinct check sets, never
@@ -245,4 +277,27 @@ app.MapHealthChecks("/health/ready", new HealthCheckOptions
     Predicate = check => check.Tags.Contains("ready"),
 });
 
+// api-standards.md's own Long-Running Operations section, first concrete endpoint:
+// GET /api/v1/operations/{operationId}, a thin translation over Job Processing
+// Framework's own already-existing GetJobQuery -- see OperationsEndpoints' own
+// remarks for why this is not a new Foundation framework's own aggregate.
+app.MapOperationsEndpoints();
+
 app.Run();
+
+/// <summary>
+/// Microsoft.AspNetCore.Mvc.Testing's WebApplicationFactory&lt;TEntryPoint&gt; needs a
+/// public type to reference -- top-level statements generate an internal Program
+/// class by default. Hris.Api.Tests (Sprint 7's own new integration-test project, the
+/// first to actually exercise this host's middleware pipeline rather than a
+/// framework's own Domain/Application layer in isolation) references this partial
+/// class directly.
+/// </summary>
+[System.Diagnostics.CodeAnalysis.SuppressMessage(
+    "Performance",
+    "CA1515:Consider making public types internal",
+    Justification = "Must be public: WebApplicationFactory<Program> in Hris.Api.Tests " +
+        "requires this type to be accessible from that separate test assembly. Not an " +
+        "externally consumed API surface, the same reasoning PostgresContainerFixture's " +
+        "own CA1515 suppression states for itself.")]
+public partial class Program;
