@@ -10,6 +10,7 @@ using Hris.Foundation.Identity;
 using Hris.Foundation.JobProcessing;
 using Hris.Foundation.Localization;
 using Hris.Foundation.Logging;
+using Hris.Foundation.Notification;
 using Hris.Foundation.Numbering;
 using Hris.Foundation.RulesEngine;
 using Hris.Foundation.Scheduling;
@@ -189,6 +190,13 @@ builder.Services.AddStatutoryReferenceDataFramework();
 // none is concretely wired through MediatR yet -- see DependencyInjection.cs for why
 // each is a real dependency with no concrete integration point yet, not a gap.
 builder.Services.AddWorkflowEngineFramework();
+// AddNotificationFramework() is the second and last of Sprint 5's own two frameworks.
+// Of its own five stated Upstream Dependencies (Workflow Engine, Rules Engine,
+// Identity, Configuration, Event Framework), none is concretely wired through MediatR
+// yet -- see DependencyInjection.cs for why each is a real dependency with no concrete
+// integration point yet, not a gap. With this framework registered, both of Sprint 5's
+// own two frameworks are wired; Sprint 6 (Entitlement & Process Pack Framework) is next.
+builder.Services.AddNotificationFramework();
 builder.Services.AddHrisInfrastructure(builder.Configuration);
 
 // naming-conventions.md aside: this is a "readiness" check on the connection, not a
