@@ -1,3 +1,4 @@
+using Hris.Application.Abstractions;
 using Hris.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -61,6 +62,19 @@ public static class ServiceCollectionExtensions
             // the prohibition holds structurally rather than by convention alone.
             options.EnableDetailedErrors();
         });
+
+        // TransactionBehavior<TRequest,TResponse> (Hris.Application) constructor-
+        // injects IUnitOfWork for every command in the platform -- AddDbContext above
+        // registers HrisDbContext itself (scoped) but never its own IUnitOfWork
+        // interface, since EF Core's own registration never infers implemented
+        // interfaces from a concrete DbContext type. A genuine pre-existing gap, found
+        // by Sprint 7's own Hris.Api.Tests -- the first test in this repository's own
+        // history to dispatch anything through the real, fully-wired DI container
+        // rather than a framework's own fake-repository unit test or a read-only LINQ
+        // translation check, both of which bypass this pipeline behavior entirely.
+        // Resolved from the same scoped HrisDbContext instance the request's own
+        // handlers already use, never a second DbContext instance racing the first.
+        services.AddScoped<IUnitOfWork>(serviceProvider => serviceProvider.GetRequiredService<HrisDbContext>());
 
         return services;
     }
