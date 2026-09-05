@@ -1,0 +1,44 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    Hris.Foundation.Entitlement
+    Sprint 6 (Entitlement & Process Pack Framework) scope, per IMPLEMENTATION-PLAN.md
+    Phase 1. Source specification: docs/03-foundation/entitlement-framework.md, itself
+    written as part of this Sprint's own work, since no docs/03-foundation/
+    specification for this framework existed before this pass.
+
+    No EF Core persistence and no ProjectReference to Hris.Infrastructure, the same
+    shape Validation Framework's own csproj header states for itself and for the
+    identical reason: the Process Pack catalogue and each edition's default pack
+    composition are closed platform vocabulary that changes with a platform release,
+    not tenant-configurable runtime data, so they resolve to static, in-memory tables
+    recoverable through source control, not a database row.
+
+    Deliberately does not persist per-tenant pack activation beyond edition defaults,
+    since docs/04-modules/administration/domain/tenant-configuration.md already
+    specifies that as Administration module's own ProcessPackActivation entity and
+    administrative commands (ActivateProcessPackCommand, DeactivateProcessPackCommand,
+    ChangeMaturityLevelCommand), a Phase 2 concern. EvaluateEntitlementQuery below
+    mirrors Authorization Framework's own CheckAuthorizationQuery shape: an explicit,
+    on-demand evaluation point taking Edition/Pack/MaturityLevel as parameters, not an
+    ambient-context lookup, since no ITenantContext or equivalent exists yet in this
+    codebase, and resolving one is Sprint 7's own API Platform concern, not this one's.
+  -->
+
+  <PropertyGroup>
+    <RootNamespace>Hris.Foundation.Entitlement</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MediatR" Version="12.4.1" />
+    <PackageReference Include="FluentValidation" Version="11.11.0" />
+    <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.11.0" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.4" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Hris.SharedKernel\Hris.SharedKernel.csproj" />
+    <ProjectReference Include="..\Hris.Application\Hris.Application.csproj" />
+  </ItemGroup>
+
+</Project>
