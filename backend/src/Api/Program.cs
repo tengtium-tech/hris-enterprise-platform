@@ -5,6 +5,7 @@ using Hris.Api.Middleware;
 using Hris.Application;
 using Hris.Foundation.Audit;
 using Hris.Foundation.Authorization;
+using Hris.Foundation.Caching;
 using Hris.Foundation.Configuration;
 using Hris.Foundation.Entitlement;
 using Hris.Foundation.Events;
@@ -208,6 +209,16 @@ builder.Services.AddNotificationFramework();
 // order relative to every framework above is not significant. With this framework
 // registered, Sprint 6 is wired; Sprint 7 (API Platform) is next.
 builder.Services.AddEntitlementFramework();
+// AddCachingFramework() is the first of Sprint 8's own three frameworks
+// (Kernel-Dependent Frameworks, Round 2), no forced order among them -- each lists
+// exactly one Sprint 4 framework as its own additional dependency beyond the kernel
+// (Caching needs Tenant Framework's own existence, per caching-framework.md's stated
+// Upstream Dependencies, though no concrete MediatR call is wired to it this Sprint;
+// see DependencyInjection.cs for why). No EF Core persistence of its own --
+// caching-framework.md's own Scope section excludes "Permanent Data Storage" -- so
+// registration order relative to AddHrisInfrastructure() below does not matter the
+// way it does for a framework with its own IEntityTypeConfiguration<T>.
+builder.Services.AddCachingFramework();
 builder.Services.AddHrisInfrastructure(builder.Configuration);
 
 // naming-conventions.md aside: this is a "readiness" check on the connection, not a

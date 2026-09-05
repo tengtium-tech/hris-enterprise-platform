@@ -1,0 +1,40 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    Hris.Foundation.Caching
+    Sprint 8 (Kernel-Dependent Frameworks, Round 2) scope, per IMPLEMENTATION-PLAN.md
+    Phase 1. Source specification: docs/03-foundation/caching-framework.md.
+
+    No MediatR package and no MediatR requests of its own, the same shape Logging
+    Framework's own csproj header states for itself, for a related but distinct
+    reason: caching-framework.md describes no user-driven business command lifecycle
+    either, and unlike Logging (which issues one MediatR query against Configuration
+    Framework for its own minimum-severity threshold), this Sprint's own build issues
+    no query against any of its four stated Upstream Dependencies (Configuration,
+    Event, Logging, Tenant); see DependencyInjection.cs's own remarks for why each
+    is a real dependency with no concrete integration point yet, not a gap.
+
+    No EF Core persistence either: caching-framework.md's own Scope section names
+    "Permanent Data Storage" as explicitly excluded, so there is no
+    IEntityTypeConfiguration<T> here and no ProjectReference to Hris.Infrastructure.
+    Microsoft.Extensions.Caching.Memory is this Sprint's own one concrete cache
+    provider (in-process, single-instance). Redis or another distributed provider is
+    a future, interchangeable implementation of the same ICacheProvider contract, the
+    identical "one concrete implementation now, interface allows a future swap"
+    precedent Logging Framework's own Serilog-only sink already establishes.
+  -->
+
+  <PropertyGroup>
+    <RootNamespace>Hris.Foundation.Caching</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="9.0.4" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.4" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Hris.SharedKernel\Hris.SharedKernel.csproj" />
+  </ItemGroup>
+
+</Project>
