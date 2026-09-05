@@ -44,6 +44,7 @@
     <ProjectReference Include="..\BuildingBlocks\Hris.Foundation.WorkflowEngine\Hris.Foundation.WorkflowEngine.csproj" />
     <ProjectReference Include="..\BuildingBlocks\Hris.Foundation.Notification\Hris.Foundation.Notification.csproj" />
     <ProjectReference Include="..\BuildingBlocks\Hris.Foundation.Entitlement\Hris.Foundation.Entitlement.csproj" />
+    <ProjectReference Include="..\BuildingBlocks\Hris.Foundation.Caching\Hris.Foundation.Caching.csproj" />
   </ItemGroup>
 
   <ItemGroup>

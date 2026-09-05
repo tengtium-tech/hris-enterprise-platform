@@ -1,0 +1,42 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    Hris.Foundation.Caching.Tests
+    docs/09-testing/unit-and-integration-testing.md Section 2: unit tests cover the
+    Domain layer directly and, per coding-standards.md, this framework's own
+    Application-layer service too (against a fake ICacheProvider). Infrastructure/
+    MemoryCacheProviderTests uses a real, plain Microsoft.Extensions.Caching.Memory.
+    MemoryCache instance, not Testcontainers: no real database or network
+    dependency is involved, so this is a genuine, fast unit test, the same "verify
+    the real correctness property, not a fake" discipline
+    NumberSeriesConcurrencyTests already establishes for its own real-PostgreSQL
+    need, applied here against the one dependency that actually matters:
+    IMemoryCache's own token-based group-eviction behavior, which no fake
+    ICacheProvider could exercise meaningfully.
+  -->
+
+  <PropertyGroup>
+    <RootNamespace>Hris.Foundation.Caching.Tests</RootNamespace>
+    <IsPackable>false</IsPackable>
+
+    <!-- CA1707 suppressed in this project only, the identical precedent every other
+         test project in this repository states for itself: descriptive
+         underscore-separated test names (Rule_Condition) are this project's own
+         deliberate naming convention, not a defect. -->
+    <NoWarn>$(NoWarn);CA1707</NoWarn>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.11.1" />
+    <PackageReference Include="xunit" Version="2.9.0" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.8.2" />
+    <PackageReference Include="NSubstitute" Version="5.1.0" />
+    <PackageReference Include="FluentAssertions" Version="6.12.0" />
+    <PackageReference Include="coverlet.msbuild" Version="6.0.4" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\BuildingBlocks\Hris.Foundation.Caching\Hris.Foundation.Caching.csproj" />
+  </ItemGroup>
+
+</Project>
