@@ -3,6 +3,7 @@ using Hris.Application;
 using Hris.Foundation.Audit;
 using Hris.Foundation.Authorization;
 using Hris.Foundation.Configuration;
+using Hris.Foundation.Entitlement;
 using Hris.Foundation.Events;
 using Hris.Foundation.Extension;
 using Hris.Foundation.FileStorage;
@@ -197,6 +198,13 @@ builder.Services.AddWorkflowEngineFramework();
 // integration point yet, not a gap. With this framework registered, both of Sprint 5's
 // own two frameworks are wired; Sprint 6 (Entitlement & Process Pack Framework) is next.
 builder.Services.AddNotificationFramework();
+// AddEntitlementFramework() is Sprint 6's own single framework -- no MediatR
+// requests of any other framework are wired to it and it takes no concrete
+// ProjectReference of its own (entitlement-framework.md's own Dependencies section:
+// "explicit reference, no concrete cross-framework dependency"), so its registration
+// order relative to every framework above is not significant. With this framework
+// registered, Sprint 6 is wired; Sprint 7 (API Platform) is next.
+builder.Services.AddEntitlementFramework();
 builder.Services.AddHrisInfrastructure(builder.Configuration);
 
 // naming-conventions.md aside: this is a "readiness" check on the connection, not a
