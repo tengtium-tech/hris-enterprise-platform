@@ -1,0 +1,63 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    Hris.Foundation.Notification
+    Sprint 5 (Workflow Engine and Notification Framework) scope, per IMPLEMENTATION-PLAN.md
+    Phase 1: second and last of Sprint 5's own two frameworks, built as a genuine mutual
+    dependency cycle with Workflow Engine but as its own separate PR, the same
+    "one framework, one PR, even within one Sprint" discipline every earlier
+    multi-framework Sprint already establishes. Source specification:
+    docs/03-foundation/notification-framework.md, built entirely from scratch this
+    Sprint: no Domain layer existed for this one before this pass.
+
+    Deliberately narrower than the source document's own full Scope, the same "records
+    the configuration, does not build the runtime that walks it" split every Sprint 4/5
+    config-plus-occurrence framework already draws for its own out-of-scope runtime
+    concern:
+
+    - No template-variable substitution/rendering engine. NotificationTemplateVersion.Body
+      and Notification.Body both carry already-resolved or opaque placeholder-bearing
+      text; the publishing module or a future rendering step substitutes
+      {{Variable}}-style placeholders before this framework's own aggregates see the
+      content.
+    - No delivery worker that actually sends through Email/SMS/push/Slack/Teams/webhook
+      provider integrations, applies user preferences and quiet hours, or fans a
+      request out across a recipient's own preferred channels. This build records
+      requests, templates, and preferences, and exposes lifecycle-transition commands a
+      future worker calls: it does not implement that worker itself, the identical
+      "does not build the actual worker process" scope boundary Job Processing
+      Framework's own remarks already draw for itself.
+    - No actual quiet-hours/digest-mode scheduling logic: NotificationPreference
+      records the settings; applying them is this document's own stated worker
+      responsibility ("Apply user preferences and quiet hours in the worker, not in the
+      publishing module"), a real operational concern this Sprint does not attempt.
+
+    This Sprint builds what the document's own AI Implementation Guidance actually names
+    as non-negotiable: asynchronous delivery with no business operation ever waiting on
+    it, never rolling back a committed business action because delivery failed, retry
+    with backoff routing exhausted attempts to a dead letter state, per-recipient-and-
+    per-channel delivery tracking, explicit tenant-scoped recipient resolution, and the
+    two client-facing endpoints (GetMyNotificationsQuery, MarkNotificationReadCommand)
+    this document itself already fully specifies: both strictly self-scoped, with no
+    admin-override path and no client-facing CreateNotificationCommand.
+  -->
+
+  <PropertyGroup>
+    <RootNamespace>Hris.Foundation.Notification</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MediatR" Version="12.4.1" />
+    <PackageReference Include="FluentValidation" Version="11.11.0" />
+    <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.11.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.4" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.4" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Hris.SharedKernel\Hris.SharedKernel.csproj" />
+    <ProjectReference Include="..\Hris.Application\Hris.Application.csproj" />
+    <ProjectReference Include="..\Hris.Infrastructure\Hris.Infrastructure.csproj" />
+  </ItemGroup>
+
+</Project>
