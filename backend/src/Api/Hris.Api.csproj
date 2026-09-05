@@ -43,6 +43,7 @@
     <ProjectReference Include="..\BuildingBlocks\Hris.Foundation.StatutoryReferenceData\Hris.Foundation.StatutoryReferenceData.csproj" />
     <ProjectReference Include="..\BuildingBlocks\Hris.Foundation.WorkflowEngine\Hris.Foundation.WorkflowEngine.csproj" />
     <ProjectReference Include="..\BuildingBlocks\Hris.Foundation.Notification\Hris.Foundation.Notification.csproj" />
+    <ProjectReference Include="..\BuildingBlocks\Hris.Foundation.Entitlement\Hris.Foundation.Entitlement.csproj" />
   </ItemGroup>
 
   <ItemGroup>
