@@ -3,6 +3,7 @@ using Hris.Application;
 using Hris.Foundation.Audit;
 using Hris.Foundation.Authorization;
 using Hris.Foundation.Configuration;
+using Hris.Foundation.DocumentManagement;
 using Hris.Foundation.Events;
 using Hris.Foundation.Identity;
 using Hris.Foundation.Localization;
@@ -31,11 +32,13 @@ namespace Hris.Infrastructure.IntegrationTests;
 /// contributor's own machine without a manual setup step.
 ///
 /// Registers every Sprint 3 Core Kernel framework except Validation (which persists
-/// nothing of its own -- see that framework's own csproj header), plus Numbering and
-/// Search Frameworks (the two Sprint 4 frameworks this project's own tests actually
-/// exercise, for <c>NumberSeriesConcurrencyTests</c> and <c>IndexedDocumentSearchTests</c>
-/// respectively) -- the same bootstrap-order registration list <c>Hris.Api</c>'s own
-/// <c>Program.cs</c> uses for everything up to that point.
+/// nothing of its own -- see that framework's own csproj header), plus every later
+/// framework this project's own tests actually exercise: Numbering and Search
+/// (Sprint 4, for <c>NumberSeriesConcurrencyTests</c> and
+/// <c>IndexedDocumentSearchTests</c>) and Document Management (Sprint 8, for
+/// <c>DocumentRepositoryQueryTranslationTests</c>) -- the same bootstrap-order
+/// registration list <c>Hris.Api</c>'s own <c>Program.cs</c> uses for everything up to
+/// that point.
 /// <see cref="PersistenceAssemblyRegistry"/> only ever sees the assemblies an
 /// <c>AddXFramework()</c> call here registers, so <see cref="HrisDbContext"/>'s own
 /// model here matches production's, not a partial subset that could hide a mapping
@@ -89,6 +92,7 @@ public sealed class PostgresContainerFixture : IAsyncLifetime
         services.AddLocalizationFramework();
         services.AddNumberingFramework();
         services.AddSearchFramework();
+        services.AddDocumentManagementFramework();
         services.AddHrisInfrastructure(configuration);
 
         _serviceProvider = services.BuildServiceProvider();

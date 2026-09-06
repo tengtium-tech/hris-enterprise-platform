@@ -1,0 +1,37 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    Hris.Foundation.DocumentManagement
+    Sprint 8 (Kernel-Dependent Frameworks, Round 2) scope, per IMPLEMENTATION-PLAN.md.
+    Second of Sprint 8's own three frameworks (Caching, Document Management,
+    Integration Framework), no forced order among them; this one's own stated
+    Sprint 4 dependency is File Storage Framework, though not as a compile-time
+    ProjectReference. See docs/03-foundation/document-management.md and this
+    project's own DependencyInjection.cs remarks for the full reasoning.
+
+    Deliberately narrower than the source document's own full Scope: OCR Processing,
+    Workflow Definitions, and Business Rule Evaluation are explicitly excluded by that
+    document's own Scope section, and Encryption at Rest/in Transit and Virus Scanning
+    Integration are storage-provider- and infrastructure-operational concerns this
+    Sprint's own build leaves to deployment configuration, not application code.
+  -->
+
+  <PropertyGroup>
+    <RootNamespace>Hris.Foundation.DocumentManagement</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MediatR" Version="12.4.1" />
+    <PackageReference Include="FluentValidation" Version="11.11.0" />
+    <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.11.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.4" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.4" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Hris.SharedKernel\Hris.SharedKernel.csproj" />
+    <ProjectReference Include="..\Hris.Application\Hris.Application.csproj" />
+    <ProjectReference Include="..\Hris.Infrastructure\Hris.Infrastructure.csproj" />
+  </ItemGroup>
+
+</Project>
