@@ -81,6 +81,15 @@
          NumberSeriesConcurrencyTests already establishes for CTR-DAT-001, applied here
          to this framework's own explicitly-named CTR-ISO-001. -->
     <ProjectReference Include="..\..\src\BuildingBlocks\Hris.Foundation.Search\Hris.Foundation.Search.csproj" />
+    <!-- Document Management Framework, added for DocumentRepositoryQueryTranslationTests.
+         Two shapes neither of the seven original risks nor Numbering/Search's own
+         additions cover: EF.Functions.ILike (a Npgsql-specific SQL function, not a
+         LINQ operator with an obvious translation) and Document.Tags, a scalar
+         collection round-tripped through a single delimited-string column via a
+         custom HasConversion/ValueComparer pair, genuinely new among this
+         repository's own predicates and therefore unverified against real Postgres
+         until now. -->
+    <ProjectReference Include="..\..\src\BuildingBlocks\Hris.Foundation.DocumentManagement\Hris.Foundation.DocumentManagement.csproj" />
   </ItemGroup>
 
 </Project>
