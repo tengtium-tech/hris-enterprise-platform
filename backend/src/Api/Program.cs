@@ -13,6 +13,7 @@ using Hris.Foundation.Events;
 using Hris.Foundation.Extension;
 using Hris.Foundation.FileStorage;
 using Hris.Foundation.Identity;
+using Hris.Foundation.Integration;
 using Hris.Foundation.JobProcessing;
 using Hris.Foundation.Localization;
 using Hris.Foundation.Logging;
@@ -227,6 +228,14 @@ builder.Services.AddCachingFramework();
 // above it is registered in this order -- its own DependencyInjection.cs explains why
 // none of its five stated Upstream Dependencies is concretely wired this Sprint.
 builder.Services.AddDocumentManagementFramework();
+// AddIntegrationFramework() is the third and last of Sprint 8's own three
+// frameworks. Owns real EF Core persistence (Connector, IntegrationRun) so it must
+// run before AddHrisInfrastructure() for the same PersistenceAssemblyRegistry-
+// ordering reason every persisted framework above it is registered in this order --
+// its own DependencyInjection.cs explains why none of its six stated Upstream
+// Dependencies is concretely wired this Sprint. With this framework registered, all
+// of Sprint 8 is wired; Sprint 9 (Logging & Monitoring Operational Layer) is next.
+builder.Services.AddIntegrationFramework();
 builder.Services.AddHrisInfrastructure(builder.Configuration);
 
 // naming-conventions.md aside: this is a "readiness" check on the connection, not a
