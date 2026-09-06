@@ -7,6 +7,7 @@ using Hris.Foundation.Audit;
 using Hris.Foundation.Authorization;
 using Hris.Foundation.Caching;
 using Hris.Foundation.Configuration;
+using Hris.Foundation.DocumentManagement;
 using Hris.Foundation.Entitlement;
 using Hris.Foundation.Events;
 using Hris.Foundation.Extension;
@@ -219,6 +220,13 @@ builder.Services.AddEntitlementFramework();
 // registration order relative to AddHrisInfrastructure() below does not matter the
 // way it does for a framework with its own IEntityTypeConfiguration<T>.
 builder.Services.AddCachingFramework();
+// AddDocumentManagementFramework() is the second of Sprint 8's own three frameworks.
+// Unlike AddCachingFramework() above, this one owns real EF Core persistence
+// (Document, DocumentAttachment), so it must run before AddHrisInfrastructure() for
+// the same PersistenceAssemblyRegistry-ordering reason every persisted framework
+// above it is registered in this order -- its own DependencyInjection.cs explains why
+// none of its five stated Upstream Dependencies is concretely wired this Sprint.
+builder.Services.AddDocumentManagementFramework();
 builder.Services.AddHrisInfrastructure(builder.Configuration);
 
 // naming-conventions.md aside: this is a "readiness" check on the connection, not a
