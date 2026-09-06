@@ -1,0 +1,42 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    Hris.Foundation.Integration
+    Sprint 8 (Kernel-Dependent Frameworks, Round 2) scope, per IMPLEMENTATION-PLAN.md.
+    Third and last of Sprint 8's own three frameworks (Caching, Document Management,
+    Integration Framework), no forced order among them; this one's own stated
+    Sprint 4 dependency is Job Processing Framework, though not as a compile-time
+    ProjectReference. See docs/03-foundation/integration-framework.md and this
+    project's own DependencyInjection.cs remarks for the full reasoning.
+
+    Deliberately narrower than the source document's own full Scope: this document's
+    own Scope section explicitly excludes "Business Logic, Workflow Decisions,
+    Authentication Providers, User Interface." This Sprint's own build transforms and
+    routes only, per that document's own AI Implementation Guidance ("Never place
+    business logic in an integration adapter; transform and route only"). There is
+    no rules-evaluation engine, no vendor-specific adapter implementation (SAP,
+    Oracle, Entra ID, etc. are named as illustrative examples in the source document,
+    not concrete build targets), and no protocol client (REST/SOAP/SFTP/message-queue)
+    of its own; this Sprint records what a connector is and what one execution of it
+    did, the provider-agnostic shape every concrete adapter will sit behind.
+  -->
+
+  <PropertyGroup>
+    <RootNamespace>Hris.Foundation.Integration</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MediatR" Version="12.4.1" />
+    <PackageReference Include="FluentValidation" Version="11.11.0" />
+    <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.11.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.4" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.4" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Hris.SharedKernel\Hris.SharedKernel.csproj" />
+    <ProjectReference Include="..\Hris.Application\Hris.Application.csproj" />
+    <ProjectReference Include="..\Hris.Infrastructure\Hris.Infrastructure.csproj" />
+  </ItemGroup>
+
+</Project>
