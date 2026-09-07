@@ -47,6 +47,8 @@
     <ProjectReference Include="..\BuildingBlocks\Hris.Foundation.Caching\Hris.Foundation.Caching.csproj" />
     <ProjectReference Include="..\BuildingBlocks\Hris.Foundation.DocumentManagement\Hris.Foundation.DocumentManagement.csproj" />
     <ProjectReference Include="..\BuildingBlocks\Hris.Foundation.Integration\Hris.Foundation.Integration.csproj" />
+    <!-- Phase 2 (Core HR) Sprint 1, the platform's first business module. -->
+    <ProjectReference Include="..\Modules\Hris.Modules.Organization\Hris.Modules.Organization.csproj" />
   </ItemGroup>
 
   <ItemGroup>
