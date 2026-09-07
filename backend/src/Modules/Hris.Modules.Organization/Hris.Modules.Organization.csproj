@@ -1,0 +1,50 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    Hris.Modules.Organization
+    Phase 2 (Core HR), Sprint 1, per IMPLEMENTATION-PLAN.md. First business module
+    ever built in this codebase, following the platform's own Coding Phase
+    scope-gating rule (this project's own conventions): the first module unlocks the physical layout
+    every later Phase 2-6 module will repeat.
+
+    One project per module, folders for Domain/Application/Infrastructure inside,
+    the exact precedent already established by all 20 built Sprint 3-9 Foundation
+    frameworks, not the four-separate-projects diagram
+    docs/02-architecture/03-application-architecture/project-structure.md and
+    module-architecture.md show, which had never actually been built once. Inside
+    Application, files are grouped by technical type (Commands/, CommandHandlers/,
+    Queries/, QueryHandlers/, Dtos/, Mapping/, Validators/), matching
+    docs/04-modules/organization/application/*.md's own topic-file names exactly,
+    not the Vertical-Slice-per-feature example those two architecture documents
+    also show. Both choices were confirmed with the project owner before this
+    Sprint began, since getting the first business module's shape wrong would have
+    set the wrong pattern for every module through Phase 6.
+
+    Source specification: docs/04-modules/organization/. Three Aggregate Roots per
+    domain/aggregates.md's own Summary and domain/entities.md's own Aggregate
+    Ownership section (Organization, LegalEntity, WorkLocation), not the eight
+    items module-overview.md's own looser Aggregate Overview lists, which
+    aggregates.md's more detailed design explicitly consolidates down to three by
+    its own stated principle of minimizing Aggregate Root count. See Domain/
+    for the per-class citations.
+  -->
+
+  <PropertyGroup>
+    <RootNamespace>Hris.Modules.Organization</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MediatR" Version="12.4.1" />
+    <PackageReference Include="FluentValidation" Version="11.11.0" />
+    <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.11.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.4" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.4" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\BuildingBlocks\Hris.SharedKernel\Hris.SharedKernel.csproj" />
+    <ProjectReference Include="..\..\BuildingBlocks\Hris.Application\Hris.Application.csproj" />
+    <ProjectReference Include="..\..\BuildingBlocks\Hris.Infrastructure\Hris.Infrastructure.csproj" />
+  </ItemGroup>
+
+</Project>

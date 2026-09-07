@@ -15,6 +15,7 @@ using Hris.Foundation.Extension;
 using Hris.Foundation.FileStorage;
 using Hris.Foundation.Identity;
 using Hris.Foundation.Integration;
+using Hris.Modules.Organization;
 using Hris.Foundation.JobProcessing;
 using Hris.Foundation.Localization;
 using Hris.Foundation.Logging;
@@ -247,6 +248,15 @@ builder.Services.AddDocumentManagementFramework();
 // Dependencies is concretely wired this Sprint. With this framework registered, all
 // of Sprint 8 is wired; Sprint 9 (Logging & Monitoring Operational Layer) is next.
 builder.Services.AddIntegrationFramework();
+// AddOrganizationModule() is Phase 2 (Core HR) Sprint 1 -- the platform's first
+// business module, following all nine Phase 1 (Foundation Platform) Sprints above.
+// Owns real EF Core persistence (Organization, WorkLocation, LegalEntity) so it must
+// run before AddHrisInfrastructure() for the same PersistenceAssemblyRegistry-
+// ordering reason every persisted framework above it is registered in this order.
+// No compile-time dependency on any Phase 1 framework or later Phase 2 module --
+// this platform's own standing "reference by identifier, never by ProjectReference"
+// rule, confirmed for this module in its own DependencyInjection.cs.
+builder.Services.AddOrganizationModule();
 builder.Services.AddHrisInfrastructure(builder.Configuration);
 
 // naming-conventions.md aside: this is a "readiness" check on the connection, not a

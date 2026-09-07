@@ -1,0 +1,49 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    Hris.Modules.Organization.Tests
+    Phase 2 (Core HR) Sprint 1, per IMPLEMENTATION-PLAN.md.
+
+    docs/09-testing/unit-and-integration-testing.md Section 2: unit tests cover the
+    Domain layer, constructing aggregates directly with no infrastructure, the
+    identical scope every other Sprint 3-9 framework's own test project already
+    establishes. One exception: Infrastructure/Persistence/ builds a real
+    HrisDbContext against a fake (never-connected) Npgsql connection string purely to
+    force EF Core's own model validation for this module's five-level nested owned
+    hierarchy (Organization -> BusinessUnit -> Division -> Department -> Section ->
+    Team), the closest thing to a real-Postgres check this sandbox can run without
+    Docker/Testcontainers, since accessing DbContext.Model triggers full model
+    building without ever opening a connection.
+
+    Organization is not one of NFR-MT-001's three named 95%-floor areas (payroll,
+    statutory calculation, authorization). This project targets the platform's own
+    general 80% floor, built from day one per this project's own Coding Phase
+    traceability rule.
+  -->
+
+  <PropertyGroup>
+    <RootNamespace>Hris.Modules.Organization.Tests</RootNamespace>
+    <IsPackable>false</IsPackable>
+
+    <!-- CA1707 suppressed in this project only, the identical precedent every other
+         test project in this solution states for itself: descriptive
+         underscore-separated test names (Rule_Condition) are this project's own
+         deliberate naming convention, not a defect. -->
+    <NoWarn>$(NoWarn);CA1707</NoWarn>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.11.1" />
+    <PackageReference Include="xunit" Version="2.9.0" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.8.2" />
+    <PackageReference Include="NSubstitute" Version="5.1.0" />
+    <PackageReference Include="FluentAssertions" Version="6.12.0" />
+    <PackageReference Include="coverlet.msbuild" Version="6.0.4" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\Modules\Hris.Modules.Organization\Hris.Modules.Organization.csproj" />
+    <ProjectReference Include="..\..\src\BuildingBlocks\Hris.Infrastructure\Hris.Infrastructure.csproj" />
+  </ItemGroup>
+
+</Project>
