@@ -45,6 +45,12 @@
          Publisher section. Hris.Api already gets this transitively as an ASP.NET Core
          Web SDK project; this plain class library needs it explicitly. -->
     <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="9.0.4" />
+    <!-- Sprint 9 (Logging & Monitoring, Operational Layer) — OutboxDispatchEnrichment's
+         own Serilog.Context.LogContext usage, the identical base "Serilog" package
+         (not Serilog.AspNetCore, an ASP.NET Core-only integration this plain class
+         library has no use for) Hris.Foundation.Logging.csproj already references for
+         SerilogLogSink. -->
+    <PackageReference Include="Serilog" Version="4.2.0" />
   </ItemGroup>
 
 </Project>

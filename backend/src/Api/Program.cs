@@ -1,6 +1,7 @@
 using System.Globalization;
 using Hris.Api.Endpoints;
 using Hris.Api.Http;
+using Hris.Api.Logging;
 using Hris.Api.Middleware;
 using Hris.Application;
 using Hris.Foundation.Audit;
@@ -29,6 +30,8 @@ using Hris.Foundation.WorkflowEngine;
 using Hris.Infrastructure;
 using Hris.Infrastructure.Persistence;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using OpenTelemetry.Resources;
+using OpenTelemetry.Trace;
 using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -45,8 +48,16 @@ var builder = WebApplication.CreateBuilder(args);
 // in the rendered output template (CA1305) -- log output read by tooling/another
 // operator should not silently vary with whatever locale the process happens to run
 // under.
+//
+// Destructure.With<SensitiveDataDestructuringPolicy>() -- monitoring-and-alerting.md's
+// own Structured Logging section (NFR-OB-001): redaction of a [SensitiveData]-marked
+// property must be structural, applied globally here, never left to per-call-site
+// discipline. See that policy's own remarks for why no concrete type carries the
+// attribute yet this Sprint.
 builder.Host.UseSerilog((_, loggerConfiguration) =>
-    loggerConfiguration.WriteTo.Console(formatProvider: CultureInfo.InvariantCulture));
+    loggerConfiguration
+        .Destructure.With<SensitiveDataDestructuringPolicy>()
+        .WriteTo.Console(formatProvider: CultureInfo.InvariantCulture));
 
 // module-registration.md's Registration Flow: Program.cs -> AddFoundation() ->
 // AddInfrastructure() -> business modules (none yet -- Phase 2 onward) -> Build().
@@ -255,6 +266,19 @@ builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 builder.Services.AddProblemDetails();
 builder.Services.AddApiRateLimiting();
 
+// Sprint 9 (Logging & Monitoring, Operational Layer, HEP-89) -- monitoring-and-alerting.md's
+// own Distributed Tracing section (NFR-OB-002): "instruments every incoming request
+// with a trace that follows the request through every layer it touches." Resource
+// service name matches this host's own assembly, the identifier a trace backend uses
+// to distinguish this platform's own traces from any other service emitting to the
+// same collector.
+builder.Services.AddOpenTelemetry()
+    .ConfigureResource(resource => resource.AddService(serviceName: "Hris.Api"))
+    .WithTracing(tracing => tracing
+        .AddAspNetCoreInstrumentation()
+        .AddHttpClientInstrumentation()
+        .AddConsoleExporter());
+
 var app = builder.Build();
 
 // Runs first: every downstream middleware and endpoint executes inside this
@@ -263,6 +287,13 @@ var app = builder.Build();
 // Details body GlobalExceptionHandler or an endpoint's own ToHttpResult() produces
 // further downstream still.
 app.UseCorrelationId();
+
+// Sprint 9 (HEP-89) -- closes monitoring-and-alerting.md's own remaining Structured
+// Logging gap (NFR-OB-001): TenantId/UserId join CorrelationId above in every log
+// entry the rest of this pipeline produces, whenever a caller has populated them --
+// see RequestContextEnrichmentMiddleware's own remarks for why no concrete caller
+// does so yet this Sprint.
+app.UseRequestContextEnrichment();
 
 // api-standards.md's Error Response Format section, wired end to end: any exception
 // (including a thrown FluentValidation.ValidationException -- "Invalid requests never

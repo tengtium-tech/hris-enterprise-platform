@@ -37,6 +37,12 @@ namespace Hris.Foundation.Events.Infrastructure.Publishing;
 /// lifetime), while <c>HrisDbContext</c> and every repository built on it are Scoped;
 /// resolving them from the root container directly would either throw or, worse,
 /// silently share one DbContext instance across the process's entire lifetime.
+///
+/// Sprint 9 (HEP-89) wraps each entry's own dispatch in
+/// <see cref="OutboxDispatchEnrichment.DispatchWithEnrichment"/> -- see that type's
+/// own remarks for why this is the concrete "propagate trace context into background
+/// work" integration point monitoring-and-alerting.md's own Distributed Tracing
+/// section (NFR-OB-002) calls for.
 /// </summary>
 public sealed class OutboxDispatcherBackgroundService : BackgroundService
 {
@@ -98,7 +104,7 @@ public sealed class OutboxDispatcherBackgroundService : BackgroundService
 
         foreach (var entry in pending)
         {
-            entry.MarkDispatched(_timeProvider.GetUtcNow());
+            OutboxDispatchEnrichment.DispatchWithEnrichment(entry, () => entry.MarkDispatched(_timeProvider.GetUtcNow()));
         }
 
         if (pending.Count > 0)
