@@ -53,6 +53,24 @@
     <!-- AddDbContextCheck<HrisDbContext> in Program.cs, backing the /health/ready
          "ready"-tagged database connectivity check. -->
     <PackageReference Include="Microsoft.Extensions.Diagnostics.HealthChecks.EntityFrameworkCore" Version="9.0.4" />
+    <!-- Sprint 9 (Logging & Monitoring, Operational Layer), monitoring-and-alerting.md's
+         own Distributed Tracing section (NFR-OB-002), per technology-stack.md's own
+         Monitoring & Observability table naming OpenTelemetry as this platform's own
+         tracing technology. Instrumentation.AspNetCore/Http trace every incoming
+         request and outbound HttpClient call; Exporter.Console is this Sprint's one
+         configured exporter, the identical "one sink for now, a production
+         destination is a config change later" choice Serilog's own Console sink
+         already makes below. environment-strategy.md governs adding a real trace
+         backend (Grafana Tempo, per technology-stack.md) later without this code
+         changing. No EF Core/Npgsql instrumentation package yet: the current stable
+         OpenTelemetry instrumentation for Npgsql ships as part of Npgsql itself
+         (Npgsql.OpenTelemetry, not an OpenTelemetry.* package), a separate,
+         database-driver-specific integration this Sprint's own build does not add,
+         stated here explicitly rather than left implicit. -->
+    <PackageReference Include="OpenTelemetry.Exporter.Console" Version="1.18.0" />
+    <PackageReference Include="OpenTelemetry.Extensions.Hosting" Version="1.18.0" />
+    <PackageReference Include="OpenTelemetry.Instrumentation.AspNetCore" Version="1.18.0" />
+    <PackageReference Include="OpenTelemetry.Instrumentation.Http" Version="1.18.0" />
     <!-- Serilog host bootstrap for Logging Framework's SerilogLogSink (see that
          class's own remarks) — Serilog.Sinks.Console is this Sprint's one configured
          sink, since no log-aggregation platform is chosen yet; environment-strategy.md
