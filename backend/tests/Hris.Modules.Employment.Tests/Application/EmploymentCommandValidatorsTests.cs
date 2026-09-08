@@ -8,7 +8,7 @@ namespace Hris.Modules.Employment.Tests.Application;
 
 public sealed class EmploymentCommandValidatorsTests
 {
-    private static readonly DateOnly Today = DateOnly.FromDateTime(TestEmployment.NowUtc.UtcDateTime);
+    private static readonly DateOnly _today = DateOnly.FromDateTime(TestEmployment.NowUtc.UtcDateTime);
 
     [Fact]
     public void CreateEmploymentCommandValidator_Valid_Passes()
@@ -102,7 +102,7 @@ public sealed class EmploymentCommandValidatorsTests
     public void SuspendEmploymentCommandValidator_Valid_Passes()
     {
         var result = new SuspendEmploymentCommandValidator().Validate(
-            new SuspendEmploymentCommand(Guid.NewGuid(), Guid.NewGuid(), "Reason", Today));
+            new SuspendEmploymentCommand(Guid.NewGuid(), Guid.NewGuid(), "Reason", _today));
 
         result.IsValid.Should().BeTrue();
     }
@@ -111,7 +111,7 @@ public sealed class EmploymentCommandValidatorsTests
     public void SuspendEmploymentCommandValidator_MissingTenantId_Fails()
     {
         var result = new SuspendEmploymentCommandValidator().Validate(
-            new SuspendEmploymentCommand(Guid.NewGuid(), Guid.Empty, "Reason", Today));
+            new SuspendEmploymentCommand(Guid.NewGuid(), Guid.Empty, "Reason", _today));
 
         result.IsValid.Should().BeFalse();
     }
@@ -120,7 +120,7 @@ public sealed class EmploymentCommandValidatorsTests
     public void ReinstateEmploymentCommandValidator_Valid_Passes()
     {
         var result = new ReinstateEmploymentCommandValidator().Validate(
-            new ReinstateEmploymentCommand(Guid.NewGuid(), Guid.NewGuid(), Today));
+            new ReinstateEmploymentCommand(Guid.NewGuid(), Guid.NewGuid(), _today));
 
         result.IsValid.Should().BeTrue();
     }
@@ -129,7 +129,7 @@ public sealed class EmploymentCommandValidatorsTests
     public void ReinstateEmploymentCommandValidator_MissingEmploymentId_Fails()
     {
         var result = new ReinstateEmploymentCommandValidator().Validate(
-            new ReinstateEmploymentCommand(Guid.Empty, Guid.NewGuid(), Today));
+            new ReinstateEmploymentCommand(Guid.Empty, Guid.NewGuid(), _today));
 
         result.IsValid.Should().BeFalse();
     }
@@ -138,7 +138,7 @@ public sealed class EmploymentCommandValidatorsTests
     public void SecondEmploymentCommandValidator_Valid_Passes()
     {
         var result = new SecondEmploymentCommandValidator().Validate(
-            new SecondEmploymentCommand(Guid.NewGuid(), Guid.NewGuid(), Today));
+            new SecondEmploymentCommand(Guid.NewGuid(), Guid.NewGuid(), _today));
 
         result.IsValid.Should().BeTrue();
     }
@@ -147,7 +147,7 @@ public sealed class EmploymentCommandValidatorsTests
     public void SecondEmploymentCommandValidator_MissingEmploymentId_Fails()
     {
         var result = new SecondEmploymentCommandValidator().Validate(
-            new SecondEmploymentCommand(Guid.Empty, Guid.NewGuid(), Today));
+            new SecondEmploymentCommand(Guid.Empty, Guid.NewGuid(), _today));
 
         result.IsValid.Should().BeFalse();
     }
@@ -156,7 +156,7 @@ public sealed class EmploymentCommandValidatorsTests
     public void SeparateEmploymentCommandValidator_Valid_Passes()
     {
         var result = new SeparateEmploymentCommandValidator().Validate(
-            new SeparateEmploymentCommand(Guid.NewGuid(), Guid.NewGuid(), SeparationType.Resigned, null, Today, Today));
+            new SeparateEmploymentCommand(Guid.NewGuid(), Guid.NewGuid(), SeparationType.Resigned, null, _today, _today));
 
         result.IsValid.Should().BeTrue();
     }
@@ -166,7 +166,7 @@ public sealed class EmploymentCommandValidatorsTests
     {
         var result = new SeparateEmploymentCommandValidator().Validate(
             new SeparateEmploymentCommand(
-                Guid.NewGuid(), Guid.NewGuid(), SeparationType.Resigned, null, Today.AddDays(5), Today));
+                Guid.NewGuid(), Guid.NewGuid(), SeparationType.Resigned, null, _today.AddDays(5), _today));
 
         result.IsValid.Should().BeFalse();
     }
@@ -174,7 +174,7 @@ public sealed class EmploymentCommandValidatorsTests
     [Fact]
     public void StartProbationCommandValidator_Valid_Passes()
     {
-        var result = new StartProbationCommandValidator().Validate(new StartProbationCommand(Guid.NewGuid(), Guid.NewGuid(), Today, 180));
+        var result = new StartProbationCommandValidator().Validate(new StartProbationCommand(Guid.NewGuid(), Guid.NewGuid(), _today, 180));
 
         result.IsValid.Should().BeTrue();
     }
@@ -182,7 +182,7 @@ public sealed class EmploymentCommandValidatorsTests
     [Fact]
     public void StartProbationCommandValidator_ZeroDuration_Fails()
     {
-        var result = new StartProbationCommandValidator().Validate(new StartProbationCommand(Guid.NewGuid(), Guid.NewGuid(), Today, 0));
+        var result = new StartProbationCommandValidator().Validate(new StartProbationCommand(Guid.NewGuid(), Guid.NewGuid(), _today, 0));
 
         result.IsValid.Should().BeFalse();
     }
@@ -224,7 +224,7 @@ public sealed class EmploymentCommandValidatorsTests
     [Fact]
     public void FailProbationCommandValidator_Valid_Passes()
     {
-        var result = new FailProbationCommandValidator().Validate(new FailProbationCommand(Guid.NewGuid(), Guid.NewGuid(), Today, Today));
+        var result = new FailProbationCommandValidator().Validate(new FailProbationCommand(Guid.NewGuid(), Guid.NewGuid(), _today, _today));
 
         result.IsValid.Should().BeTrue();
     }
@@ -233,7 +233,7 @@ public sealed class EmploymentCommandValidatorsTests
     public void FailProbationCommandValidator_LastWorkingDateAfterEffectiveDate_Fails()
     {
         var result = new FailProbationCommandValidator().Validate(
-            new FailProbationCommand(Guid.NewGuid(), Guid.NewGuid(), Today.AddDays(5), Today));
+            new FailProbationCommand(Guid.NewGuid(), Guid.NewGuid(), _today.AddDays(5), _today));
 
         result.IsValid.Should().BeFalse();
     }
@@ -243,7 +243,7 @@ public sealed class EmploymentCommandValidatorsTests
     {
         var result = new RecordEmploymentCompensationCommandValidator().Validate(
             new RecordEmploymentCompensationCommand(
-                Guid.NewGuid(), Guid.NewGuid(), 50000m, "PHP", CompensationBasis.Monthly, Today, CompensationChangeSource.Hire, null));
+                Guid.NewGuid(), Guid.NewGuid(), 50000m, "PHP", CompensationBasis.Monthly, _today, CompensationChangeSource.Hire, null));
 
         result.IsValid.Should().BeTrue();
     }
@@ -253,7 +253,7 @@ public sealed class EmploymentCommandValidatorsTests
     {
         var result = new RecordEmploymentCompensationCommandValidator().Validate(
             new RecordEmploymentCompensationCommand(
-                Guid.NewGuid(), Guid.NewGuid(), -1m, "PHP", CompensationBasis.Monthly, Today, CompensationChangeSource.Hire, null));
+                Guid.NewGuid(), Guid.NewGuid(), -1m, "PHP", CompensationBasis.Monthly, _today, CompensationChangeSource.Hire, null));
 
         result.IsValid.Should().BeFalse();
     }
@@ -262,7 +262,7 @@ public sealed class EmploymentCommandValidatorsTests
     public void CreateEmploymentContractCommandValidator_Valid_Passes()
     {
         var result = new CreateEmploymentContractCommandValidator().Validate(
-            new CreateEmploymentContractCommand(Guid.NewGuid(), Guid.NewGuid(), "Regular", Today, null, false, null));
+            new CreateEmploymentContractCommand(Guid.NewGuid(), Guid.NewGuid(), "Regular", _today, null, false, null));
 
         result.IsValid.Should().BeTrue();
     }
@@ -271,7 +271,7 @@ public sealed class EmploymentCommandValidatorsTests
     public void CreateEmploymentContractCommandValidator_MissingContractType_Fails()
     {
         var result = new CreateEmploymentContractCommandValidator().Validate(
-            new CreateEmploymentContractCommand(Guid.NewGuid(), Guid.NewGuid(), null, Today, null, false, null));
+            new CreateEmploymentContractCommand(Guid.NewGuid(), Guid.NewGuid(), null, _today, null, false, null));
 
         result.IsValid.Should().BeFalse();
     }
@@ -316,7 +316,7 @@ public sealed class EmploymentCommandValidatorsTests
     public void RenewEmploymentContractCommandValidator_Valid_Passes()
     {
         var result = new RenewEmploymentContractCommandValidator().Validate(
-            new RenewEmploymentContractCommand(Guid.NewGuid(), Guid.NewGuid(), Today, null, null));
+            new RenewEmploymentContractCommand(Guid.NewGuid(), Guid.NewGuid(), _today, null, null));
 
         result.IsValid.Should().BeTrue();
     }
@@ -325,7 +325,7 @@ public sealed class EmploymentCommandValidatorsTests
     public void RenewEmploymentContractCommandValidator_MissingContractId_Fails()
     {
         var result = new RenewEmploymentContractCommandValidator().Validate(
-            new RenewEmploymentContractCommand(Guid.Empty, Guid.NewGuid(), Today, null, null));
+            new RenewEmploymentContractCommand(Guid.Empty, Guid.NewGuid(), _today, null, null));
 
         result.IsValid.Should().BeFalse();
     }
@@ -334,7 +334,7 @@ public sealed class EmploymentCommandValidatorsTests
     public void ExtendEmploymentContractCommandValidator_Valid_Passes()
     {
         var result = new ExtendEmploymentContractCommandValidator().Validate(
-            new ExtendEmploymentContractCommand(Guid.NewGuid(), Guid.NewGuid(), Today, null));
+            new ExtendEmploymentContractCommand(Guid.NewGuid(), Guid.NewGuid(), _today, null));
 
         result.IsValid.Should().BeTrue();
     }
@@ -343,7 +343,7 @@ public sealed class EmploymentCommandValidatorsTests
     public void ExtendEmploymentContractCommandValidator_MissingContractId_Fails()
     {
         var result = new ExtendEmploymentContractCommandValidator().Validate(
-            new ExtendEmploymentContractCommand(Guid.Empty, Guid.NewGuid(), Today, null));
+            new ExtendEmploymentContractCommand(Guid.Empty, Guid.NewGuid(), _today, null));
 
         result.IsValid.Should().BeFalse();
     }
@@ -408,7 +408,7 @@ public sealed class EmploymentCommandValidatorsTests
         var result = new AssignPositionCommandValidator().Validate(
             new AssignPositionCommand(
                 Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid(), null, null, null, null, null, WorkArrangement.OnSite,
-                null, Today, true));
+                null, _today, true));
 
         result.IsValid.Should().BeTrue();
     }
@@ -419,7 +419,7 @@ public sealed class EmploymentCommandValidatorsTests
         var result = new AssignPositionCommandValidator().Validate(
             new AssignPositionCommand(
                 Guid.NewGuid(), Guid.NewGuid(), Guid.Empty, null, null, null, null, null, WorkArrangement.OnSite, null,
-                Today, true));
+                _today, true));
 
         result.IsValid.Should().BeFalse();
     }
@@ -430,7 +430,7 @@ public sealed class EmploymentCommandValidatorsTests
         var result = new TransferEmploymentCommandValidator().Validate(
             new TransferEmploymentCommand(
                 Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid(), null, null, null, null, null, WorkArrangement.OnSite,
-                Today, null, true));
+                _today, null, true));
 
         result.IsValid.Should().BeTrue();
     }
@@ -440,7 +440,7 @@ public sealed class EmploymentCommandValidatorsTests
     {
         var result = new TransferEmploymentCommandValidator().Validate(
             new TransferEmploymentCommand(
-                Guid.NewGuid(), Guid.NewGuid(), Guid.Empty, null, null, null, null, null, WorkArrangement.OnSite, Today,
+                Guid.NewGuid(), Guid.NewGuid(), Guid.Empty, null, null, null, null, null, WorkArrangement.OnSite, _today,
                 null, true));
 
         result.IsValid.Should().BeFalse();
@@ -452,7 +452,7 @@ public sealed class EmploymentCommandValidatorsTests
         var result = new PromoteEmploymentCommandValidator().Validate(
             new PromoteEmploymentCommand(
                 Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid(), null, null, null, null, null, WorkArrangement.OnSite,
-                Today, null, true));
+                _today, null, true));
 
         result.IsValid.Should().BeTrue();
     }
@@ -462,7 +462,7 @@ public sealed class EmploymentCommandValidatorsTests
     {
         var result = new PromoteEmploymentCommandValidator().Validate(
             new PromoteEmploymentCommand(
-                Guid.NewGuid(), Guid.NewGuid(), Guid.Empty, null, null, null, null, null, WorkArrangement.OnSite, Today,
+                Guid.NewGuid(), Guid.NewGuid(), Guid.Empty, null, null, null, null, null, WorkArrangement.OnSite, _today,
                 null, true));
 
         result.IsValid.Should().BeFalse();
@@ -474,7 +474,7 @@ public sealed class EmploymentCommandValidatorsTests
         var result = new DemoteEmploymentCommandValidator().Validate(
             new DemoteEmploymentCommand(
                 Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid(), null, null, null, null, null, WorkArrangement.OnSite,
-                Today, null, true));
+                _today, null, true));
 
         result.IsValid.Should().BeTrue();
     }
@@ -484,7 +484,7 @@ public sealed class EmploymentCommandValidatorsTests
     {
         var result = new DemoteEmploymentCommandValidator().Validate(
             new DemoteEmploymentCommand(
-                Guid.NewGuid(), Guid.NewGuid(), Guid.Empty, null, null, null, null, null, WorkArrangement.OnSite, Today,
+                Guid.NewGuid(), Guid.NewGuid(), Guid.Empty, null, null, null, null, null, WorkArrangement.OnSite, _today,
                 null, true));
 
         result.IsValid.Should().BeFalse();
@@ -494,7 +494,7 @@ public sealed class EmploymentCommandValidatorsTests
     public void ChangeReportingManagerCommandValidator_Valid_Passes()
     {
         var result = new ChangeReportingManagerCommandValidator().Validate(
-            new ChangeReportingManagerCommand(Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid(), Today));
+            new ChangeReportingManagerCommand(Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid(), _today));
 
         result.IsValid.Should().BeTrue();
     }
@@ -503,7 +503,7 @@ public sealed class EmploymentCommandValidatorsTests
     public void ChangeReportingManagerCommandValidator_MissingNewManagerId_Fails()
     {
         var result = new ChangeReportingManagerCommandValidator().Validate(
-            new ChangeReportingManagerCommand(Guid.NewGuid(), Guid.NewGuid(), Guid.Empty, Today));
+            new ChangeReportingManagerCommand(Guid.NewGuid(), Guid.NewGuid(), Guid.Empty, _today));
 
         result.IsValid.Should().BeFalse();
     }
@@ -511,7 +511,7 @@ public sealed class EmploymentCommandValidatorsTests
     [Fact]
     public void EndAssignmentCommandValidator_Valid_Passes()
     {
-        var result = new EndAssignmentCommandValidator().Validate(new EndAssignmentCommand(Guid.NewGuid(), Guid.NewGuid(), Today));
+        var result = new EndAssignmentCommandValidator().Validate(new EndAssignmentCommand(Guid.NewGuid(), Guid.NewGuid(), _today));
 
         result.IsValid.Should().BeTrue();
     }
@@ -519,7 +519,7 @@ public sealed class EmploymentCommandValidatorsTests
     [Fact]
     public void EndAssignmentCommandValidator_MissingAssignmentId_Fails()
     {
-        var result = new EndAssignmentCommandValidator().Validate(new EndAssignmentCommand(Guid.Empty, Guid.NewGuid(), Today));
+        var result = new EndAssignmentCommandValidator().Validate(new EndAssignmentCommand(Guid.Empty, Guid.NewGuid(), _today));
 
         result.IsValid.Should().BeFalse();
     }

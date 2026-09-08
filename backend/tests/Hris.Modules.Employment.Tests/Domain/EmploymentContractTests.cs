@@ -6,14 +6,14 @@ namespace Hris.Modules.Employment.Tests.Domain;
 
 public sealed class EmploymentContractTests
 {
-    private static readonly Guid TenantId = Guid.NewGuid();
-    private static readonly DateOnly StartDate = DateOnly.FromDateTime(TestEmployment.NowUtc.UtcDateTime);
+    private static readonly Guid _tenantId = Guid.NewGuid();
+    private static readonly DateOnly _startDate = DateOnly.FromDateTime(TestEmployment.NowUtc.UtcDateTime);
 
     [Fact]
     public void Create_IndefiniteContract_Succeeds()
     {
         var result = EmploymentContract.Create(
-            new EmploymentContractId(Guid.NewGuid()), TenantId, Guid.NewGuid(), "Regular", StartDate, null, false,
+            new EmploymentContractId(Guid.NewGuid()), _tenantId, Guid.NewGuid(), "Regular", _startDate, null, false,
             null, TestEmployment.NowUtc);
 
         result.IsSuccess.Should().BeTrue();
@@ -25,7 +25,7 @@ public sealed class EmploymentContractTests
     public void Create_FixedTermWithoutEndDate_Fails()
     {
         var result = EmploymentContract.Create(
-            new EmploymentContractId(Guid.NewGuid()), TenantId, Guid.NewGuid(), "Contractual", StartDate, null, true,
+            new EmploymentContractId(Guid.NewGuid()), _tenantId, Guid.NewGuid(), "Contractual", _startDate, null, true,
             null, TestEmployment.NowUtc);
 
         result.IsFailure.Should().BeTrue();
@@ -36,8 +36,8 @@ public sealed class EmploymentContractTests
     public void Create_EndDateBeforeStartDate_Fails()
     {
         var result = EmploymentContract.Create(
-            new EmploymentContractId(Guid.NewGuid()), TenantId, Guid.NewGuid(), "Contractual", StartDate,
-            StartDate.AddDays(-1), true, null, TestEmployment.NowUtc);
+            new EmploymentContractId(Guid.NewGuid()), _tenantId, Guid.NewGuid(), "Contractual", _startDate,
+            _startDate.AddDays(-1), true, null, TestEmployment.NowUtc);
 
         result.IsFailure.Should().BeTrue();
         result.Error.Should().Be(EmploymentErrors.ContractPeriodEndBeforeStart);
@@ -46,7 +46,7 @@ public sealed class EmploymentContractTests
     [Fact]
     public void Approve_FromDraft_Succeeds()
     {
-        var contract = TestEmployment.CreateContract(TenantId, Guid.NewGuid());
+        var contract = TestEmployment.CreateContract(_tenantId, Guid.NewGuid());
 
         var result = contract.Approve(TestEmployment.NowUtc);
 
@@ -57,7 +57,7 @@ public sealed class EmploymentContractTests
     [Fact]
     public void Approve_WhenNotDraft_Fails()
     {
-        var contract = TestEmployment.CreateContract(TenantId, Guid.NewGuid());
+        var contract = TestEmployment.CreateContract(_tenantId, Guid.NewGuid());
         contract.Approve(TestEmployment.NowUtc);
 
         var result = contract.Approve(TestEmployment.NowUtc);
@@ -69,7 +69,7 @@ public sealed class EmploymentContractTests
     [Fact]
     public void MakeEffective_FromApproved_Succeeds()
     {
-        var contract = TestEmployment.CreateContract(TenantId, Guid.NewGuid());
+        var contract = TestEmployment.CreateContract(_tenantId, Guid.NewGuid());
         contract.Approve(TestEmployment.NowUtc);
 
         var result = contract.MakeEffective(TestEmployment.NowUtc);
@@ -81,7 +81,7 @@ public sealed class EmploymentContractTests
     [Fact]
     public void MakeEffective_WhenDraft_Fails()
     {
-        var contract = TestEmployment.CreateContract(TenantId, Guid.NewGuid());
+        var contract = TestEmployment.CreateContract(_tenantId, Guid.NewGuid());
 
         var result = contract.MakeEffective(TestEmployment.NowUtc);
 
@@ -92,27 +92,27 @@ public sealed class EmploymentContractTests
     [Fact]
     public void Renew_WhenEffective_UpdatesPeriodAndRecordsHistory()
     {
-        var contract = TestEmployment.CreateContract(TenantId, Guid.NewGuid());
+        var contract = TestEmployment.CreateContract(_tenantId, Guid.NewGuid());
         contract.Approve(TestEmployment.NowUtc);
         contract.MakeEffective(TestEmployment.NowUtc);
 
-        var result = contract.Renew(StartDate.AddYears(1), StartDate.AddYears(2), "Approved by HR", TestEmployment.NowUtc);
+        var result = contract.Renew(_startDate.AddYears(1), _startDate.AddYears(2), "Approved by HR", TestEmployment.NowUtc);
 
         result.IsSuccess.Should().BeTrue();
         contract.Renewals.Should().HaveCount(1);
-        contract.Period.StartDate.Should().Be(StartDate.AddYears(1));
+        contract.Period.StartDate.Should().Be(_startDate.AddYears(1));
         contract.LifecycleStage.Should().Be(ContractLifecycleStage.Effective);
     }
 
     [Fact]
     public void Renew_WhenClosed_Fails()
     {
-        var contract = TestEmployment.CreateContract(TenantId, Guid.NewGuid());
+        var contract = TestEmployment.CreateContract(_tenantId, Guid.NewGuid());
         contract.Approve(TestEmployment.NowUtc);
         contract.MakeEffective(TestEmployment.NowUtc);
         contract.Close(TestEmployment.NowUtc);
 
-        var result = contract.Renew(StartDate.AddYears(1), null, null, TestEmployment.NowUtc);
+        var result = contract.Renew(_startDate.AddYears(1), null, null, TestEmployment.NowUtc);
 
         result.IsFailure.Should().BeTrue();
         result.Error.Should().Be(EmploymentErrors.ContractCannotRenewAfterClosed);
@@ -122,24 +122,24 @@ public sealed class EmploymentContractTests
     public void Extend_WhenEffective_UpdatesEndDateAndRecordsHistory()
     {
         var contract = EmploymentContract.Create(
-            new EmploymentContractId(Guid.NewGuid()), TenantId, Guid.NewGuid(), "Contractual", StartDate,
-            StartDate.AddMonths(6), true, null, TestEmployment.NowUtc).Value;
+            new EmploymentContractId(Guid.NewGuid()), _tenantId, Guid.NewGuid(), "Contractual", _startDate,
+            _startDate.AddMonths(6), true, null, TestEmployment.NowUtc).Value;
         contract.Approve(TestEmployment.NowUtc);
         contract.MakeEffective(TestEmployment.NowUtc);
 
-        var result = contract.Extend(StartDate.AddMonths(9), "Project extended", TestEmployment.NowUtc);
+        var result = contract.Extend(_startDate.AddMonths(9), "Project extended", TestEmployment.NowUtc);
 
         result.IsSuccess.Should().BeTrue();
         contract.Extensions.Should().HaveCount(1);
-        contract.Period.EndDate.Should().Be(StartDate.AddMonths(9));
+        contract.Period.EndDate.Should().Be(_startDate.AddMonths(9));
     }
 
     [Fact]
     public void Extend_WhenDraft_Fails()
     {
-        var contract = TestEmployment.CreateContract(TenantId, Guid.NewGuid());
+        var contract = TestEmployment.CreateContract(_tenantId, Guid.NewGuid());
 
-        var result = contract.Extend(StartDate.AddMonths(6), null, TestEmployment.NowUtc);
+        var result = contract.Extend(_startDate.AddMonths(6), null, TestEmployment.NowUtc);
 
         result.IsFailure.Should().BeTrue();
         result.Error.Should().Be(EmploymentErrors.ContractNotEffective);
@@ -148,7 +148,7 @@ public sealed class EmploymentContractTests
     [Fact]
     public void Expire_WhenEffective_Succeeds()
     {
-        var contract = TestEmployment.CreateContract(TenantId, Guid.NewGuid());
+        var contract = TestEmployment.CreateContract(_tenantId, Guid.NewGuid());
         contract.Approve(TestEmployment.NowUtc);
         contract.MakeEffective(TestEmployment.NowUtc);
 
@@ -161,7 +161,7 @@ public sealed class EmploymentContractTests
     [Fact]
     public void Supersede_WhenEffective_Succeeds()
     {
-        var contract = TestEmployment.CreateContract(TenantId, Guid.NewGuid());
+        var contract = TestEmployment.CreateContract(_tenantId, Guid.NewGuid());
         contract.Approve(TestEmployment.NowUtc);
         contract.MakeEffective(TestEmployment.NowUtc);
 
@@ -174,7 +174,7 @@ public sealed class EmploymentContractTests
     [Fact]
     public void Close_WhenEffective_Succeeds()
     {
-        var contract = TestEmployment.CreateContract(TenantId, Guid.NewGuid());
+        var contract = TestEmployment.CreateContract(_tenantId, Guid.NewGuid());
         contract.Approve(TestEmployment.NowUtc);
         contract.MakeEffective(TestEmployment.NowUtc);
 
@@ -187,7 +187,7 @@ public sealed class EmploymentContractTests
     [Fact]
     public void Cancel_WhenDraft_Succeeds()
     {
-        var contract = TestEmployment.CreateContract(TenantId, Guid.NewGuid());
+        var contract = TestEmployment.CreateContract(_tenantId, Guid.NewGuid());
 
         var result = contract.Cancel(TestEmployment.NowUtc);
 
@@ -198,7 +198,7 @@ public sealed class EmploymentContractTests
     [Fact]
     public void Cancel_WhenEffective_Fails()
     {
-        var contract = TestEmployment.CreateContract(TenantId, Guid.NewGuid());
+        var contract = TestEmployment.CreateContract(_tenantId, Guid.NewGuid());
         contract.Approve(TestEmployment.NowUtc);
         contract.MakeEffective(TestEmployment.NowUtc);
 
@@ -211,7 +211,7 @@ public sealed class EmploymentContractTests
     [Fact]
     public void AddDocument_WithValidData_Succeeds()
     {
-        var contract = TestEmployment.CreateContract(TenantId, Guid.NewGuid());
+        var contract = TestEmployment.CreateContract(_tenantId, Guid.NewGuid());
 
         var result = contract.AddDocument("SignedContract", "documents/abc123", 1, TestEmployment.NowUtc);
 
@@ -222,7 +222,7 @@ public sealed class EmploymentContractTests
     [Fact]
     public void AddDocument_WithoutStorageReference_Fails()
     {
-        var contract = TestEmployment.CreateContract(TenantId, Guid.NewGuid());
+        var contract = TestEmployment.CreateContract(_tenantId, Guid.NewGuid());
 
         var result = contract.AddDocument("SignedContract", null, 1, TestEmployment.NowUtc);
 
@@ -233,7 +233,7 @@ public sealed class EmploymentContractTests
     public void Create_WithInvalidContractType_Fails()
     {
         var result = EmploymentContract.Create(
-            new EmploymentContractId(Guid.NewGuid()), TenantId, Guid.NewGuid(), null, StartDate, null, false, null,
+            new EmploymentContractId(Guid.NewGuid()), _tenantId, Guid.NewGuid(), null, _startDate, null, false, null,
             TestEmployment.NowUtc);
 
         result.IsFailure.Should().BeTrue();
@@ -243,11 +243,11 @@ public sealed class EmploymentContractTests
     [Fact]
     public void Renew_WithEndDateBeforeStartDate_Fails()
     {
-        var contract = TestEmployment.CreateContract(TenantId, Guid.NewGuid());
+        var contract = TestEmployment.CreateContract(_tenantId, Guid.NewGuid());
         contract.Approve(TestEmployment.NowUtc);
         contract.MakeEffective(TestEmployment.NowUtc);
 
-        var result = contract.Renew(StartDate.AddYears(1), StartDate, null, TestEmployment.NowUtc);
+        var result = contract.Renew(_startDate.AddYears(1), _startDate, null, TestEmployment.NowUtc);
 
         result.IsFailure.Should().BeTrue();
         result.Error.Should().Be(EmploymentErrors.ContractPeriodEndBeforeStart);
@@ -257,12 +257,12 @@ public sealed class EmploymentContractTests
     public void Extend_WithNewEndDateBeforeCurrentEnd_Fails()
     {
         var contract = EmploymentContract.Create(
-            new EmploymentContractId(Guid.NewGuid()), TenantId, Guid.NewGuid(), "Contractual", StartDate,
-            StartDate.AddMonths(6), true, null, TestEmployment.NowUtc).Value;
+            new EmploymentContractId(Guid.NewGuid()), _tenantId, Guid.NewGuid(), "Contractual", _startDate,
+            _startDate.AddMonths(6), true, null, TestEmployment.NowUtc).Value;
         contract.Approve(TestEmployment.NowUtc);
         contract.MakeEffective(TestEmployment.NowUtc);
 
-        var result = contract.Extend(StartDate.AddMonths(3), null, TestEmployment.NowUtc);
+        var result = contract.Extend(_startDate.AddMonths(3), null, TestEmployment.NowUtc);
 
         result.IsFailure.Should().BeTrue();
         result.Error.Should().Be(EmploymentErrors.ContractPeriodEndBeforeStart);
@@ -271,25 +271,25 @@ public sealed class EmploymentContractTests
     [Fact]
     public void Extend_OnOpenEndedContract_WithNullReason_Succeeds()
     {
-        var contract = TestEmployment.CreateContract(TenantId, Guid.NewGuid());
+        var contract = TestEmployment.CreateContract(_tenantId, Guid.NewGuid());
         contract.Approve(TestEmployment.NowUtc);
         contract.MakeEffective(TestEmployment.NowUtc);
 
-        var result = contract.Extend(StartDate.AddYears(1), null, TestEmployment.NowUtc);
+        var result = contract.Extend(_startDate.AddYears(1), null, TestEmployment.NowUtc);
 
         result.IsSuccess.Should().BeTrue();
         contract.Extensions[0].Reason.Should().BeEmpty();
-        contract.Period.EndDate.Should().Be(StartDate.AddYears(1));
+        contract.Period.EndDate.Should().Be(_startDate.AddYears(1));
     }
 
     [Fact]
     public void Extend_OnOpenEndedContract_WithNewEndDateBeforeStart_Fails()
     {
-        var contract = TestEmployment.CreateContract(TenantId, Guid.NewGuid());
+        var contract = TestEmployment.CreateContract(_tenantId, Guid.NewGuid());
         contract.Approve(TestEmployment.NowUtc);
         contract.MakeEffective(TestEmployment.NowUtc);
 
-        var result = contract.Extend(StartDate.AddDays(-1), "Backdated", TestEmployment.NowUtc);
+        var result = contract.Extend(_startDate.AddDays(-1), "Backdated", TestEmployment.NowUtc);
 
         result.IsFailure.Should().BeTrue();
         result.Error.Should().Be(EmploymentErrors.ContractPeriodEndBeforeStart);
@@ -298,7 +298,7 @@ public sealed class EmploymentContractTests
     [Fact]
     public void Expire_WhenDraft_Fails()
     {
-        var contract = TestEmployment.CreateContract(TenantId, Guid.NewGuid());
+        var contract = TestEmployment.CreateContract(_tenantId, Guid.NewGuid());
 
         var result = contract.Expire(TestEmployment.NowUtc);
 
@@ -309,7 +309,7 @@ public sealed class EmploymentContractTests
     [Fact]
     public void Supersede_WhenDraft_Fails()
     {
-        var contract = TestEmployment.CreateContract(TenantId, Guid.NewGuid());
+        var contract = TestEmployment.CreateContract(_tenantId, Guid.NewGuid());
 
         var result = contract.Supersede(TestEmployment.NowUtc);
 
@@ -320,7 +320,7 @@ public sealed class EmploymentContractTests
     [Fact]
     public void Supersede_WhenApproved_Succeeds()
     {
-        var contract = TestEmployment.CreateContract(TenantId, Guid.NewGuid());
+        var contract = TestEmployment.CreateContract(_tenantId, Guid.NewGuid());
         contract.Approve(TestEmployment.NowUtc);
 
         var result = contract.Supersede(TestEmployment.NowUtc);
@@ -332,7 +332,7 @@ public sealed class EmploymentContractTests
     [Fact]
     public void Close_WhenDraft_Fails()
     {
-        var contract = TestEmployment.CreateContract(TenantId, Guid.NewGuid());
+        var contract = TestEmployment.CreateContract(_tenantId, Guid.NewGuid());
 
         var result = contract.Close(TestEmployment.NowUtc);
 

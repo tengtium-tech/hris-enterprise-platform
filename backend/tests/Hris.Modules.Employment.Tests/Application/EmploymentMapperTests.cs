@@ -13,18 +13,18 @@ namespace Hris.Modules.Employment.Tests.Application;
 /// </summary>
 public sealed class EmploymentMapperTests
 {
-    private static readonly Guid TenantId = Guid.NewGuid();
-    private static readonly DateOnly Today = DateOnly.FromDateTime(TestEmployment.NowUtc.UtcDateTime);
+    private static readonly Guid _tenantId = Guid.NewGuid();
+    private static readonly DateOnly _today = DateOnly.FromDateTime(TestEmployment.NowUtc.UtcDateTime);
 
     [Fact]
     public void ToDto_Employment_MapsEveryField()
     {
-        var employment = TestEmployment.CreateActive(TenantId);
-        employment.RecordCompensation(50000m, "PHP", CompensationBasis.Monthly, Today, CompensationChangeSource.Hire, "REF-1", TestEmployment.NowUtc);
-        employment.StartProbation(Today, 180, TestEmployment.NowUtc);
-        employment.Suspend("Investigation", Today, TestEmployment.NowUtc);
-        employment.Reinstate(Today, TestEmployment.NowUtc);
-        employment.Separate(SeparationType.Resigned, "New opportunity", Today, Today, TestEmployment.NowUtc);
+        var employment = TestEmployment.CreateActive(_tenantId);
+        employment.RecordCompensation(50000m, "PHP", CompensationBasis.Monthly, _today, CompensationChangeSource.Hire, "REF-1", TestEmployment.NowUtc);
+        employment.StartProbation(_today, 180, TestEmployment.NowUtc);
+        employment.Suspend("Investigation", _today, TestEmployment.NowUtc);
+        employment.Reinstate(_today, TestEmployment.NowUtc);
+        employment.Separate(SeparationType.Resigned, "New opportunity", _today, _today, TestEmployment.NowUtc);
 
         var dto = EmploymentMapper.ToDto(employment);
 
@@ -44,15 +44,15 @@ public sealed class EmploymentMapperTests
         statusChange.Id.Should().NotBeEmpty();
         statusChange.PreviousStatus.Should().Be(nameof(OperationalStatus.Active));
         statusChange.NewStatus.Should().Be(nameof(OperationalStatus.Suspended));
-        statusChange.EffectiveDate.Should().Be(Today);
+        statusChange.EffectiveDate.Should().Be(_today);
         statusChange.Reason.Should().Be("Investigation");
 
         dto.ProbationRecords.Should().HaveCount(1);
         var probation = dto.ProbationRecords[0];
         probation.Id.Should().NotBeEmpty();
-        probation.StartDate.Should().Be(Today);
+        probation.StartDate.Should().Be(_today);
         probation.DurationDays.Should().Be(180);
-        probation.ExpectedEvaluationDate.Should().Be(Today.AddDays(180));
+        probation.ExpectedEvaluationDate.Should().Be(_today.AddDays(180));
         probation.Outcome.Should().Be(nameof(ProbationOutcome.Pending));
         probation.ExtensionCount.Should().Be(0);
 
@@ -62,7 +62,7 @@ public sealed class EmploymentMapperTests
         compensation.Amount.Should().Be(50000m);
         compensation.CurrencyCode.Should().Be("PHP");
         compensation.Basis.Should().Be(nameof(CompensationBasis.Monthly));
-        compensation.EffectiveStartDate.Should().Be(Today);
+        compensation.EffectiveStartDate.Should().Be(_today);
         compensation.EffectiveEndDate.Should().BeNull();
         compensation.ChangeSource.Should().Be(nameof(CompensationChangeSource.Hire));
         compensation.ApprovalReference.Should().Be("REF-1");
@@ -71,14 +71,14 @@ public sealed class EmploymentMapperTests
         dto.SeparationRecord!.Id.Should().NotBeEmpty();
         dto.SeparationRecord.SeparationType.Should().Be(nameof(SeparationType.Resigned));
         dto.SeparationRecord.TerminationReason.Should().Be("New opportunity");
-        dto.SeparationRecord.LastWorkingDate.Should().Be(Today);
-        dto.SeparationRecord.EffectiveSeparationDate.Should().Be(Today);
+        dto.SeparationRecord.LastWorkingDate.Should().Be(_today);
+        dto.SeparationRecord.EffectiveSeparationDate.Should().Be(_today);
     }
 
     [Fact]
     public void ToSummaryDto_Employment_MapsEveryField()
     {
-        var employment = TestEmployment.Create(TenantId);
+        var employment = TestEmployment.Create(_tenantId);
 
         var dto = EmploymentMapper.ToSummaryDto(employment);
 
@@ -96,12 +96,12 @@ public sealed class EmploymentMapperTests
     public void ToDto_EmploymentContract_MapsEveryField()
     {
         var contract = EmploymentContract.Create(
-            new EmploymentContractId(Guid.NewGuid()), TenantId, Guid.NewGuid(), "Contractual", Today, Today.AddMonths(6),
+            new EmploymentContractId(Guid.NewGuid()), _tenantId, Guid.NewGuid(), "Contractual", _today, _today.AddMonths(6),
             true, Guid.NewGuid(), TestEmployment.NowUtc).Value;
         contract.Approve(TestEmployment.NowUtc);
         contract.MakeEffective(TestEmployment.NowUtc);
-        contract.Renew(Today.AddMonths(6), Today.AddMonths(12), "Approved", TestEmployment.NowUtc);
-        contract.Extend(Today.AddMonths(13), "Extended once more", TestEmployment.NowUtc);
+        contract.Renew(_today.AddMonths(6), _today.AddMonths(12), "Approved", TestEmployment.NowUtc);
+        contract.Extend(_today.AddMonths(13), "Extended once more", TestEmployment.NowUtc);
         contract.AddDocument("SignedContract", "documents/abc123", 1, TestEmployment.NowUtc);
 
         var dto = EmploymentMapper.ToDto(contract);
@@ -110,8 +110,8 @@ public sealed class EmploymentMapperTests
         dto.TenantId.Should().Be(contract.TenantId);
         dto.EmploymentId.Should().Be(contract.EmploymentId);
         dto.ContractType.Should().Be("Contractual");
-        dto.StartDate.Should().Be(Today.AddMonths(6));
-        dto.EndDate.Should().Be(Today.AddMonths(13));
+        dto.StartDate.Should().Be(_today.AddMonths(6));
+        dto.EndDate.Should().Be(_today.AddMonths(13));
         dto.LifecycleStage.Should().Be(nameof(ContractLifecycleStage.Effective));
         dto.SupersedesContractId.Should().Be(contract.SupersedesContractId);
         dto.CreatedAtUtc.Should().Be(contract.CreatedAtUtc);
@@ -119,17 +119,17 @@ public sealed class EmploymentMapperTests
         dto.Renewals.Should().HaveCount(1);
         var renewal = dto.Renewals[0];
         renewal.Id.Should().NotBeEmpty();
-        renewal.PreviousStartDate.Should().Be(Today);
-        renewal.PreviousEndDate.Should().Be(Today.AddMonths(6));
-        renewal.NewStartDate.Should().Be(Today.AddMonths(6));
-        renewal.NewEndDate.Should().Be(Today.AddMonths(12));
+        renewal.PreviousStartDate.Should().Be(_today);
+        renewal.PreviousEndDate.Should().Be(_today.AddMonths(6));
+        renewal.NewStartDate.Should().Be(_today.AddMonths(6));
+        renewal.NewEndDate.Should().Be(_today.AddMonths(12));
         renewal.ApprovalReference.Should().Be("Approved");
 
         dto.Extensions.Should().HaveCount(1);
         var extension = dto.Extensions[0];
         extension.Id.Should().NotBeEmpty();
-        extension.PreviousEndDate.Should().Be(Today.AddMonths(12));
-        extension.NewEndDate.Should().Be(Today.AddMonths(13));
+        extension.PreviousEndDate.Should().Be(_today.AddMonths(12));
+        extension.NewEndDate.Should().Be(_today.AddMonths(13));
         extension.Reason.Should().Be("Extended once more");
 
         dto.Documents.Should().HaveCount(1);
@@ -146,17 +146,17 @@ public sealed class EmploymentMapperTests
         var employmentId = Guid.NewGuid();
         var firstManagerId = Guid.NewGuid();
         var assignment = EmploymentAssignment.Create(
-            new EmploymentAssignmentId(Guid.NewGuid()), TenantId, employmentId, Guid.NewGuid(), Guid.NewGuid(),
-            Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid(), WorkArrangement.Hybrid, firstManagerId, Today,
+            new EmploymentAssignmentId(Guid.NewGuid()), _tenantId, employmentId, Guid.NewGuid(), Guid.NewGuid(),
+            Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid(), WorkArrangement.Hybrid, firstManagerId, _today,
             true, TestEmployment.NowUtc).Value;
         var newPositionId = Guid.NewGuid();
         var newDepartmentId = Guid.NewGuid();
         assignment.ChangePosition(
             newPositionId, newDepartmentId, Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid(),
-            WorkArrangement.Remote, MovementType.Lateral, Today.AddDays(30), "Approved", true, TestEmployment.NowUtc);
+            WorkArrangement.Remote, MovementType.Lateral, _today.AddDays(30), "Approved", true, TestEmployment.NowUtc);
         var newManagerId = Guid.NewGuid();
-        assignment.ChangeReportingManager(newManagerId, false, Today.AddDays(31), TestEmployment.NowUtc);
-        assignment.End(Today.AddDays(60), TestEmployment.NowUtc);
+        assignment.ChangeReportingManager(newManagerId, false, _today.AddDays(31), TestEmployment.NowUtc);
+        assignment.End(_today.AddDays(60), TestEmployment.NowUtc);
 
         var dto = EmploymentMapper.ToDto(assignment);
 
@@ -171,23 +171,23 @@ public sealed class EmploymentMapperTests
         dto.LegalEntityId.Should().Be(assignment.LegalEntityId);
         dto.WorkArrangement.Should().Be(nameof(WorkArrangement.Remote));
         dto.ReportingManagerEmploymentId.Should().Be(newManagerId);
-        dto.EffectiveStartDate.Should().Be(Today.AddDays(30));
+        dto.EffectiveStartDate.Should().Be(_today.AddDays(30));
         dto.IsEnded.Should().BeTrue();
-        dto.EndedDate.Should().Be(Today.AddDays(60));
+        dto.EndedDate.Should().Be(_today.AddDays(60));
         dto.CreatedAtUtc.Should().Be(assignment.CreatedAtUtc);
 
         dto.History.Should().HaveCount(2);
         var firstHistory = dto.History[0];
         firstHistory.Id.Should().NotBeEmpty();
         firstHistory.PositionId.Should().NotBeEmpty();
-        firstHistory.EffectiveStartDate.Should().Be(Today);
-        firstHistory.EffectiveEndDate.Should().Be(Today.AddDays(30));
+        firstHistory.EffectiveStartDate.Should().Be(_today);
+        firstHistory.EffectiveEndDate.Should().Be(_today.AddDays(30));
 
         dto.ReportingHistory.Should().HaveCount(2);
         var firstReporting = dto.ReportingHistory[0];
         firstReporting.Id.Should().NotBeEmpty();
         firstReporting.ReportingManagerEmploymentId.Should().Be(firstManagerId);
-        firstReporting.EffectiveStartDate.Should().Be(Today);
-        firstReporting.EffectiveEndDate.Should().Be(Today.AddDays(31));
+        firstReporting.EffectiveStartDate.Should().Be(_today);
+        firstReporting.EffectiveEndDate.Should().Be(_today.AddDays(31));
     }
 }

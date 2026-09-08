@@ -14,25 +14,25 @@ namespace Hris.Modules.Employment.Tests.Domain;
 /// </summary>
 public sealed class EmploymentDomainEventsTests
 {
-    private static readonly Guid EventId = Guid.NewGuid();
-    private static readonly DateTimeOffset OccurredOnUtc = TestEmployment.NowUtc;
-    private static readonly DateOnly Today = DateOnly.FromDateTime(TestEmployment.NowUtc.UtcDateTime);
-    private static readonly EmploymentId TheEmploymentId = new(Guid.NewGuid());
-    private static readonly EmploymentContractId TheContractId = new(Guid.NewGuid());
-    private static readonly EmploymentAssignmentId TheAssignmentId = new(Guid.NewGuid());
-    private static readonly Guid EmployeeId = Guid.NewGuid();
+    private static readonly Guid _eventId = Guid.NewGuid();
+    private static readonly DateTimeOffset _occurredOnUtc = TestEmployment.NowUtc;
+    private static readonly DateOnly _today = DateOnly.FromDateTime(TestEmployment.NowUtc.UtcDateTime);
+    private static readonly EmploymentId _theEmploymentId = new(Guid.NewGuid());
+    private static readonly EmploymentContractId _theContractId = new(Guid.NewGuid());
+    private static readonly EmploymentAssignmentId _theAssignmentId = new(Guid.NewGuid());
+    private static readonly Guid _employeeId = Guid.NewGuid();
 
     [Fact]
     public void EmploymentCreated_CarriesAllProperties()
     {
         var tenantId = Guid.NewGuid();
-        var e = new EmploymentCreated(EventId, OccurredOnUtc, TheEmploymentId, tenantId, EmployeeId, "EMP-000001", "Regular", "Rank-and-File");
+        var e = new EmploymentCreated(_eventId, _occurredOnUtc, _theEmploymentId, tenantId, _employeeId, "EMP-000001", "Regular", "Rank-and-File");
 
-        e.EventId.Should().Be(EventId);
-        e.OccurredOnUtc.Should().Be(OccurredOnUtc);
-        e.EmploymentId.Should().Be(TheEmploymentId);
+        e.EventId.Should().Be(_eventId);
+        e.OccurredOnUtc.Should().Be(_occurredOnUtc);
+        e.EmploymentId.Should().Be(_theEmploymentId);
         e.TenantId.Should().Be(tenantId);
-        e.EmployeeId.Should().Be(EmployeeId);
+        e.EmployeeId.Should().Be(_employeeId);
         e.EmploymentNumber.Should().Be("EMP-000001");
         e.EmploymentType.Should().Be("Regular");
         e.EmploymentCategory.Should().Be("Rank-and-File");
@@ -41,35 +41,35 @@ public sealed class EmploymentDomainEventsTests
     [Fact]
     public void EmploymentActivated_CarriesAllProperties()
     {
-        var e = new EmploymentActivated(EventId, OccurredOnUtc, TheEmploymentId);
+        var e = new EmploymentActivated(_eventId, _occurredOnUtc, _theEmploymentId);
 
-        e.EventId.Should().Be(EventId);
-        e.OccurredOnUtc.Should().Be(OccurredOnUtc);
-        e.EmploymentId.Should().Be(TheEmploymentId);
+        e.EventId.Should().Be(_eventId);
+        e.OccurredOnUtc.Should().Be(_occurredOnUtc);
+        e.EmploymentId.Should().Be(_theEmploymentId);
     }
 
     [Fact]
     public void EmploymentTypeChanged_CarriesAllProperties()
     {
-        var e = new EmploymentTypeChanged(EventId, OccurredOnUtc, TheEmploymentId, "Probationary", "Regular");
+        var e = new EmploymentTypeChanged(_eventId, _occurredOnUtc, _theEmploymentId, "Probationary", "Regular");
 
         e.PreviousType.Should().Be("Probationary");
         e.NewType.Should().Be("Regular");
-        e.EmploymentId.Should().Be(TheEmploymentId);
-        e.EventId.Should().Be(EventId);
-        e.OccurredOnUtc.Should().Be(OccurredOnUtc);
+        e.EmploymentId.Should().Be(_theEmploymentId);
+        e.EventId.Should().Be(_eventId);
+        e.OccurredOnUtc.Should().Be(_occurredOnUtc);
     }
 
     [Fact]
     public void EmploymentCategoryChanged_CarriesAllProperties()
     {
-        var e = new EmploymentCategoryChanged(EventId, OccurredOnUtc, TheEmploymentId, "Rank-and-File", "Managerial");
+        var e = new EmploymentCategoryChanged(_eventId, _occurredOnUtc, _theEmploymentId, "Rank-and-File", "Managerial");
 
         e.PreviousCategory.Should().Be("Rank-and-File");
         e.NewCategory.Should().Be("Managerial");
-        e.EmploymentId.Should().Be(TheEmploymentId);
-        e.EventId.Should().Be(EventId);
-        e.OccurredOnUtc.Should().Be(OccurredOnUtc);
+        e.EmploymentId.Should().Be(_theEmploymentId);
+        e.EventId.Should().Be(_eventId);
+        e.OccurredOnUtc.Should().Be(_occurredOnUtc);
     }
 
     [Fact]
@@ -78,121 +78,121 @@ public sealed class EmploymentDomainEventsTests
         var previous = new CompensationRecordId(Guid.NewGuid());
         var current = new CompensationRecordId(Guid.NewGuid());
         var e = new EmploymentCompensationChanged(
-            EventId, OccurredOnUtc, TheEmploymentId, EmployeeId, previous, current, Today, CompensationChangeSource.Hire);
+            _eventId, _occurredOnUtc, _theEmploymentId, _employeeId, previous, current, _today, CompensationChangeSource.Hire);
 
         e.PreviousCompensationRecordId.Should().Be(previous);
         e.NewCompensationRecordId.Should().Be(current);
-        e.EffectiveDate.Should().Be(Today);
+        e.EffectiveDate.Should().Be(_today);
         e.ChangeSource.Should().Be(CompensationChangeSource.Hire);
-        e.EmployeeId.Should().Be(EmployeeId);
-        e.EmploymentId.Should().Be(TheEmploymentId);
-        e.EventId.Should().Be(EventId);
-        e.OccurredOnUtc.Should().Be(OccurredOnUtc);
+        e.EmployeeId.Should().Be(_employeeId);
+        e.EmploymentId.Should().Be(_theEmploymentId);
+        e.EventId.Should().Be(_eventId);
+        e.OccurredOnUtc.Should().Be(_occurredOnUtc);
     }
 
     [Fact]
     public void ProbationStarted_CarriesAllProperties()
     {
         var probationId = new ProbationRecordId(Guid.NewGuid());
-        var e = new ProbationStarted(EventId, OccurredOnUtc, TheEmploymentId, probationId, Today, Today.AddDays(180));
+        var e = new ProbationStarted(_eventId, _occurredOnUtc, _theEmploymentId, probationId, _today, _today.AddDays(180));
 
         e.ProbationRecordId.Should().Be(probationId);
-        e.StartDate.Should().Be(Today);
-        e.ExpectedEvaluationDate.Should().Be(Today.AddDays(180));
-        e.EmploymentId.Should().Be(TheEmploymentId);
-        e.EventId.Should().Be(EventId);
-        e.OccurredOnUtc.Should().Be(OccurredOnUtc);
+        e.StartDate.Should().Be(_today);
+        e.ExpectedEvaluationDate.Should().Be(_today.AddDays(180));
+        e.EmploymentId.Should().Be(_theEmploymentId);
+        e.EventId.Should().Be(_eventId);
+        e.OccurredOnUtc.Should().Be(_occurredOnUtc);
     }
 
     [Fact]
     public void ProbationExtended_CarriesAllProperties()
     {
         var probationId = new ProbationRecordId(Guid.NewGuid());
-        var e = new ProbationExtended(EventId, OccurredOnUtc, TheEmploymentId, probationId, Today.AddDays(210));
+        var e = new ProbationExtended(_eventId, _occurredOnUtc, _theEmploymentId, probationId, _today.AddDays(210));
 
         e.ProbationRecordId.Should().Be(probationId);
-        e.NewExpectedEvaluationDate.Should().Be(Today.AddDays(210));
-        e.EmploymentId.Should().Be(TheEmploymentId);
+        e.NewExpectedEvaluationDate.Should().Be(_today.AddDays(210));
+        e.EmploymentId.Should().Be(_theEmploymentId);
     }
 
     [Fact]
     public void EmploymentConfirmed_CarriesAllProperties()
     {
-        var e = new EmploymentConfirmed(EventId, OccurredOnUtc, TheEmploymentId);
+        var e = new EmploymentConfirmed(_eventId, _occurredOnUtc, _theEmploymentId);
 
-        e.EmploymentId.Should().Be(TheEmploymentId);
-        e.EventId.Should().Be(EventId);
-        e.OccurredOnUtc.Should().Be(OccurredOnUtc);
+        e.EmploymentId.Should().Be(_theEmploymentId);
+        e.EventId.Should().Be(_eventId);
+        e.OccurredOnUtc.Should().Be(_occurredOnUtc);
     }
 
     [Fact]
     public void ProbationFailed_CarriesAllProperties()
     {
         var probationId = new ProbationRecordId(Guid.NewGuid());
-        var e = new ProbationFailed(EventId, OccurredOnUtc, TheEmploymentId, probationId);
+        var e = new ProbationFailed(_eventId, _occurredOnUtc, _theEmploymentId, probationId);
 
         e.ProbationRecordId.Should().Be(probationId);
-        e.EmploymentId.Should().Be(TheEmploymentId);
+        e.EmploymentId.Should().Be(_theEmploymentId);
     }
 
     [Fact]
     public void EmploymentSuspended_CarriesAllProperties()
     {
-        var e = new EmploymentSuspended(EventId, OccurredOnUtc, TheEmploymentId, "Investigation", Today);
+        var e = new EmploymentSuspended(_eventId, _occurredOnUtc, _theEmploymentId, "Investigation", _today);
 
         e.Reason.Should().Be("Investigation");
-        e.EffectiveDate.Should().Be(Today);
-        e.EmploymentId.Should().Be(TheEmploymentId);
+        e.EffectiveDate.Should().Be(_today);
+        e.EmploymentId.Should().Be(_theEmploymentId);
     }
 
     [Fact]
     public void EmploymentReinstated_CarriesAllProperties()
     {
-        var e = new EmploymentReinstated(EventId, OccurredOnUtc, TheEmploymentId, Today);
+        var e = new EmploymentReinstated(_eventId, _occurredOnUtc, _theEmploymentId, _today);
 
-        e.EffectiveDate.Should().Be(Today);
-        e.EmploymentId.Should().Be(TheEmploymentId);
+        e.EffectiveDate.Should().Be(_today);
+        e.EmploymentId.Should().Be(_theEmploymentId);
     }
 
     [Fact]
     public void EmploymentSeconded_CarriesAllProperties()
     {
-        var e = new EmploymentSeconded(EventId, OccurredOnUtc, TheEmploymentId, Today);
+        var e = new EmploymentSeconded(_eventId, _occurredOnUtc, _theEmploymentId, _today);
 
-        e.EffectiveDate.Should().Be(Today);
-        e.EmploymentId.Should().Be(TheEmploymentId);
+        e.EffectiveDate.Should().Be(_today);
+        e.EmploymentId.Should().Be(_theEmploymentId);
     }
 
     [Fact]
     public void EmploymentSeparated_CarriesAllProperties()
     {
-        var e = new EmploymentSeparated(EventId, OccurredOnUtc, TheEmploymentId, SeparationType.Resigned, Today);
+        var e = new EmploymentSeparated(_eventId, _occurredOnUtc, _theEmploymentId, SeparationType.Resigned, _today);
 
         e.SeparationReason.Should().Be(SeparationType.Resigned);
-        e.EffectiveDate.Should().Be(Today);
-        e.EmploymentId.Should().Be(TheEmploymentId);
+        e.EffectiveDate.Should().Be(_today);
+        e.EmploymentId.Should().Be(_theEmploymentId);
     }
 
     [Fact]
     public void EmployeeRehired_CarriesAllProperties()
     {
         var priorId = Guid.NewGuid();
-        var e = new EmployeeRehired(EventId, OccurredOnUtc, TheEmploymentId, EmployeeId, priorId, Today);
+        var e = new EmployeeRehired(_eventId, _occurredOnUtc, _theEmploymentId, _employeeId, priorId, _today);
 
-        e.NewEmploymentId.Should().Be(TheEmploymentId);
-        e.EmployeeId.Should().Be(EmployeeId);
+        e.NewEmploymentId.Should().Be(_theEmploymentId);
+        e.EmployeeId.Should().Be(_employeeId);
         e.PriorEmploymentId.Should().Be(priorId);
-        e.EffectiveDate.Should().Be(Today);
+        e.EffectiveDate.Should().Be(_today);
     }
 
     [Fact]
     public void ConcurrentEmploymentCreated_CarriesAllProperties()
     {
         var primaryId = Guid.NewGuid();
-        var e = new ConcurrentEmploymentCreated(EventId, OccurredOnUtc, TheEmploymentId, EmployeeId, primaryId);
+        var e = new ConcurrentEmploymentCreated(_eventId, _occurredOnUtc, _theEmploymentId, _employeeId, primaryId);
 
-        e.EmploymentId.Should().Be(TheEmploymentId);
-        e.EmployeeId.Should().Be(EmployeeId);
+        e.EmploymentId.Should().Be(_theEmploymentId);
+        e.EmployeeId.Should().Be(_employeeId);
         e.PrimaryEmploymentId.Should().Be(primaryId);
     }
 
@@ -200,20 +200,20 @@ public sealed class EmploymentDomainEventsTests
     public void PrimaryEmploymentChanged_CarriesAllProperties()
     {
         var previousId = Guid.NewGuid();
-        var e = new PrimaryEmploymentChanged(EventId, OccurredOnUtc, EmployeeId, TheEmploymentId, previousId);
+        var e = new PrimaryEmploymentChanged(_eventId, _occurredOnUtc, _employeeId, _theEmploymentId, previousId);
 
-        e.EmployeeId.Should().Be(EmployeeId);
-        e.NewPrimaryEmploymentId.Should().Be(TheEmploymentId);
+        e.EmployeeId.Should().Be(_employeeId);
+        e.NewPrimaryEmploymentId.Should().Be(_theEmploymentId);
         e.PreviousPrimaryEmploymentId.Should().Be(previousId);
     }
 
     [Fact]
     public void ConcurrentEmploymentEnded_CarriesAllProperties()
     {
-        var e = new ConcurrentEmploymentEnded(EventId, OccurredOnUtc, TheEmploymentId, EmployeeId);
+        var e = new ConcurrentEmploymentEnded(_eventId, _occurredOnUtc, _theEmploymentId, _employeeId);
 
-        e.EmploymentId.Should().Be(TheEmploymentId);
-        e.EmployeeId.Should().Be(EmployeeId);
+        e.EmploymentId.Should().Be(_theEmploymentId);
+        e.EmployeeId.Should().Be(_employeeId);
     }
 
     [Fact]
@@ -221,86 +221,86 @@ public sealed class EmploymentDomainEventsTests
     {
         var tenantId = Guid.NewGuid();
         var employmentId = Guid.NewGuid();
-        var e = new EmploymentContractCreated(EventId, OccurredOnUtc, TheContractId, tenantId, employmentId, Today, Today.AddYears(1));
+        var e = new EmploymentContractCreated(_eventId, _occurredOnUtc, _theContractId, tenantId, employmentId, _today, _today.AddYears(1));
 
-        e.EmploymentContractId.Should().Be(TheContractId);
+        e.EmploymentContractId.Should().Be(_theContractId);
         e.TenantId.Should().Be(tenantId);
         e.EmploymentId.Should().Be(employmentId);
-        e.StartDate.Should().Be(Today);
-        e.EndDate.Should().Be(Today.AddYears(1));
+        e.StartDate.Should().Be(_today);
+        e.EndDate.Should().Be(_today.AddYears(1));
     }
 
     [Fact]
     public void EmploymentContractApproved_CarriesAllProperties()
     {
-        var e = new EmploymentContractApproved(EventId, OccurredOnUtc, TheContractId);
+        var e = new EmploymentContractApproved(_eventId, _occurredOnUtc, _theContractId);
 
-        e.EmploymentContractId.Should().Be(TheContractId);
-        e.EventId.Should().Be(EventId);
-        e.OccurredOnUtc.Should().Be(OccurredOnUtc);
+        e.EmploymentContractId.Should().Be(_theContractId);
+        e.EventId.Should().Be(_eventId);
+        e.OccurredOnUtc.Should().Be(_occurredOnUtc);
     }
 
     [Fact]
     public void EmploymentContractEffective_CarriesAllProperties()
     {
-        var e = new EmploymentContractEffective(EventId, OccurredOnUtc, TheContractId);
+        var e = new EmploymentContractEffective(_eventId, _occurredOnUtc, _theContractId);
 
-        e.EmploymentContractId.Should().Be(TheContractId);
+        e.EmploymentContractId.Should().Be(_theContractId);
     }
 
     [Fact]
     public void EmploymentContractRenewed_CarriesAllProperties()
     {
         var renewalId = new ContractRenewalId(Guid.NewGuid());
-        var e = new EmploymentContractRenewed(EventId, OccurredOnUtc, TheContractId, renewalId, Today, Today.AddYears(1));
+        var e = new EmploymentContractRenewed(_eventId, _occurredOnUtc, _theContractId, renewalId, _today, _today.AddYears(1));
 
         e.ContractRenewalId.Should().Be(renewalId);
-        e.NewStartDate.Should().Be(Today);
-        e.NewEndDate.Should().Be(Today.AddYears(1));
-        e.EmploymentContractId.Should().Be(TheContractId);
+        e.NewStartDate.Should().Be(_today);
+        e.NewEndDate.Should().Be(_today.AddYears(1));
+        e.EmploymentContractId.Should().Be(_theContractId);
     }
 
     [Fact]
     public void EmploymentContractExtended_CarriesAllProperties()
     {
         var extensionId = new ContractExtensionId(Guid.NewGuid());
-        var e = new EmploymentContractExtended(EventId, OccurredOnUtc, TheContractId, extensionId, Today.AddMonths(9));
+        var e = new EmploymentContractExtended(_eventId, _occurredOnUtc, _theContractId, extensionId, _today.AddMonths(9));
 
         e.ContractExtensionId.Should().Be(extensionId);
-        e.NewEndDate.Should().Be(Today.AddMonths(9));
-        e.EmploymentContractId.Should().Be(TheContractId);
+        e.NewEndDate.Should().Be(_today.AddMonths(9));
+        e.EmploymentContractId.Should().Be(_theContractId);
     }
 
     [Fact]
     public void EmploymentContractExpired_CarriesAllProperties()
     {
-        var e = new EmploymentContractExpired(EventId, OccurredOnUtc, TheContractId);
+        var e = new EmploymentContractExpired(_eventId, _occurredOnUtc, _theContractId);
 
-        e.EmploymentContractId.Should().Be(TheContractId);
+        e.EmploymentContractId.Should().Be(_theContractId);
     }
 
     [Fact]
     public void EmploymentContractSuperseded_CarriesAllProperties()
     {
-        var e = new EmploymentContractSuperseded(EventId, OccurredOnUtc, TheContractId);
+        var e = new EmploymentContractSuperseded(_eventId, _occurredOnUtc, _theContractId);
 
-        e.EmploymentContractId.Should().Be(TheContractId);
+        e.EmploymentContractId.Should().Be(_theContractId);
     }
 
     [Fact]
     public void EmploymentContractClosed_CarriesAllProperties()
     {
-        var e = new EmploymentContractClosed(EventId, OccurredOnUtc, TheContractId);
+        var e = new EmploymentContractClosed(_eventId, _occurredOnUtc, _theContractId);
 
-        e.EmploymentContractId.Should().Be(TheContractId);
+        e.EmploymentContractId.Should().Be(_theContractId);
     }
 
     [Fact]
     public void EmploymentContractCancelled_CarriesAllProperties()
     {
-        var e = new EmploymentContractCancelled(EventId, OccurredOnUtc, TheContractId);
+        var e = new EmploymentContractCancelled(_eventId, _occurredOnUtc, _theContractId);
 
-        e.EmploymentContractId.Should().Be(TheContractId);
+        e.EmploymentContractId.Should().Be(_theContractId);
     }
 
     [Fact]
@@ -309,13 +309,13 @@ public sealed class EmploymentDomainEventsTests
         var tenantId = Guid.NewGuid();
         var employmentId = Guid.NewGuid();
         var positionId = Guid.NewGuid();
-        var e = new EmploymentAssignmentCreated(EventId, OccurredOnUtc, TheAssignmentId, tenantId, employmentId, positionId, Today);
+        var e = new EmploymentAssignmentCreated(_eventId, _occurredOnUtc, _theAssignmentId, tenantId, employmentId, positionId, _today);
 
-        e.EmploymentAssignmentId.Should().Be(TheAssignmentId);
+        e.EmploymentAssignmentId.Should().Be(_theAssignmentId);
         e.TenantId.Should().Be(tenantId);
         e.EmploymentId.Should().Be(employmentId);
         e.PositionId.Should().Be(positionId);
-        e.EffectiveDate.Should().Be(Today);
+        e.EffectiveDate.Should().Be(_today);
     }
 
     [Fact]
@@ -325,13 +325,13 @@ public sealed class EmploymentDomainEventsTests
         var previousPositionId = Guid.NewGuid();
         var newPositionId = Guid.NewGuid();
         var e = new EmploymentAssignmentChanged(
-            EventId, OccurredOnUtc, TheAssignmentId, employmentId, previousPositionId, newPositionId, Today);
+            _eventId, _occurredOnUtc, _theAssignmentId, employmentId, previousPositionId, newPositionId, _today);
 
-        e.EmploymentAssignmentId.Should().Be(TheAssignmentId);
+        e.EmploymentAssignmentId.Should().Be(_theAssignmentId);
         e.EmploymentId.Should().Be(employmentId);
         e.PreviousPositionId.Should().Be(previousPositionId);
         e.NewPositionId.Should().Be(newPositionId);
-        e.EffectiveDate.Should().Be(Today);
+        e.EffectiveDate.Should().Be(_today);
     }
 
     [Fact]
@@ -340,12 +340,12 @@ public sealed class EmploymentDomainEventsTests
         var employmentId = Guid.NewGuid();
         var previousPositionId = Guid.NewGuid();
         var newPositionId = Guid.NewGuid();
-        var e = new EmploymentPromoted(EventId, OccurredOnUtc, employmentId, previousPositionId, newPositionId, Today);
+        var e = new EmploymentPromoted(_eventId, _occurredOnUtc, employmentId, previousPositionId, newPositionId, _today);
 
         e.EmploymentId.Should().Be(employmentId);
         e.PreviousPositionId.Should().Be(previousPositionId);
         e.NewPositionId.Should().Be(newPositionId);
-        e.EffectiveDate.Should().Be(Today);
+        e.EffectiveDate.Should().Be(_today);
     }
 
     [Fact]
@@ -354,12 +354,12 @@ public sealed class EmploymentDomainEventsTests
         var employmentId = Guid.NewGuid();
         var previousPositionId = Guid.NewGuid();
         var newPositionId = Guid.NewGuid();
-        var e = new EmploymentDemoted(EventId, OccurredOnUtc, employmentId, previousPositionId, newPositionId, Today);
+        var e = new EmploymentDemoted(_eventId, _occurredOnUtc, employmentId, previousPositionId, newPositionId, _today);
 
         e.EmploymentId.Should().Be(employmentId);
         e.PreviousPositionId.Should().Be(previousPositionId);
         e.NewPositionId.Should().Be(newPositionId);
-        e.EffectiveDate.Should().Be(Today);
+        e.EffectiveDate.Should().Be(_today);
     }
 
     [Fact]
@@ -368,12 +368,12 @@ public sealed class EmploymentDomainEventsTests
         var employmentId = Guid.NewGuid();
         var previousUnitId = Guid.NewGuid();
         var newUnitId = Guid.NewGuid();
-        var e = new EmploymentTransferred(EventId, OccurredOnUtc, employmentId, previousUnitId, newUnitId, Today);
+        var e = new EmploymentTransferred(_eventId, _occurredOnUtc, employmentId, previousUnitId, newUnitId, _today);
 
         e.EmploymentId.Should().Be(employmentId);
         e.PreviousOrganizationalUnitId.Should().Be(previousUnitId);
         e.NewOrganizationalUnitId.Should().Be(newUnitId);
-        e.EffectiveDate.Should().Be(Today);
+        e.EffectiveDate.Should().Be(_today);
     }
 
     [Fact]
@@ -382,9 +382,9 @@ public sealed class EmploymentDomainEventsTests
         var employmentId = Guid.NewGuid();
         var previousManagerId = Guid.NewGuid();
         var newManagerId = Guid.NewGuid();
-        var e = new ReportingManagerChanged(EventId, OccurredOnUtc, TheAssignmentId, employmentId, previousManagerId, newManagerId);
+        var e = new ReportingManagerChanged(_eventId, _occurredOnUtc, _theAssignmentId, employmentId, previousManagerId, newManagerId);
 
-        e.EmploymentAssignmentId.Should().Be(TheAssignmentId);
+        e.EmploymentAssignmentId.Should().Be(_theAssignmentId);
         e.EmploymentId.Should().Be(employmentId);
         e.PreviousReportingManagerEmploymentId.Should().Be(previousManagerId);
         e.NewReportingManagerEmploymentId.Should().Be(newManagerId);
@@ -394,10 +394,10 @@ public sealed class EmploymentDomainEventsTests
     public void EmploymentAssignmentEnded_CarriesAllProperties()
     {
         var employmentId = Guid.NewGuid();
-        var e = new EmploymentAssignmentEnded(EventId, OccurredOnUtc, TheAssignmentId, employmentId, Today);
+        var e = new EmploymentAssignmentEnded(_eventId, _occurredOnUtc, _theAssignmentId, employmentId, _today);
 
-        e.EmploymentAssignmentId.Should().Be(TheAssignmentId);
+        e.EmploymentAssignmentId.Should().Be(_theAssignmentId);
         e.EmploymentId.Should().Be(employmentId);
-        e.EffectiveDate.Should().Be(Today);
+        e.EffectiveDate.Should().Be(_today);
     }
 }

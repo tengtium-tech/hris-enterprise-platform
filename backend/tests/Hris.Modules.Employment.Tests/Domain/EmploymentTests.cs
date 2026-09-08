@@ -6,13 +6,13 @@ namespace Hris.Modules.Employment.Tests.Domain;
 
 public sealed class EmploymentTests
 {
-    private static readonly Guid TenantId = Guid.NewGuid();
+    private static readonly Guid _tenantId = Guid.NewGuid();
 
     [Fact]
     public void Create_WithValidData_Succeeds()
     {
         var result = Hris.Modules.Employment.Domain.Employment.Create(
-            new EmploymentId(Guid.NewGuid()), TenantId, Guid.NewGuid(), "EMP-000001", "Regular", "Rank-and-File", true,
+            new EmploymentId(Guid.NewGuid()), _tenantId, Guid.NewGuid(), "EMP-000001", "Regular", "Rank-and-File", true,
             null, null, true, false, TestEmployment.NowUtc);
 
         result.IsSuccess.Should().BeTrue();
@@ -25,7 +25,7 @@ public sealed class EmploymentTests
     public void Create_WithoutNumber_Fails()
     {
         var result = Hris.Modules.Employment.Domain.Employment.Create(
-            new EmploymentId(Guid.NewGuid()), TenantId, Guid.NewGuid(), null, "Regular", "Rank-and-File", true, null,
+            new EmploymentId(Guid.NewGuid()), _tenantId, Guid.NewGuid(), null, "Regular", "Rank-and-File", true, null,
             null, true, false, TestEmployment.NowUtc);
 
         result.IsFailure.Should().BeTrue();
@@ -36,7 +36,7 @@ public sealed class EmploymentTests
     public void Create_SecondaryWithoutConcurrentEmploymentEnabled_Fails()
     {
         var result = Hris.Modules.Employment.Domain.Employment.Create(
-            new EmploymentId(Guid.NewGuid()), TenantId, Guid.NewGuid(), "EMP-000002", "Consultant", "Rank-and-File",
+            new EmploymentId(Guid.NewGuid()), _tenantId, Guid.NewGuid(), "EMP-000002", "Consultant", "Rank-and-File",
             false, Guid.NewGuid(), null, false, false, TestEmployment.NowUtc);
 
         result.IsFailure.Should().BeTrue();
@@ -47,7 +47,7 @@ public sealed class EmploymentTests
     public void Create_PrimaryWithExistingPrimaryAndConcurrentDisabled_Fails()
     {
         var result = Hris.Modules.Employment.Domain.Employment.Create(
-            new EmploymentId(Guid.NewGuid()), TenantId, Guid.NewGuid(), "EMP-000003", "Regular", "Rank-and-File", true,
+            new EmploymentId(Guid.NewGuid()), _tenantId, Guid.NewGuid(), "EMP-000003", "Regular", "Rank-and-File", true,
             null, null, false, true, TestEmployment.NowUtc);
 
         result.IsFailure.Should().BeTrue();
@@ -57,7 +57,7 @@ public sealed class EmploymentTests
     [Fact]
     public void Activate_FromDraftWithValidContractAndAssignment_Succeeds()
     {
-        var employment = TestEmployment.Create(TenantId);
+        var employment = TestEmployment.Create(_tenantId);
 
         var result = employment.Activate(true, true, TestEmployment.NowUtc);
 
@@ -68,7 +68,7 @@ public sealed class EmploymentTests
     [Fact]
     public void Activate_WithoutValidContract_Fails()
     {
-        var employment = TestEmployment.Create(TenantId);
+        var employment = TestEmployment.Create(_tenantId);
 
         var result = employment.Activate(false, true, TestEmployment.NowUtc);
 
@@ -79,7 +79,7 @@ public sealed class EmploymentTests
     [Fact]
     public void Activate_WithoutValidAssignment_Fails()
     {
-        var employment = TestEmployment.Create(TenantId);
+        var employment = TestEmployment.Create(_tenantId);
 
         var result = employment.Activate(true, false, TestEmployment.NowUtc);
 
@@ -90,7 +90,7 @@ public sealed class EmploymentTests
     [Fact]
     public void Activate_WhenAlreadyActive_Fails()
     {
-        var employment = TestEmployment.CreateActive(TenantId);
+        var employment = TestEmployment.CreateActive(_tenantId);
 
         var result = employment.Activate(true, true, TestEmployment.NowUtc);
 
@@ -101,7 +101,7 @@ public sealed class EmploymentTests
     [Fact]
     public void ChangeEmploymentType_WhenActive_Succeeds()
     {
-        var employment = TestEmployment.CreateActive(TenantId);
+        var employment = TestEmployment.CreateActive(_tenantId);
 
         var result = employment.ChangeEmploymentType("Contractual", TestEmployment.NowUtc);
 
@@ -112,7 +112,7 @@ public sealed class EmploymentTests
     [Fact]
     public void ChangeEmploymentType_WhenSeparated_Fails()
     {
-        var employment = TestEmployment.CreateActive(TenantId);
+        var employment = TestEmployment.CreateActive(_tenantId);
         employment.Separate(SeparationType.Resigned, null, DateOnly.FromDateTime(TestEmployment.NowUtc.UtcDateTime),
             DateOnly.FromDateTime(TestEmployment.NowUtc.UtcDateTime), TestEmployment.NowUtc);
 
@@ -125,7 +125,7 @@ public sealed class EmploymentTests
     [Fact]
     public void ChangeEmploymentCategory_WhenActive_Succeeds()
     {
-        var employment = TestEmployment.CreateActive(TenantId);
+        var employment = TestEmployment.CreateActive(_tenantId);
 
         var result = employment.ChangeEmploymentCategory("Supervisory", TestEmployment.NowUtc);
 
@@ -136,7 +136,7 @@ public sealed class EmploymentTests
     [Fact]
     public void RecordCompensation_FirstRecord_Succeeds()
     {
-        var employment = TestEmployment.CreateActive(TenantId);
+        var employment = TestEmployment.CreateActive(_tenantId);
 
         var result = employment.RecordCompensation(
             50000m, "PHP", CompensationBasis.Monthly, DateOnly.FromDateTime(TestEmployment.NowUtc.UtcDateTime),
@@ -150,7 +150,7 @@ public sealed class EmploymentTests
     [Fact]
     public void RecordCompensation_SecondRecord_ClosesFirst()
     {
-        var employment = TestEmployment.CreateActive(TenantId);
+        var employment = TestEmployment.CreateActive(_tenantId);
         var startDate = DateOnly.FromDateTime(TestEmployment.NowUtc.UtcDateTime);
         employment.RecordCompensation(50000m, "PHP", CompensationBasis.Monthly, startDate, CompensationChangeSource.Hire, null, TestEmployment.NowUtc);
 
@@ -167,7 +167,7 @@ public sealed class EmploymentTests
     [Fact]
     public void RecordCompensation_WithNegativeAmount_Fails()
     {
-        var employment = TestEmployment.CreateActive(TenantId);
+        var employment = TestEmployment.CreateActive(_tenantId);
 
         var result = employment.RecordCompensation(
             -1m, "PHP", CompensationBasis.Monthly, DateOnly.FromDateTime(TestEmployment.NowUtc.UtcDateTime),
@@ -180,7 +180,7 @@ public sealed class EmploymentTests
     [Fact]
     public void StartProbation_WhenActive_Succeeds()
     {
-        var employment = TestEmployment.CreateActive(TenantId);
+        var employment = TestEmployment.CreateActive(_tenantId);
 
         var result = employment.StartProbation(DateOnly.FromDateTime(TestEmployment.NowUtc.UtcDateTime), 180, TestEmployment.NowUtc);
 
@@ -192,7 +192,7 @@ public sealed class EmploymentTests
     [Fact]
     public void StartProbation_WhenAlreadyStarted_Fails()
     {
-        var employment = TestEmployment.CreateActive(TenantId);
+        var employment = TestEmployment.CreateActive(_tenantId);
         employment.StartProbation(DateOnly.FromDateTime(TestEmployment.NowUtc.UtcDateTime), 180, TestEmployment.NowUtc);
 
         var result = employment.StartProbation(DateOnly.FromDateTime(TestEmployment.NowUtc.UtcDateTime), 180, TestEmployment.NowUtc);
@@ -204,7 +204,7 @@ public sealed class EmploymentTests
     [Fact]
     public void StartProbation_WhenDraft_Fails()
     {
-        var employment = TestEmployment.Create(TenantId);
+        var employment = TestEmployment.Create(_tenantId);
 
         var result = employment.StartProbation(DateOnly.FromDateTime(TestEmployment.NowUtc.UtcDateTime), 180, TestEmployment.NowUtc);
 
@@ -215,7 +215,7 @@ public sealed class EmploymentTests
     [Fact]
     public void ExtendProbation_WhenInProgress_Succeeds()
     {
-        var employment = TestEmployment.CreateActive(TenantId);
+        var employment = TestEmployment.CreateActive(_tenantId);
         var startDate = DateOnly.FromDateTime(TestEmployment.NowUtc.UtcDateTime);
         employment.StartProbation(startDate, 180, TestEmployment.NowUtc);
         var originalEvaluationDate = employment.ProbationRecords[0].ExpectedEvaluationDate;
@@ -230,7 +230,7 @@ public sealed class EmploymentTests
     [Fact]
     public void ExtendProbation_WithoutProbation_Fails()
     {
-        var employment = TestEmployment.CreateActive(TenantId);
+        var employment = TestEmployment.CreateActive(_tenantId);
 
         var result = employment.ExtendProbation(30, TestEmployment.NowUtc);
 
@@ -241,7 +241,7 @@ public sealed class EmploymentTests
     [Fact]
     public void ConfirmEmployment_WithProbationInProgress_Succeeds()
     {
-        var employment = TestEmployment.CreateActive(TenantId);
+        var employment = TestEmployment.CreateActive(_tenantId);
         employment.StartProbation(DateOnly.FromDateTime(TestEmployment.NowUtc.UtcDateTime), 180, TestEmployment.NowUtc);
 
         var result = employment.ConfirmEmployment("Regular", TestEmployment.NowUtc);
@@ -254,7 +254,7 @@ public sealed class EmploymentTests
     [Fact]
     public void ConfirmEmployment_WithoutProbation_Fails()
     {
-        var employment = TestEmployment.CreateActive(TenantId);
+        var employment = TestEmployment.CreateActive(_tenantId);
 
         var result = employment.ConfirmEmployment(null, TestEmployment.NowUtc);
 
@@ -265,7 +265,7 @@ public sealed class EmploymentTests
     [Fact]
     public void FailProbation_WithProbationInProgress_SeparatesEmployment()
     {
-        var employment = TestEmployment.CreateActive(TenantId);
+        var employment = TestEmployment.CreateActive(_tenantId);
         employment.StartProbation(DateOnly.FromDateTime(TestEmployment.NowUtc.UtcDateTime), 180, TestEmployment.NowUtc);
         var date = DateOnly.FromDateTime(TestEmployment.NowUtc.UtcDateTime);
 
@@ -281,7 +281,7 @@ public sealed class EmploymentTests
     [Fact]
     public void Suspend_WhenActive_Succeeds()
     {
-        var employment = TestEmployment.CreateActive(TenantId);
+        var employment = TestEmployment.CreateActive(_tenantId);
 
         var result = employment.Suspend("Under investigation", DateOnly.FromDateTime(TestEmployment.NowUtc.UtcDateTime), TestEmployment.NowUtc);
 
@@ -293,7 +293,7 @@ public sealed class EmploymentTests
     [Fact]
     public void Suspend_WhenAlreadySuspended_Fails()
     {
-        var employment = TestEmployment.CreateActive(TenantId);
+        var employment = TestEmployment.CreateActive(_tenantId);
         var date = DateOnly.FromDateTime(TestEmployment.NowUtc.UtcDateTime);
         employment.Suspend("Reason", date, TestEmployment.NowUtc);
 
@@ -306,7 +306,7 @@ public sealed class EmploymentTests
     [Fact]
     public void Reinstate_FromSuspended_Succeeds()
     {
-        var employment = TestEmployment.CreateActive(TenantId);
+        var employment = TestEmployment.CreateActive(_tenantId);
         var date = DateOnly.FromDateTime(TestEmployment.NowUtc.UtcDateTime);
         employment.Suspend("Reason", date, TestEmployment.NowUtc);
 
@@ -319,7 +319,7 @@ public sealed class EmploymentTests
     [Fact]
     public void Reinstate_WhenAlreadyActive_Fails()
     {
-        var employment = TestEmployment.CreateActive(TenantId);
+        var employment = TestEmployment.CreateActive(_tenantId);
 
         var result = employment.Reinstate(DateOnly.FromDateTime(TestEmployment.NowUtc.UtcDateTime), TestEmployment.NowUtc);
 
@@ -330,7 +330,7 @@ public sealed class EmploymentTests
     [Fact]
     public void Second_WhenActive_Succeeds()
     {
-        var employment = TestEmployment.CreateActive(TenantId);
+        var employment = TestEmployment.CreateActive(_tenantId);
 
         var result = employment.Second(DateOnly.FromDateTime(TestEmployment.NowUtc.UtcDateTime), TestEmployment.NowUtc);
 
@@ -341,7 +341,7 @@ public sealed class EmploymentTests
     [Fact]
     public void Separate_FromActive_Succeeds()
     {
-        var employment = TestEmployment.CreateActive(TenantId);
+        var employment = TestEmployment.CreateActive(_tenantId);
         var date = DateOnly.FromDateTime(TestEmployment.NowUtc.UtcDateTime);
 
         var result = employment.Separate(SeparationType.Resigned, "Better offer", date, date, TestEmployment.NowUtc);
@@ -354,7 +354,7 @@ public sealed class EmploymentTests
     [Fact]
     public void Separate_FromDraft_Fails()
     {
-        var employment = TestEmployment.Create(TenantId);
+        var employment = TestEmployment.Create(_tenantId);
         var date = DateOnly.FromDateTime(TestEmployment.NowUtc.UtcDateTime);
 
         var result = employment.Separate(SeparationType.Resigned, null, date, date, TestEmployment.NowUtc);
@@ -366,7 +366,7 @@ public sealed class EmploymentTests
     [Fact]
     public void Separate_WhenAlreadySeparated_Fails()
     {
-        var employment = TestEmployment.CreateActive(TenantId);
+        var employment = TestEmployment.CreateActive(_tenantId);
         var date = DateOnly.FromDateTime(TestEmployment.NowUtc.UtcDateTime);
         employment.Separate(SeparationType.Resigned, null, date, date, TestEmployment.NowUtc);
 
@@ -381,7 +381,7 @@ public sealed class EmploymentTests
     {
         var employeeId = Guid.NewGuid();
         var employment = Hris.Modules.Employment.Domain.Employment.Create(
-            new EmploymentId(Guid.NewGuid()), TenantId, employeeId, "EMP-000009", "Consultant", "Rank-and-File", false,
+            new EmploymentId(Guid.NewGuid()), _tenantId, employeeId, "EMP-000009", "Consultant", "Rank-and-File", false,
             Guid.NewGuid(), null, true, false, TestEmployment.NowUtc).Value;
         employment.Activate(true, true, TestEmployment.NowUtc);
         var date = DateOnly.FromDateTime(TestEmployment.NowUtc.UtcDateTime);
@@ -396,7 +396,7 @@ public sealed class EmploymentTests
     public void MarkPrimary_WhenSecondary_Succeeds()
     {
         var employment = Hris.Modules.Employment.Domain.Employment.Create(
-            new EmploymentId(Guid.NewGuid()), TenantId, Guid.NewGuid(), "EMP-000010", "Consultant", "Rank-and-File",
+            new EmploymentId(Guid.NewGuid()), _tenantId, Guid.NewGuid(), "EMP-000010", "Consultant", "Rank-and-File",
             false, Guid.NewGuid(), null, true, false, TestEmployment.NowUtc).Value;
 
         var result = employment.MarkPrimary(Guid.NewGuid(), TestEmployment.NowUtc);
@@ -408,7 +408,7 @@ public sealed class EmploymentTests
     [Fact]
     public void MarkPrimary_WhenAlreadyPrimary_Fails()
     {
-        var employment = TestEmployment.Create(TenantId);
+        var employment = TestEmployment.Create(_tenantId);
 
         var result = employment.MarkPrimary(Guid.NewGuid(), TestEmployment.NowUtc);
 
@@ -419,7 +419,7 @@ public sealed class EmploymentTests
     [Fact]
     public void MarkSecondary_SetsIsPrimaryFalse()
     {
-        var employment = TestEmployment.Create(TenantId);
+        var employment = TestEmployment.Create(_tenantId);
 
         employment.MarkSecondary();
 
@@ -430,7 +430,7 @@ public sealed class EmploymentTests
     public void Create_WithInvalidEmploymentType_Fails()
     {
         var result = Hris.Modules.Employment.Domain.Employment.Create(
-            new EmploymentId(Guid.NewGuid()), TenantId, Guid.NewGuid(), "EMP-000020", new string('A', 101),
+            new EmploymentId(Guid.NewGuid()), _tenantId, Guid.NewGuid(), "EMP-000020", new string('A', 101),
             "Rank-and-File", true, null, null, true, false, TestEmployment.NowUtc);
 
         result.IsFailure.Should().BeTrue();
@@ -441,7 +441,7 @@ public sealed class EmploymentTests
     public void Create_WithInvalidCategory_Fails()
     {
         var result = Hris.Modules.Employment.Domain.Employment.Create(
-            new EmploymentId(Guid.NewGuid()), TenantId, Guid.NewGuid(), "EMP-000021", "Regular", null, true, null,
+            new EmploymentId(Guid.NewGuid()), _tenantId, Guid.NewGuid(), "EMP-000021", "Regular", null, true, null,
             null, true, false, TestEmployment.NowUtc);
 
         result.IsFailure.Should().BeTrue();
@@ -454,7 +454,7 @@ public sealed class EmploymentTests
         var priorEmploymentId = Guid.NewGuid();
 
         var result = Hris.Modules.Employment.Domain.Employment.Create(
-            new EmploymentId(Guid.NewGuid()), TenantId, Guid.NewGuid(), "EMP-000022", "Regular", "Rank-and-File", true,
+            new EmploymentId(Guid.NewGuid()), _tenantId, Guid.NewGuid(), "EMP-000022", "Regular", "Rank-and-File", true,
             null, priorEmploymentId, true, false, TestEmployment.NowUtc);
 
         result.IsSuccess.Should().BeTrue();
@@ -465,7 +465,7 @@ public sealed class EmploymentTests
     [Fact]
     public void ChangeEmploymentType_WithInvalidType_Fails()
     {
-        var employment = TestEmployment.CreateActive(TenantId);
+        var employment = TestEmployment.CreateActive(_tenantId);
 
         var result = employment.ChangeEmploymentType(new string('A', 101), TestEmployment.NowUtc);
 
@@ -476,7 +476,7 @@ public sealed class EmploymentTests
     [Fact]
     public void ChangeEmploymentCategory_WhenSeparated_Fails()
     {
-        var employment = TestEmployment.CreateActive(TenantId);
+        var employment = TestEmployment.CreateActive(_tenantId);
         var date = DateOnly.FromDateTime(TestEmployment.NowUtc.UtcDateTime);
         employment.Separate(SeparationType.Resigned, null, date, date, TestEmployment.NowUtc);
 
@@ -489,7 +489,7 @@ public sealed class EmploymentTests
     [Fact]
     public void ChangeEmploymentCategory_WithInvalidCategory_Fails()
     {
-        var employment = TestEmployment.CreateActive(TenantId);
+        var employment = TestEmployment.CreateActive(_tenantId);
 
         var result = employment.ChangeEmploymentCategory(new string('A', 101), TestEmployment.NowUtc);
 
@@ -500,7 +500,7 @@ public sealed class EmploymentTests
     [Fact]
     public void RecordCompensation_WhenSeparated_Fails()
     {
-        var employment = TestEmployment.CreateActive(TenantId);
+        var employment = TestEmployment.CreateActive(_tenantId);
         var date = DateOnly.FromDateTime(TestEmployment.NowUtc.UtcDateTime);
         employment.Separate(SeparationType.Resigned, null, date, date, TestEmployment.NowUtc);
 
@@ -514,7 +514,7 @@ public sealed class EmploymentTests
     [Fact]
     public void StartProbation_WithInvalidDuration_Fails()
     {
-        var employment = TestEmployment.CreateActive(TenantId);
+        var employment = TestEmployment.CreateActive(_tenantId);
 
         var result = employment.StartProbation(DateOnly.FromDateTime(TestEmployment.NowUtc.UtcDateTime), 0, TestEmployment.NowUtc);
 
@@ -525,7 +525,7 @@ public sealed class EmploymentTests
     [Fact]
     public void ExtendProbation_WithInvalidDuration_Fails()
     {
-        var employment = TestEmployment.CreateActive(TenantId);
+        var employment = TestEmployment.CreateActive(_tenantId);
         employment.StartProbation(DateOnly.FromDateTime(TestEmployment.NowUtc.UtcDateTime), 180, TestEmployment.NowUtc);
 
         var result = employment.ExtendProbation(0, TestEmployment.NowUtc);
@@ -537,7 +537,7 @@ public sealed class EmploymentTests
     [Fact]
     public void ConfirmEmployment_WithInvalidNewEmploymentType_Fails()
     {
-        var employment = TestEmployment.CreateActive(TenantId);
+        var employment = TestEmployment.CreateActive(_tenantId);
         employment.StartProbation(DateOnly.FromDateTime(TestEmployment.NowUtc.UtcDateTime), 180, TestEmployment.NowUtc);
 
         var result = employment.ConfirmEmployment(new string('A', 101), TestEmployment.NowUtc);
@@ -549,7 +549,7 @@ public sealed class EmploymentTests
     [Fact]
     public void FailProbation_WithoutProbation_Fails()
     {
-        var employment = TestEmployment.CreateActive(TenantId);
+        var employment = TestEmployment.CreateActive(_tenantId);
         var date = DateOnly.FromDateTime(TestEmployment.NowUtc.UtcDateTime);
 
         var result = employment.FailProbation(date, date, TestEmployment.NowUtc);
@@ -561,7 +561,7 @@ public sealed class EmploymentTests
     [Fact]
     public void Suspend_WhenDraft_Fails()
     {
-        var employment = TestEmployment.Create(TenantId);
+        var employment = TestEmployment.Create(_tenantId);
 
         var result = employment.Suspend("Reason", DateOnly.FromDateTime(TestEmployment.NowUtc.UtcDateTime), TestEmployment.NowUtc);
 
@@ -572,7 +572,7 @@ public sealed class EmploymentTests
     [Fact]
     public void Suspend_WithNullReason_NormalizesToEmpty()
     {
-        var employment = TestEmployment.CreateActive(TenantId);
+        var employment = TestEmployment.CreateActive(_tenantId);
 
         var result = employment.Suspend(null, DateOnly.FromDateTime(TestEmployment.NowUtc.UtcDateTime), TestEmployment.NowUtc);
 
@@ -583,7 +583,7 @@ public sealed class EmploymentTests
     [Fact]
     public void Reinstate_WhenDraft_Fails()
     {
-        var employment = TestEmployment.Create(TenantId);
+        var employment = TestEmployment.Create(_tenantId);
 
         var result = employment.Reinstate(DateOnly.FromDateTime(TestEmployment.NowUtc.UtcDateTime), TestEmployment.NowUtc);
 
@@ -594,7 +594,7 @@ public sealed class EmploymentTests
     [Fact]
     public void Second_WhenDraft_Fails()
     {
-        var employment = TestEmployment.Create(TenantId);
+        var employment = TestEmployment.Create(_tenantId);
 
         var result = employment.Second(DateOnly.FromDateTime(TestEmployment.NowUtc.UtcDateTime), TestEmployment.NowUtc);
 
@@ -605,7 +605,7 @@ public sealed class EmploymentTests
     [Fact]
     public void Second_WhenAlreadySeconded_Fails()
     {
-        var employment = TestEmployment.CreateActive(TenantId);
+        var employment = TestEmployment.CreateActive(_tenantId);
         var date = DateOnly.FromDateTime(TestEmployment.NowUtc.UtcDateTime);
         employment.Second(date, TestEmployment.NowUtc);
 
@@ -618,7 +618,7 @@ public sealed class EmploymentTests
     [Fact]
     public void Separate_WithInvalidTerminationReason_Fails()
     {
-        var employment = TestEmployment.CreateActive(TenantId);
+        var employment = TestEmployment.CreateActive(_tenantId);
         var date = DateOnly.FromDateTime(TestEmployment.NowUtc.UtcDateTime);
 
         var result = employment.Separate(SeparationType.Terminated, new string('A', 501), date, date, TestEmployment.NowUtc);
