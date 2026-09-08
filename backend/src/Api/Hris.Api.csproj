@@ -54,6 +54,8 @@
     <ProjectReference Include="..\Modules\Hris.Modules.Employment\Hris.Modules.Employment.csproj" />
     <!-- Phase 2 (Core HR) Sprint 4, last of Phase 2's four Sprints. -->
     <ProjectReference Include="..\Modules\Hris.Modules.Employee\Hris.Modules.Employee.csproj" />
+    <!-- Phase 3 (Workforce Management) Sprint 1, first module of Phase 3. -->
+    <ProjectReference Include="..\Modules\Hris.Modules.Administration\Hris.Modules.Administration.csproj" />
   </ItemGroup>
 
   <ItemGroup>

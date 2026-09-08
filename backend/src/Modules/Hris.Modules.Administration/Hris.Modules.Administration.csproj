@@ -1,0 +1,59 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    Hris.Modules.Administration
+    Phase 3 (Workforce Management), Sprint 1, per IMPLEMENTATION-PLAN.md
+    ("A tenant cannot be provisioned, users cannot be created, and roles cannot be
+    assigned without it. Everything downstream assumes it exists."). First module of
+    Phase 3, and first module overall since Phase 2 (Core HR) closed.
+
+    Source specification: docs/04-modules/administration/. Three Aggregate Roots
+    this Sprint: UserAccount (a tenant's platform-user record, its type, its
+    optional employee linkage, and the roles it holds), TenantRole (a tenant-
+    composed role built additively from existing platform permissions), and
+    AdministrativeDelegation (a time-bounded transfer of authority between two
+    accounts). docs/04-modules/administration/domain/aggregates.md also documents
+    four further Aggregate Roots, TenantConfiguration, IntegrationCredential,
+    TenantExtension, and ApiCredential, explicitly stated in that same document as
+    later additions "to close a genuine gap docs/07-ui-ux/screen-catalog/system-
+    administrator.md found", not part of the module's original scope. All four are
+    deliberately deferred this Sprint: they are independent administrative
+    capabilities (tenant branding/Process Pack entitlement, external-system
+    credentials, installed extensions, inbound API credentials) rather than
+    prerequisites for "users exist and hold roles", the actual reason this module is
+    first in Phase 3, see STATUS.md's own "Known open items" for the tracked gap,
+    matching the precedent every Phase 2 module set for its own deferred cross-
+    cutting concerns.
+
+    Role Assignment lives as a child entity inside UserAccount, and Permission
+    Grant lives as a child entity inside TenantRole, both for the same
+    consistency-boundary reason: separation of duties (AR-003) must validate a
+    user's complete role set atomically, which requires the assignment set to be
+    inside the same aggregate as the account, not a separate root.
+
+    This module's own primary Aggregate is named UserAccount, not Administration.
+    Unlike Organization, Position, Employment, and Employee, none of this module's
+    three Aggregate Roots shares its own name with the module's own root namespace
+    segment ("Administration"), so the CS0118 name-resolution collision those four
+    modules each hit does not recur here.
+  -->
+
+  <PropertyGroup>
+    <RootNamespace>Hris.Modules.Administration</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MediatR" Version="12.4.1" />
+    <PackageReference Include="FluentValidation" Version="11.11.0" />
+    <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.11.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.4" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.4" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\BuildingBlocks\Hris.SharedKernel\Hris.SharedKernel.csproj" />
+    <ProjectReference Include="..\..\BuildingBlocks\Hris.Application\Hris.Application.csproj" />
+    <ProjectReference Include="..\..\BuildingBlocks\Hris.Infrastructure\Hris.Infrastructure.csproj" />
+  </ItemGroup>
+
+</Project>
