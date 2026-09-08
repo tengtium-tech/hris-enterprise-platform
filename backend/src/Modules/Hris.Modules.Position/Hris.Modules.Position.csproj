@@ -1,0 +1,47 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    Hris.Modules.Position
+    Phase 2 (Core HR), Sprint 2, per IMPLEMENTATION-PLAN.md. Second business module,
+    following the physical layout Sprint 1's Organization module already established
+    and confirmed with the project owner: one project per module, Domain/Application/
+    Infrastructure as folders inside, Application grouped by technical type
+    (Commands/, Queries/, Dtos/, Mapping/, Validators/). Neither choice is re-derived
+    here; see Hris.Modules.Organization.csproj's own remarks for the full reasoning.
+
+    Source specification: docs/04-modules/position/. Four Aggregate Roots per
+    domain/aggregates.md's own Aggregate Overview: Position, JobFamily,
+    JobClassification, JobGrade. Position references Organization, Department, and
+    every other organizational unit by plain Guid only, per this platform's own
+    standing "reference by identifier, never by ProjectReference" rule, confirmed
+    again here since Position sits directly downstream of Organization
+    (IMPLEMENTATION-PLAN.md's own Phase 2 Sprint order: "position before employment
+    because an employment is assigned to a position", and "organization first because
+    positions belong to organizational units").
+
+    Like Organization before it, this module's own primary Aggregate shares its name
+    with the module's own root namespace segment ("Position"), which reproduces the
+    exact CS0118 name-resolution collision found and documented while building
+    Organization, see Domain/Position.cs's own remarks and the CA1724 suppression
+    on that class.
+  -->
+
+  <PropertyGroup>
+    <RootNamespace>Hris.Modules.Position</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MediatR" Version="12.4.1" />
+    <PackageReference Include="FluentValidation" Version="11.11.0" />
+    <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.11.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.4" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.4" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\BuildingBlocks\Hris.SharedKernel\Hris.SharedKernel.csproj" />
+    <ProjectReference Include="..\..\BuildingBlocks\Hris.Application\Hris.Application.csproj" />
+    <ProjectReference Include="..\..\BuildingBlocks\Hris.Infrastructure\Hris.Infrastructure.csproj" />
+  </ItemGroup>
+
+</Project>
