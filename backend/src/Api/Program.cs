@@ -16,6 +16,7 @@ using Hris.Foundation.FileStorage;
 using Hris.Foundation.Identity;
 using Hris.Foundation.Integration;
 using Hris.Modules.Organization;
+using Hris.Modules.Position;
 using Hris.Foundation.JobProcessing;
 using Hris.Foundation.Localization;
 using Hris.Foundation.Logging;
@@ -257,6 +258,15 @@ builder.Services.AddIntegrationFramework();
 // this platform's own standing "reference by identifier, never by ProjectReference"
 // rule, confirmed for this module in its own DependencyInjection.cs.
 builder.Services.AddOrganizationModule();
+// AddPositionModule() is Phase 2 (Core HR) Sprint 2 -- the platform's second
+// business module, following Organization (Sprint 1) directly above. Owns real EF
+// Core persistence (Position, JobFamily, JobClassification, JobGrade) so it must run
+// before AddHrisInfrastructure() for the same PersistenceAssemblyRegistry-ordering
+// reason every persisted framework/module above it is registered in this order. No
+// compile-time dependency on Organization or any Phase 1 framework -- this
+// platform's own standing "reference by identifier, never by ProjectReference" rule,
+// confirmed for this module in its own DependencyInjection.cs.
+builder.Services.AddPositionModule();
 builder.Services.AddHrisInfrastructure(builder.Configuration);
 
 // naming-conventions.md aside: this is a "readiness" check on the connection, not a
