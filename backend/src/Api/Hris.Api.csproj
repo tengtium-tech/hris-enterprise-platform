@@ -51,6 +51,7 @@
     <ProjectReference Include="..\Modules\Hris.Modules.Organization\Hris.Modules.Organization.csproj" />
     <!-- Phase 2 (Core HR) Sprint 2. -->
     <ProjectReference Include="..\Modules\Hris.Modules.Position\Hris.Modules.Position.csproj" />
+    <ProjectReference Include="..\Modules\Hris.Modules.Employment\Hris.Modules.Employment.csproj" />
   </ItemGroup>
 
   <ItemGroup>

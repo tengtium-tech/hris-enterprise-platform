@@ -1,0 +1,52 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    Hris.Modules.Employment
+    Phase 2 (Core HR), Sprint 3, per IMPLEMENTATION-PLAN.md. Third business module,
+    following the physical layout Sprint 1's Organization module established and
+    Sprint 2's Position module confirmed without re-asking: one project per module,
+    Domain/Application/Infrastructure as folders inside, Application grouped by
+    technical type (Commands/, Queries/, Dtos/, Mapping/, Validators/).
+
+    Source specification: docs/04-modules/employment/. Three Aggregate Roots per
+    domain/aggregates.md's own Aggregate Overview and ADR-0008's own canonical
+    workforce domain model: Employment (the relationship), EmploymentContract (the
+    legal artifact, separate because one employment may run through several
+    successive contracts), and EmploymentAssignment (organizational placement).
+    ADR-0008's own diagram names the third layer "Assignment" with identity
+    "AssignmentId" as architectural shorthand; this module's own three domain
+    documents are internally consistent on the fuller "EmploymentAssignment" form
+    used throughout this project's own code,see EmploymentAssignmentId.cs's own
+    remarks.
+
+    Employment, EmploymentContract, and EmploymentAssignment reference Organization,
+    Position, and Employee module data by plain Guid only, per this platform's own
+    standing "reference by identifier, never by ProjectReference" rule,the
+    Employee module does not exist in code yet (Phase 2 Sprint 4 next), which this
+    module accommodates by never taking a compile-time dependency on it.
+
+    Like Organization and Position before it, this module's own primary Aggregate
+    shares its name with the module's own root namespace segment ("Employment"),
+    reproducing the same CS0118 name-resolution collision,see Domain/Employment.cs's
+    own remarks and the CA1724 suppression on that class.
+  -->
+
+  <PropertyGroup>
+    <RootNamespace>Hris.Modules.Employment</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MediatR" Version="12.4.1" />
+    <PackageReference Include="FluentValidation" Version="11.11.0" />
+    <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.11.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.4" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.4" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\BuildingBlocks\Hris.SharedKernel\Hris.SharedKernel.csproj" />
+    <ProjectReference Include="..\..\BuildingBlocks\Hris.Application\Hris.Application.csproj" />
+    <ProjectReference Include="..\..\BuildingBlocks\Hris.Infrastructure\Hris.Infrastructure.csproj" />
+  </ItemGroup>
+
+</Project>
