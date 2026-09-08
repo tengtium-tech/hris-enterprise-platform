@@ -36,4 +36,9 @@ public static class SharedKernelErrors
         "SharedKernel.MoneyCurrencyMismatch",
         "Money values in different currencies cannot be combined directly.",
         ErrorCategory.Validation);
+
+    public static readonly Error DateRangeEndBeforeStart = new(
+        "SharedKernel.DateRangeEndBeforeStart",
+        "A date range's end date must not precede its start date.",
+        ErrorCategory.Validation);
 }

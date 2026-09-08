@@ -15,6 +15,7 @@ using Hris.Foundation.Extension;
 using Hris.Foundation.FileStorage;
 using Hris.Foundation.Identity;
 using Hris.Foundation.Integration;
+using Hris.Modules.Administration;
 using Hris.Modules.Employee;
 using Hris.Modules.Employment;
 using Hris.Modules.Organization;
@@ -291,6 +292,16 @@ builder.Services.AddEmploymentModule();
 // ProjectReference" rule, confirmed for this module in its own
 // DependencyInjection.cs.
 builder.Services.AddEmployeeModule();
+// AddAdministrationModule() is Phase 3 (Workforce Management) Sprint 1 -- the
+// platform's first Phase 3 module, and first module overall since Phase 2 (Core
+// HR) closed with Employee above. Owns real EF Core persistence (UserAccount,
+// TenantRole, AdministrativeDelegation) so it must run before
+// AddHrisInfrastructure() for the same PersistenceAssemblyRegistry-ordering
+// reason every persisted framework/module above it is registered in this order.
+// No compile-time dependency on any Phase 2 module or Phase 1 framework -- this
+// platform's own standing "reference by identifier, never by ProjectReference"
+// rule, confirmed for this module in its own DependencyInjection.cs.
+builder.Services.AddAdministrationModule();
 builder.Services.AddHrisInfrastructure(builder.Configuration);
 
 // naming-conventions.md aside: this is a "readiness" check on the connection, not a
