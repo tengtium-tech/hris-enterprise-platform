@@ -15,6 +15,7 @@ using Hris.Foundation.Extension;
 using Hris.Foundation.FileStorage;
 using Hris.Foundation.Identity;
 using Hris.Foundation.Integration;
+using Hris.Modules.Employee;
 using Hris.Modules.Employment;
 using Hris.Modules.Organization;
 using Hris.Modules.Position;
@@ -278,6 +279,18 @@ builder.Services.AddPositionModule();
 // either -- this platform's own standing "reference by identifier, never by
 // ProjectReference" rule, confirmed for this module in its own DependencyInjection.cs.
 builder.Services.AddEmploymentModule();
+// AddEmployeeModule() is Phase 2 (Core HR) Sprint 4 -- the platform's fourth and
+// last Core HR business module, following Organization (Sprint 1), Position
+// (Sprint 2), and Employment (Sprint 3) above -- "employee last of the four
+// because it references employment" per IMPLEMENTATION-PLAN.md. Owns real EF Core
+// persistence (Employee, EmployeeHistory) so it must run before
+// AddHrisInfrastructure() for the same PersistenceAssemblyRegistry-ordering reason
+// every persisted framework/module above it is registered in this order. No
+// compile-time dependency on Organization, Position, Employment, or any Phase 1
+// framework -- this platform's own standing "reference by identifier, never by
+// ProjectReference" rule, confirmed for this module in its own
+// DependencyInjection.cs.
+builder.Services.AddEmployeeModule();
 builder.Services.AddHrisInfrastructure(builder.Configuration);
 
 // naming-conventions.md aside: this is a "readiness" check on the connection, not a
