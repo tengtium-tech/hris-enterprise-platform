@@ -1,0 +1,53 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    Hris.Modules.Employee
+    Phase 2 (Core HR), Sprint 4, per IMPLEMENTATION-PLAN.md ("employee last of the
+    four because it references employment"). Fourth business module, following the
+    physical layout Sprint 1 (Organization) established and Sprints 2-3 (Position,
+    Employment) confirmed without re-asking: one project per module, Domain/
+    Application/Infrastructure as folders inside, Application grouped by technical
+    type (Commands/, Queries/, Dtos/, Mapping/, Validators/).
+
+    Source specification: docs/04-modules/employee/. Two Aggregate Roots this
+    Sprint: Employee (the primary Aggregate Root, person-level identity, contact,
+    government, banking, emergency-contact, and family-member information, plus
+    Lifecycle Stage) and EmployeeHistory (a simple append-only record of Employee-
+    owned changes). Per ADR-0008, Employee owns none of Employment Type, Employment
+    Lifecycle, Operational Status, organizational placement, or position, those
+    are owned by the Employment module's own Employment and EmploymentAssignment
+    Aggregate Roots, referenced only by plain Guid, never by a compile-time
+    ProjectReference. docs/04-modules/employee/domain/aggregates.md also documents
+    EmployeeDocument, EmployeeSkill, and EmployeeQualification as further Aggregate
+    Roots; all three are deliberately deferred this Sprint (EmployeeDocument needs a
+    real Document Management Framework integration design; Skill and Qualification
+    are supplementary enrichment data, not core to the workforce relationship),
+    see STATUS.md's own "Known open items" for the tracked gap, matching the
+    precedent Position and Employment set for their own deferred cross-cutting
+    concerns.
+
+    Like Organization, Position, and Employment before it, this module's own
+    primary Aggregate shares its name with the module's own root namespace segment
+    ("Employee"), reproducing the same CS0118 name-resolution collision, see
+    Domain/Employee.cs's own remarks and the CA1724 suppression on that class.
+  -->
+
+  <PropertyGroup>
+    <RootNamespace>Hris.Modules.Employee</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MediatR" Version="12.4.1" />
+    <PackageReference Include="FluentValidation" Version="11.11.0" />
+    <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.11.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.4" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.4" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\BuildingBlocks\Hris.SharedKernel\Hris.SharedKernel.csproj" />
+    <ProjectReference Include="..\..\BuildingBlocks\Hris.Application\Hris.Application.csproj" />
+    <ProjectReference Include="..\..\BuildingBlocks\Hris.Infrastructure\Hris.Infrastructure.csproj" />
+  </ItemGroup>
+
+</Project>
