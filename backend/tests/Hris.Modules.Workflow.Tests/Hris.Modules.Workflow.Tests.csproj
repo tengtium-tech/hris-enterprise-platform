@@ -1,0 +1,52 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    Hris.Modules.Workflow.Tests
+    Phase 3 (Workforce Management) Sprint 2, per IMPLEMENTATION-PLAN.md.
+
+    docs/09-testing/unit-and-integration-testing.md Section 2: unit tests cover the
+    Domain layer, constructing aggregates directly with no infrastructure, the
+    identical scope every prior module's own test project already establishes. One
+    exception: Infrastructure/Persistence/ builds a real HrisDbContext against a
+    fake (never-connected) Npgsql connection string purely to force EF Core's own
+    model validation for this module's three Aggregate Roots and their owned
+    navigations, the same Docker-free technique that caught real EF Core modeling
+    bugs while building Organization and Administration.
+
+    CTR-WFL-002 gets deliberately heavy coverage here. Self-approval prevention is
+    enforced in three separate places (structurally in ApproverResolutionRule, at
+    publication in WorkflowDefinition, and dynamically in ApproverResolution), and a
+    hole in any one of them reintroduces the failure the other two exist to prevent.
+
+    Workflow is not one of NFR-MT-001's three named 95%-floor areas (payroll,
+    statutory calculation, authorization). This project targets the platform's own
+    general 80% floor, built from day one per this project's own Coding Phase
+    traceability rule.
+  -->
+
+  <PropertyGroup>
+    <RootNamespace>Hris.Modules.Workflow.Tests</RootNamespace>
+    <IsPackable>false</IsPackable>
+
+    <!-- CA1707 suppressed in this project only, the identical precedent every other
+         test project in this solution states for itself: descriptive
+         underscore-separated test names (Rule_Condition) are this project's own
+         deliberate naming convention, not a defect. -->
+    <NoWarn>$(NoWarn);CA1707</NoWarn>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.11.1" />
+    <PackageReference Include="xunit" Version="2.9.0" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.8.2" />
+    <PackageReference Include="NSubstitute" Version="5.1.0" />
+    <PackageReference Include="FluentAssertions" Version="6.12.0" />
+    <PackageReference Include="coverlet.msbuild" Version="6.0.4" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\Modules\Hris.Modules.Workflow\Hris.Modules.Workflow.csproj" />
+    <ProjectReference Include="..\..\src\BuildingBlocks\Hris.Infrastructure\Hris.Infrastructure.csproj" />
+  </ItemGroup>
+
+</Project>

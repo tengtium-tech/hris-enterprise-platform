@@ -56,6 +56,7 @@
     <ProjectReference Include="..\Modules\Hris.Modules.Employee\Hris.Modules.Employee.csproj" />
     <!-- Phase 3 (Workforce Management) Sprint 1, first module of Phase 3. -->
     <ProjectReference Include="..\Modules\Hris.Modules.Administration\Hris.Modules.Administration.csproj" />
+    <ProjectReference Include="..\Modules\Hris.Modules.Workflow\Hris.Modules.Workflow.csproj" />
   </ItemGroup>
 
   <ItemGroup>
