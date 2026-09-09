@@ -16,6 +16,7 @@ using Hris.Foundation.FileStorage;
 using Hris.Foundation.Identity;
 using Hris.Foundation.Integration;
 using Hris.Modules.Administration;
+using Hris.Modules.Workflow;
 using Hris.Modules.Employee;
 using Hris.Modules.Employment;
 using Hris.Modules.Organization;
@@ -302,6 +303,17 @@ builder.Services.AddEmployeeModule();
 // platform's own standing "reference by identifier, never by ProjectReference"
 // rule, confirmed for this module in its own DependencyInjection.cs.
 builder.Services.AddAdministrationModule();
+// AddWorkflowModule() is Phase 3 (Workforce Management) Sprint 2. It owns the
+// business semantics of approval -- which processes require it, who approves, in
+// what order -- and is deliberately NOT the Workflow Engine framework registered
+// further above, which executes what this module defines. Owns real EF Core
+// persistence (WorkflowDefinition and its owned steps, ApprovalPolicy,
+// ApprovalDelegation) so it must run before AddHrisInfrastructure() for the same
+// PersistenceAssemblyRegistry-ordering reason every persisted framework/module
+// above it is registered in this order. No compile-time dependency on the Workflow
+// Engine or on any sibling module, per this platform's own standing "reference by
+// identifier, never by ProjectReference" rule.
+builder.Services.AddWorkflowModule();
 builder.Services.AddHrisInfrastructure(builder.Configuration);
 
 // naming-conventions.md aside: this is a "readiness" check on the connection, not a

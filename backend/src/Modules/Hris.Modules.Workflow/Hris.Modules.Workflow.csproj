@@ -1,0 +1,61 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    Hris.Modules.Workflow
+    Phase 3 (Workforce Management), Sprint 2, per IMPLEMENTATION-PLAN.md
+    ("Both attendance correction and leave application require approval routing.
+    Building either before workflow means hardcoding approvals and revisiting them
+    later.").
+
+    Source specification: docs/04-modules/workflow/.
+
+    This module is NOT the Workflow Engine. Hris.Foundation.WorkflowEngine (Phase 1,
+    Sprint 5) executes running instances: task creation, assignment, completion,
+    escalation timers firing, the SLA clock, retry, and dead-lettering. This module
+    owns the business semantics those mechanics operate on: which processes require
+    approval, who approves, in what order, what the escalation policy is, and how
+    long an SLA allows. IMPLEMENTATION-PLAN.md's own Phase 3 Epic table flags the
+    confusion explicitly ("do not confuse with Phase 1's Workflow Engine"), and
+    workflow/README.md's own boundary table is the authority on the split. The
+    parallel it draws: administration records who holds what authority, the
+    Authorization Framework evaluates decisions from it.
+
+    Three Aggregate Roots, exactly as domain/aggregates.md states with no scoping
+    ambiguity: WorkflowDefinition (a tenant-authored process, its ordered steps as
+    child entities, and its publication lifecycle), ApprovalPolicy (tenant-level
+    approval governance, one per tenant), and ApprovalDelegation (a time-bounded
+    transfer of approval authority between two users). WorkflowStep is a child
+    entity of WorkflowDefinition, never its own root, because publication validates
+    the step graph as a whole; a separately persistable step would let a valid
+    published definition be edited into an invalid one with nothing checking.
+
+    Workflow instances and approval tasks are deliberately absent, per that same
+    document: they change on the engine's schedule rather than the tenant's, and a
+    copy of them here would be a lagging second record of state the engine already
+    owns authoritatively.
+
+    This module's own root namespace segment is "Workflow", and none of its three
+    Aggregate Roots is named Workflow, so the CS0118 name-resolution collision
+    Organization, Position, Employment, and Employee each hit does not recur here,
+    the same as Administration before it.
+  -->
+
+  <PropertyGroup>
+    <RootNamespace>Hris.Modules.Workflow</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MediatR" Version="12.4.1" />
+    <PackageReference Include="FluentValidation" Version="11.11.0" />
+    <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.11.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.4" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.4" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\BuildingBlocks\Hris.SharedKernel\Hris.SharedKernel.csproj" />
+    <ProjectReference Include="..\..\BuildingBlocks\Hris.Application\Hris.Application.csproj" />
+    <ProjectReference Include="..\..\BuildingBlocks\Hris.Infrastructure\Hris.Infrastructure.csproj" />
+  </ItemGroup>
+
+</Project>
