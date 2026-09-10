@@ -16,6 +16,7 @@ using Hris.Foundation.FileStorage;
 using Hris.Foundation.Identity;
 using Hris.Foundation.Integration;
 using Hris.Modules.Administration;
+using Hris.Modules.Timekeeping;
 using Hris.Modules.Workflow;
 using Hris.Modules.Employee;
 using Hris.Modules.Employment;
@@ -314,6 +315,17 @@ builder.Services.AddAdministrationModule();
 // Engine or on any sibling module, per this platform's own standing "reference by
 // identifier, never by ProjectReference" rule.
 builder.Services.AddWorkflowModule();
+// AddTimekeepingModule() is Phase 3 (Workforce Management) Sprint 3. It owns the
+// rules that define expected work -- schedules, shifts, shift assignments, holiday
+// calendars -- and deliberately nothing about what actually happened on any given
+// day, which is the attendance module's job in Sprint 4. Owns real EF Core
+// persistence (WorkSchedule with owned assignments, WorkShift, ShiftAssignment,
+// HolidayCalendar with owned holidays) so it must run before AddHrisInfrastructure()
+// for the same PersistenceAssemblyRegistry-ordering reason every persisted
+// framework/module above it is registered in this order. Deliberately does not
+// consume Hris.Foundation.Scheduling, which is unrelated cron/job execution that
+// happens to share the word "schedule".
+builder.Services.AddTimekeepingModule();
 builder.Services.AddHrisInfrastructure(builder.Configuration);
 
 // naming-conventions.md aside: this is a "readiness" check on the connection, not a
