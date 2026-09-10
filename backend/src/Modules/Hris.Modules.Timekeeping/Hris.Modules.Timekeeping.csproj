@@ -1,0 +1,71 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    Hris.Modules.Timekeeping
+    Phase 3 (Workforce Management), Sprint 3, per IMPLEMENTATION-PLAN.md
+    ("This ordering is easy to get backwards... Attendance records are evaluated
+    against those rules. Building attendance first means having nothing to evaluate
+    against.").
+
+    Source specification: docs/04-modules/timekeeping/.
+
+    This module owns the rules that define expected work, and deliberately owns
+    nothing about what actually happened on any given day. Clock events, attendance
+    records, corrections, tardiness, undertime, overtime amount, and absence
+    detection all belong to the attendance module built in Sprint 4. Timekeeping's
+    only contribution to overtime is the OvertimeEligible flag on WorkShift, which
+    is a property of the shift definition rather than of any day worked.
+
+    Four Aggregate Roots per domain/aggregates.md: WorkSchedule (the recurring
+    working-day pattern, holding its coarse organizational assignments as child
+    entities), WorkShift (the concrete daily working-time definition), ShiftAssignment
+    (one employee-or-unit-to-shift binding, its own root), and HolidayCalendar (a
+    dated, layered, versioned holiday set holding Holiday child entities).
+
+    The two assignment-shaped decisions point in opposite directions on purpose, and
+    that document says so explicitly. Schedule assignment is coarse, infrequent, and
+    reviewed together with the schedule it adopts, so it lives inside WorkSchedule.
+    Shift assignment is high-churn, independently swapped, and a swap involves two
+    employees at once, so it stands alone with its own repository. Neither is an
+    oversight.
+
+    The module's core property is determinism: the same query, for the same employee
+    and the same past date, must always return the same shift and the same holiday
+    determination regardless of when it is asked. Payroll two phases downstream
+    computes pay from what this module says was true, and a rule that answers
+    differently on Tuesday than it did on Monday produces payroll that is internally
+    consistent, plausible, and wrong. TK-001 through TK-003 are that property
+    expressed as invariants: superseded versions are never edited, resolution selects
+    the version in force on the date being evaluated rather than the version current
+    at query time, and publishing a revision never triggers a retroactive rewrite of
+    already-finalized downstream results.
+
+    This module's own root namespace segment is "Timekeeping", and none of its four
+    Aggregate Roots is named Timekeeping, so the CS0118 name-resolution collision
+    Organization, Position, Employment, and Employee each hit does not recur here.
+
+    Deliberately does NOT reference Hris.Foundation.Scheduling. That framework is
+    general-purpose cron and job execution which happens to share the word
+    "schedule"; README.md's own boundary table states this module never calls into it
+    and is never a consumer of it.
+  -->
+
+  <PropertyGroup>
+    <RootNamespace>Hris.Modules.Timekeeping</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MediatR" Version="12.4.1" />
+    <PackageReference Include="FluentValidation" Version="11.11.0" />
+    <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.11.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.4" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.4" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\BuildingBlocks\Hris.SharedKernel\Hris.SharedKernel.csproj" />
+    <ProjectReference Include="..\..\BuildingBlocks\Hris.Application\Hris.Application.csproj" />
+    <ProjectReference Include="..\..\BuildingBlocks\Hris.Infrastructure\Hris.Infrastructure.csproj" />
+  </ItemGroup>
+
+</Project>
