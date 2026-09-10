@@ -11,6 +11,18 @@
   <PropertyGroup>
     <RootNamespace>Hris.Testing.TenantIsolation</RootNamespace>
     <IsPackable>false</IsPackable>
+    <!-- This is a shared library consumed by Hris.CriticalRequirements.Tests — it has
+         no [Fact]s of its own. Without Microsoft.NET.Test.Sdk it should never be picked
+         up as a runnable test project, but referencing xunit directly (needed for
+         IAsyncLifetime/IClassFixture<T>) is enough for `dotnet test Hris.sln` to try
+         launching a standalone test host against it anyway. That host does not resolve
+         Testcontainers' own transitive dependencies (BouncyCastle.Cryptography) the way
+         a real test project's full Test SDK does, so CI fails on a project with zero
+         tests to run. IsTestProject=false is the documented MSBuild property `dotnet
+         test` checks before attempting to execute a project; it opts this one out of
+         discovery entirely rather than working around a test host that should never
+         have started. -->
+    <IsTestProject>false</IsTestProject>
     <NoWarn>$(NoWarn);CA1515</NoWarn>
   </PropertyGroup>
 
