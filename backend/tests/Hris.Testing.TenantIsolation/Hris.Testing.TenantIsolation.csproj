@@ -1,0 +1,59 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    Hris.Testing.TenantIsolation
+    Shared integration-test harness for tenant-isolation critical requirements.
+    Provides a real PostgreSQL container (Testcontainers), full DI composition
+    (all foundation frameworks + all merged modules), two canonical seeded tenants,
+    and per-test transaction rollback for isolation.
+  -->
+
+  <PropertyGroup>
+    <RootNamespace>Hris.Testing.TenantIsolation</RootNamespace>
+    <IsPackable>false</IsPackable>
+    <NoWarn>$(NoWarn);CA1515</NoWarn>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="xunit" Version="2.9.0" />
+    <PackageReference Include="Testcontainers.PostgreSql" Version="4.14.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration" Version="9.0.4" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- Full foundation framework registration list, identical to Hris.Api.Program.cs -->
+    <ProjectReference Include="..\..\src\BuildingBlocks\Hris.Application\Hris.Application.csproj" />
+    <ProjectReference Include="..\..\src\BuildingBlocks\Hris.Infrastructure\Hris.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\src\BuildingBlocks\Hris.Foundation.Audit\Hris.Foundation.Audit.csproj" />
+    <ProjectReference Include="..\..\src\BuildingBlocks\Hris.Foundation.Authorization\Hris.Foundation.Authorization.csproj" />
+    <ProjectReference Include="..\..\src\BuildingBlocks\Hris.Foundation.Configuration\Hris.Foundation.Configuration.csproj" />
+    <ProjectReference Include="..\..\src\BuildingBlocks\Hris.Foundation.DocumentManagement\Hris.Foundation.DocumentManagement.csproj" />
+    <ProjectReference Include="..\..\src\BuildingBlocks\Hris.Foundation.Events\Hris.Foundation.Events.csproj" />
+    <ProjectReference Include="..\..\src\BuildingBlocks\Hris.Foundation.Extension\Hris.Foundation.Extension.csproj" />
+    <ProjectReference Include="..\..\src\BuildingBlocks\Hris.Foundation.FileStorage\Hris.Foundation.FileStorage.csproj" />
+    <ProjectReference Include="..\..\src\BuildingBlocks\Hris.Foundation.Identity\Hris.Foundation.Identity.csproj" />
+    <ProjectReference Include="..\..\src\BuildingBlocks\Hris.Foundation.JobProcessing\Hris.Foundation.JobProcessing.csproj" />
+    <ProjectReference Include="..\..\src\BuildingBlocks\Hris.Foundation.Localization\Hris.Foundation.Localization.csproj" />
+    <ProjectReference Include="..\..\src\BuildingBlocks\Hris.Foundation.Logging\Hris.Foundation.Logging.csproj" />
+    <ProjectReference Include="..\..\src\BuildingBlocks\Hris.Foundation.Notification\Hris.Foundation.Notification.csproj" />
+    <ProjectReference Include="..\..\src\BuildingBlocks\Hris.Foundation.Numbering\Hris.Foundation.Numbering.csproj" />
+    <ProjectReference Include="..\..\src\BuildingBlocks\Hris.Foundation.RulesEngine\Hris.Foundation.RulesEngine.csproj" />
+    <ProjectReference Include="..\..\src\BuildingBlocks\Hris.Foundation.Scheduling\Hris.Foundation.Scheduling.csproj" />
+    <ProjectReference Include="..\..\src\BuildingBlocks\Hris.Foundation.Search\Hris.Foundation.Search.csproj" />
+    <ProjectReference Include="..\..\src\BuildingBlocks\Hris.Foundation.StatutoryReferenceData\Hris.Foundation.StatutoryReferenceData.csproj" />
+    <ProjectReference Include="..\..\src\BuildingBlocks\Hris.Foundation.Tenant\Hris.Foundation.Tenant.csproj" />
+    <ProjectReference Include="..\..\src\BuildingBlocks\Hris.Foundation.Validation\Hris.Foundation.Validation.csproj" />
+    <ProjectReference Include="..\..\src\BuildingBlocks\Hris.Foundation.WorkflowEngine\Hris.Foundation.WorkflowEngine.csproj" />
+    <ProjectReference Include="..\..\src\BuildingBlocks\Hris.Foundation.Entitlement\Hris.Foundation.Entitlement.csproj" />
+
+    <!-- All merged business modules -->
+    <ProjectReference Include="..\..\src\Modules\Hris.Modules.Administration\Hris.Modules.Administration.csproj" />
+    <ProjectReference Include="..\..\src\Modules\Hris.Modules.Employee\Hris.Modules.Employee.csproj" />
+    <ProjectReference Include="..\..\src\Modules\Hris.Modules.Employment\Hris.Modules.Employment.csproj" />
+    <ProjectReference Include="..\..\src\Modules\Hris.Modules.Organization\Hris.Modules.Organization.csproj" />
+    <ProjectReference Include="..\..\src\Modules\Hris.Modules.Position\Hris.Modules.Position.csproj" />
+    <ProjectReference Include="..\..\src\Modules\Hris.Modules.Timekeeping\Hris.Modules.Timekeeping.csproj" />
+    <ProjectReference Include="..\..\src\Modules\Hris.Modules.Workflow\Hris.Modules.Workflow.csproj" />
+  </ItemGroup>
+
+</Project>

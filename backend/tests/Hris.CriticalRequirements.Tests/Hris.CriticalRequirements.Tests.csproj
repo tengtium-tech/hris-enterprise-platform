@@ -2,21 +2,9 @@
 
   <!--
     Hris.CriticalRequirements.Tests
-    One stub test per Critical Test Requirement in
+    One test per Critical Test Requirement in
     docs/09-testing/critical-test-requirements.md (59 requirements, confirmed by
-    direct count against that document — the project's own tracker had drifted to
-    "58" and was corrected alongside this scaffold).
-
-    Every test below is [Fact(Skip = "...")] — none is implemented, because none
-    can be until the module or framework it exercises exists. Removing a Skip
-    attribute without also implementing the corresponding module/framework code
-    would make the suite lie about coverage; the CTR ID in each test name and each
-    Skip message is what keeps this file honest as a checklist rather than a
-    finished suite. docs/09-testing/README.md §9's own stated test order
-    (Compilation -> Architecture tests -> Unit tests -> Integration tests ->
-    Contract tests -> Coverage evaluation) governs the *pipeline*; this project is
-    where the *Critical Test Requirement* layer of that order lives, per
-    docs/08-devops/coding-standards.md's Static Analysis and Linting table.
+    direct count against that document).
 
     Per technology-stack.md's Testing table: xUnit, NSubstitute, FluentAssertions.
   -->
@@ -29,10 +17,7 @@
          this project. Every test method name embeds its Critical Test Requirement
          ID verbatim (CTR_AUD_001_..., CTR_ISO_002_...) by design, per this file's
          own header comment above — that is the checklist mechanism, not a naming
-         defect. Directory.Build.props separately suppresses CA1812 solution-wide, for
-         an unrelated reason (see that file's own comment) — this remains the only
-         project-specific suppression, and CA1707 remains specific to this project's own
-         naming convention, not a repository-wide relaxation. -->
+         defect. -->
     <NoWarn>$(NoWarn);CA1707</NoWarn>
   </PropertyGroup>
 
@@ -44,23 +29,26 @@
     <PackageReference Include="FluentAssertions" Version="6.12.0" />
     <!-- CTR-AUT-001's own Verification is "Architecture or static analysis test";
          coding-standards.md separately names "a custom Roslyn analyzer or
-         static-analysis rule" as the mechanism. This package is that mechanism used
-         as a source-tree scanner (CSharpSyntaxTree.ParseText over backend/src/),
-         not a build-time DiagnosticAnalyzer; see AuthorizationTests.cs. -->
+         static-analysis rule" as the mechanism. -->
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.11.0" />
   </ItemGroup>
 
   <ItemGroup>
+    <!-- Shared tenant-isolation harness (HEP-111) -->
+    <ProjectReference Include="..\Hris.Testing.TenantIsolation\Hris.Testing.TenantIsolation.csproj" />
+
+    <!-- Every merged module with tenant-scoped data, so CTR-ISO tests can resolve
+         repository interfaces, aggregate factories, and MediatR query types directly. -->
+    <ProjectReference Include="..\..\src\Modules\Hris.Modules.Administration\Hris.Modules.Administration.csproj" />
+    <ProjectReference Include="..\..\src\Modules\Hris.Modules.Employee\Hris.Modules.Employee.csproj" />
+    <ProjectReference Include="..\..\src\Modules\Hris.Modules.Employment\Hris.Modules.Employment.csproj" />
+    <ProjectReference Include="..\..\src\Modules\Hris.Modules.Organization\Hris.Modules.Organization.csproj" />
+    <ProjectReference Include="..\..\src\Modules\Hris.Modules.Position\Hris.Modules.Position.csproj" />
+    <ProjectReference Include="..\..\src\Modules\Hris.Modules.Timekeeping\Hris.Modules.Timekeeping.csproj" />
+    <ProjectReference Include="..\..\src\Modules\Hris.Modules.Workflow\Hris.Modules.Workflow.csproj" />
+
     <ProjectReference Include="..\..\src\BuildingBlocks\Hris.SharedKernel\Hris.SharedKernel.csproj" />
-    <!-- CTR_AUT_001_NoRoleNameComparisonInCode derives the prohibited string list
-         from the real Role enum rather than duplicating the ten names by hand, so
-         the test cannot silently drift from authorization-framework.md's own
-         canonical list. -->
     <ProjectReference Include="..\..\src\BuildingBlocks\Hris.Foundation.Authorization\Hris.Foundation.Authorization.csproj" />
-    <!-- CTR_DAT_005_EffectiveDatedConfigurationSelectsTheVersionInForceOnTheEvaluationDate
-         exercises ConfigurationSetting.GetValueAsOf directly - the first Sprint 3
-         framework with real Application/Infrastructure layers behind its Domain
-         layer, per IMPLEMENTATION-PLAN.md's bootstrap order. -->
     <ProjectReference Include="..\..\src\BuildingBlocks\Hris.Foundation.Configuration\Hris.Foundation.Configuration.csproj" />
   </ItemGroup>
 
