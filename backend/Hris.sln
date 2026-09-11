@@ -135,6 +135,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hris.Modules.Timekeeping", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hris.Modules.Timekeeping.Tests", "tests\Hris.Modules.Timekeeping.Tests\Hris.Modules.Timekeeping.Tests.csproj", "{A7CEBE8E-C1C3-4BB6-A831-5BE36F6287F0}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hris.Testing.TenantIsolation", "tests\Hris.Testing.TenantIsolation\Hris.Testing.TenantIsolation.csproj", "{61A6B14F-F4C8-4941-A438-7BD084DC94AA}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -877,6 +879,18 @@ Global
 		{A7CEBE8E-C1C3-4BB6-A831-5BE36F6287F0}.Release|x64.Build.0 = Release|Any CPU
 		{A7CEBE8E-C1C3-4BB6-A831-5BE36F6287F0}.Release|x86.ActiveCfg = Release|Any CPU
 		{A7CEBE8E-C1C3-4BB6-A831-5BE36F6287F0}.Release|x86.Build.0 = Release|Any CPU
+		{61A6B14F-F4C8-4941-A438-7BD084DC94AA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{61A6B14F-F4C8-4941-A438-7BD084DC94AA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{61A6B14F-F4C8-4941-A438-7BD084DC94AA}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{61A6B14F-F4C8-4941-A438-7BD084DC94AA}.Debug|x64.Build.0 = Debug|Any CPU
+		{61A6B14F-F4C8-4941-A438-7BD084DC94AA}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{61A6B14F-F4C8-4941-A438-7BD084DC94AA}.Debug|x86.Build.0 = Debug|Any CPU
+		{61A6B14F-F4C8-4941-A438-7BD084DC94AA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{61A6B14F-F4C8-4941-A438-7BD084DC94AA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{61A6B14F-F4C8-4941-A438-7BD084DC94AA}.Release|x64.ActiveCfg = Release|Any CPU
+		{61A6B14F-F4C8-4941-A438-7BD084DC94AA}.Release|x64.Build.0 = Release|Any CPU
+		{61A6B14F-F4C8-4941-A438-7BD084DC94AA}.Release|x86.ActiveCfg = Release|Any CPU
+		{61A6B14F-F4C8-4941-A438-7BD084DC94AA}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -946,5 +960,6 @@ Global
 		{22182676-876A-46F3-9026-72FF9AC494FD} = {A1000005-0000-0000-0000-000000000005}
 		{1E5F4E41-EB1E-4B5A-B7BC-AA8EE1385B74} = {A1000004-0000-0000-0000-000000000004}
 		{A7CEBE8E-C1C3-4BB6-A831-5BE36F6287F0} = {A1000005-0000-0000-0000-000000000005}
+		{61A6B14F-F4C8-4941-A438-7BD084DC94AA} = {A1000005-0000-0000-0000-000000000005}
 	EndGlobalSection
 EndGlobal

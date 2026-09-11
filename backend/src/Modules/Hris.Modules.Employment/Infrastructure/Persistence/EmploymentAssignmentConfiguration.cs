@@ -32,8 +32,15 @@ public sealed class EmploymentAssignmentConfiguration : IEntityTypeConfiguration
         builder.Property(a => a.TenantId).IsRequired();
         builder.Property(a => a.EmploymentId).IsRequired();
 
+        // Raw SQL filter, so it is not subject to expression translation and must name
+        // the actual post-convention column ("is_ended", not "IsEnded" -- this project
+        // applies UseSnakeCaseNamingConvention() globally, per Hris.Infrastructure's own
+        // DependencyInjection.cs). Nothing before the tenant-isolation harness (HEP-111)
+        // ever called EnsureCreatedAsync with this table's real filtered index, so this
+        // was latent since the Employment module merged and would have failed the first
+        // time anything actually built or migrated this schema for real.
         builder.HasIndex(a => new { a.EmploymentId, a.IsEnded })
-            .HasFilter("\"IsEnded\" = false")
+            .HasFilter("\"is_ended\" = false")
             .IsUnique();
 
         builder.Property(a => a.PositionId).IsRequired();
