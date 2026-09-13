@@ -66,6 +66,7 @@
     <ProjectReference Include="..\..\src\Modules\Hris.Modules.Position\Hris.Modules.Position.csproj" />
     <ProjectReference Include="..\..\src\Modules\Hris.Modules.Timekeeping\Hris.Modules.Timekeeping.csproj" />
     <ProjectReference Include="..\..\src\Modules\Hris.Modules.Workflow\Hris.Modules.Workflow.csproj" />
+    <ProjectReference Include="..\..\src\Modules\Hris.Modules.Attendance\Hris.Modules.Attendance.csproj" />
   </ItemGroup>
 
 </Project>
