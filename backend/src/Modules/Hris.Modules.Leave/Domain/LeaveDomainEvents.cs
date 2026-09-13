@@ -48,3 +48,46 @@ public sealed record LeavePolicySuperseded(
     Guid TenantId,
     LeavePolicyId SupersededByLeavePolicyId,
     Guid ActorId) : IDomainEvent;
+
+/// <summary>Raised whenever any <see cref="LeaveLedgerEntry"/> is written, of any <see cref="LeaveLedgerEntryType"/>.</summary>
+public sealed record LeaveLedgerEntryAppended(
+    Guid EventId,
+    DateTimeOffset OccurredOnUtc,
+    LeaveBalanceId LeaveBalanceId,
+    Guid TenantId,
+    LeaveLedgerEntryId LeaveLedgerEntryId,
+    LeaveLedgerEntryType EntryType,
+    decimal Amount) : IDomainEvent;
+
+public sealed record LeaveBalanceAccrued(
+    Guid EventId,
+    DateTimeOffset OccurredOnUtc,
+    LeaveBalanceId LeaveBalanceId,
+    Guid TenantId,
+    decimal Amount,
+    DateOnly EffectiveDate) : IDomainEvent;
+
+public sealed record LeaveCarriedOver(
+    Guid EventId,
+    DateTimeOffset OccurredOnUtc,
+    LeaveBalanceId LeaveBalanceId,
+    Guid TenantId,
+    decimal Amount,
+    DateOnly EffectiveDate) : IDomainEvent;
+
+public sealed record LeaveForfeited(
+    Guid EventId,
+    DateTimeOffset OccurredOnUtc,
+    LeaveBalanceId LeaveBalanceId,
+    Guid TenantId,
+    decimal Amount,
+    DateOnly EffectiveDate) : IDomainEvent;
+
+/// <summary>A verification/repair resummation completed (LV-025) — raised whether or not the total actually changed.</summary>
+public sealed record LeaveBalanceRecalculated(
+    Guid EventId,
+    DateTimeOffset OccurredOnUtc,
+    LeaveBalanceId LeaveBalanceId,
+    Guid TenantId,
+    Guid ActorId,
+    bool WasCorrected) : IDomainEvent;

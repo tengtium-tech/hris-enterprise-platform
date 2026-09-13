@@ -79,4 +79,30 @@ public static class LeaveErrors
         "Leave.LeavePolicyNotFound",
         "The requested leave policy was not found.",
         ErrorCategory.NotFound);
+
+    // LeaveBalance (LV-020 through LV-025).
+    public static readonly Error EmployeeIdentifierRequired = new(
+        "Leave.EmployeeIdentifierRequired",
+        "An employee identifier is required.",
+        ErrorCategory.Validation);
+
+    public static readonly Error LedgerEntryAmountMustBePositive = new(
+        "Leave.LedgerEntryAmountMustBePositive",
+        "A ledger entry's magnitude must be greater than zero.",
+        ErrorCategory.Validation);
+
+    public static readonly Error LedgerEntryAmountMustNotBeZero = new(
+        "Leave.LedgerEntryAmountMustNotBeZero",
+        "An adjustment must be a non-zero grant or correction.",
+        ErrorCategory.Validation);
+
+    public static readonly Error InsufficientBalance = new(
+        "Leave.InsufficientBalance",
+        "This action would drive the balance below zero, and the effective policy does not permit that. (LV-022)",
+        ErrorCategory.Domain);
+
+    public static readonly Error LeaveBalanceNotFound = new(
+        "Leave.LeaveBalanceNotFound",
+        "The requested leave balance was not found.",
+        ErrorCategory.NotFound);
 }

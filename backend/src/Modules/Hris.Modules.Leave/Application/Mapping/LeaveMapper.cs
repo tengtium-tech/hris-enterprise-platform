@@ -55,4 +55,22 @@ public static class LeaveMapper
                     a.Id.Value, a.ScopeLevel.ToString(), a.ScopeTargetId, a.EffectiveFrom, a.EffectiveTo, a.AssignedBy, a.AssignedOn))
                 .ToList());
     }
+
+    public static LeaveBalanceDto ToDto(LeaveBalance balance)
+    {
+        ArgumentNullException.ThrowIfNull(balance);
+
+        return new LeaveBalanceDto(
+            balance.Id.Value, balance.TenantId, balance.EmployeeId, balance.LeaveTypeId.Value, balance.CurrentBalance,
+            balance.LastRecalculatedAt);
+    }
+
+    public static LeaveLedgerEntryDto ToDto(LeaveLedgerEntry entry)
+    {
+        ArgumentNullException.ThrowIfNull(entry);
+
+        return new LeaveLedgerEntryDto(
+            entry.Id.Value, entry.EntryType.ToString(), entry.Amount, entry.EffectiveDate, entry.SourceReference, entry.Actor,
+            entry.RecordedAt);
+    }
 }

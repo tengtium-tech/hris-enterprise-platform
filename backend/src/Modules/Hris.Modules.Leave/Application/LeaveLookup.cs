@@ -40,4 +40,15 @@ internal static class LeaveLookup
             ? Result.Failure<LeavePolicy>(LeaveErrors.LeavePolicyNotFound)
             : Result.Success(policy);
     }
+
+    public static async Task<Result<LeaveBalance>> LoadLeaveBalanceForTenantAsync(
+        ILeaveBalanceRepository repository, Guid leaveBalanceId, Guid tenantId, CancellationToken cancellationToken)
+    {
+        var balance = await repository.GetByIdAsync(new LeaveBalanceId(leaveBalanceId), cancellationToken)
+            .ConfigureAwait(false);
+
+        return balance is null || balance.TenantId != tenantId
+            ? Result.Failure<LeaveBalance>(LeaveErrors.LeaveBalanceNotFound)
+            : Result.Success(balance);
+    }
 }

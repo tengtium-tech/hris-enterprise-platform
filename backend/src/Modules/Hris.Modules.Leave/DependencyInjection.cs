@@ -34,6 +34,7 @@ public static class ServiceCollectionExtensions
 
         services.AddScoped<ILeaveTypeRepository, LeaveTypeRepository>();
         services.AddScoped<ILeavePolicyRepository, LeavePolicyRepository>();
+        services.AddScoped<ILeaveBalanceRepository, LeaveBalanceRepository>();
 
         return services;
     }
