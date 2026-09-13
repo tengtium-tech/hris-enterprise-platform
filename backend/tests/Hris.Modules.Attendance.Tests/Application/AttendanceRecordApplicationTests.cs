@@ -299,4 +299,72 @@ public sealed class AttendanceRecordApplicationTests : TenantIsolationTestBase
         await Sender.Send(new CaptureTimeEventCommand(
             _tenantId, _employeeId, workDate, TimeEventType.ClockIn, new DateTimeOffset(workDate, new TimeOnly(9, 0), TimeSpan.Zero),
             AttendanceSource.MobileApplication, null, null, null, null)).ConfigureAwait(false);
+
+    [Fact]
+    public async Task GetTeamAttendanceForApprovalQuery_ReturnsOnlyRecordsWithPendingApproval_ForTheGivenTeam()
+    {
+        await SeedActivePolicyAsync();
+        var recordId = await CaptureAndReturnRecordIdAsync(TimeEventType.ClockIn, TestAttendance.At(9));
+        await Sender.Send(new CaptureTimeEventCommand(
+            _tenantId, _employeeId, TestAttendance.Today, TimeEventType.ClockOut, TestAttendance.At(17),
+            AttendanceSource.MobileApplication, null, null, null, null));
+        await Sender.Send(new RunCalculationCommand(
+            _tenantId, recordId, "Manual", [_scopeTarget], null, Guid.NewGuid(), false, false, false, null, Guid.NewGuid()));
+        await Sender.Send(new SubmitAttendanceForApprovalCommand(_tenantId, recordId, Guid.NewGuid()));
+
+        var result = await Sender.Send(new GetTeamAttendanceForApprovalQuery(_tenantId, [_employeeId]));
+
+        result.Value.Should().ContainSingle(r => r.Id == recordId && r.ApprovalStatus == nameof(ApprovalStatus.Pending));
+    }
+
+    [Fact]
+    public async Task GetTeamAttendanceForApprovalQuery_ExcludesEmployeesNotInTheGivenTeam()
+    {
+        await SeedActivePolicyAsync();
+        var recordId = await CaptureAndReturnRecordIdAsync(TimeEventType.ClockIn, TestAttendance.At(9));
+        await Sender.Send(new CaptureTimeEventCommand(
+            _tenantId, _employeeId, TestAttendance.Today, TimeEventType.ClockOut, TestAttendance.At(17),
+            AttendanceSource.MobileApplication, null, null, null, null));
+        await Sender.Send(new RunCalculationCommand(
+            _tenantId, recordId, "Manual", [_scopeTarget], null, Guid.NewGuid(), false, false, false, null, Guid.NewGuid()));
+        await Sender.Send(new SubmitAttendanceForApprovalCommand(_tenantId, recordId, Guid.NewGuid()));
+
+        var result = await Sender.Send(new GetTeamAttendanceForApprovalQuery(_tenantId, [Guid.NewGuid()]));
+
+        result.Value.Should().BeEmpty("the only pending record belongs to an employee outside the requested team");
+    }
+
+    [Fact]
+    public async Task GetAttendanceExceptionsQuery_ReturnsARecordFlaggedDuringCalculation()
+    {
+        await SeedActivePolicyAsync();
+        var recordId = await CaptureAndReturnRecordIdAsync(TimeEventType.ClockIn, TestAttendance.At(9));
+        await Sender.Send(new CaptureTimeEventCommand(
+            _tenantId, _employeeId, TestAttendance.Today, TimeEventType.ClockOut, TestAttendance.At(17),
+            AttendanceSource.MobileApplication, null, null, null, null));
+
+        await Sender.Send(new RunCalculationCommand(
+            _tenantId, recordId, "Manual", [_scopeTarget], null, null, true, false, false, null, Guid.NewGuid()));
+
+        var result = await Sender.Send(new GetAttendanceExceptionsQuery(_tenantId));
+
+        result.Value.Should().ContainSingle(r => r.Id == recordId);
+        result.Value.Single().Exceptions.Should().Contain(e => e.Contains("Shift could not be resolved", StringComparison.Ordinal));
+    }
+
+    [Fact]
+    public async Task GetAttendanceExceptionsQuery_ScopesToTheGivenEmployeeIds_WhenProvided()
+    {
+        await SeedActivePolicyAsync();
+        var recordId = await CaptureAndReturnRecordIdAsync(TimeEventType.ClockIn, TestAttendance.At(9));
+        await Sender.Send(new CaptureTimeEventCommand(
+            _tenantId, _employeeId, TestAttendance.Today, TimeEventType.ClockOut, TestAttendance.At(17),
+            AttendanceSource.MobileApplication, null, null, null, null));
+        await Sender.Send(new RunCalculationCommand(
+            _tenantId, recordId, "Manual", [_scopeTarget], null, null, true, false, false, null, Guid.NewGuid()));
+
+        var result = await Sender.Send(new GetAttendanceExceptionsQuery(_tenantId, [Guid.NewGuid()]));
+
+        result.Value.Should().BeEmpty("the only exception record belongs to an employee outside the requested scope");
+    }
 }
