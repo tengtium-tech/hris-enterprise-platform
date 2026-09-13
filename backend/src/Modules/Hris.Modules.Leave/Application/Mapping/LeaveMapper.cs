@@ -119,4 +119,22 @@ public static class LeaveMapper
             adjustment.RejectionReason,
             adjustment.AppliedAt);
     }
+
+    public static LeaveEncashmentDto ToDto(LeaveEncashment encashment)
+    {
+        ArgumentNullException.ThrowIfNull(encashment);
+
+        return new LeaveEncashmentDto(
+            encashment.Id.Value,
+            encashment.TenantId,
+            encashment.EmployeeId,
+            encashment.LeaveBalanceId.Value,
+            encashment.RequestedAmount,
+            encashment.Status.ToString(),
+            encashment.SubmittedBy,
+            encashment.SubmittedOn,
+            encashment.Decision?.ApproverId,
+            encashment.RejectionReason,
+            encashment.CancellationReason);
+    }
 }

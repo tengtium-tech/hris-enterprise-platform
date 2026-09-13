@@ -195,3 +195,37 @@ public sealed record LeaveAdjustmentApplied(
     LeaveAdjustmentId LeaveAdjustmentId,
     LeaveBalanceId LeaveBalanceId,
     Guid TenantId) : IDomainEvent;
+
+public sealed record LeaveEncashmentRequested(
+    Guid EventId,
+    DateTimeOffset OccurredOnUtc,
+    LeaveEncashmentId LeaveEncashmentId,
+    Guid TenantId,
+    Guid EmployeeId,
+    Guid SubmittedBy) : IDomainEvent;
+
+/// <summary>The source confirming a decision was made; never itself writes to <see cref="LeaveBalance"/> (LV-071).</summary>
+public sealed record LeaveEncashmentApproved(
+    Guid EventId,
+    DateTimeOffset OccurredOnUtc,
+    LeaveEncashmentId LeaveEncashmentId,
+    Guid TenantId,
+    LeaveBalanceId LeaveBalanceId,
+    decimal RequestedAmount,
+    Guid ApproverId) : IDomainEvent;
+
+public sealed record LeaveEncashmentRejected(
+    Guid EventId,
+    DateTimeOffset OccurredOnUtc,
+    LeaveEncashmentId LeaveEncashmentId,
+    Guid TenantId,
+    Guid ApproverId,
+    string Reason) : IDomainEvent;
+
+public sealed record LeaveEncashmentCancelled(
+    Guid EventId,
+    DateTimeOffset OccurredOnUtc,
+    LeaveEncashmentId LeaveEncashmentId,
+    Guid TenantId,
+    Guid ActorId,
+    string Reason) : IDomainEvent;

@@ -167,4 +167,40 @@ public static class LeaveErrors
         "Leave.LeaveAdjustmentNotFound",
         "The requested leave adjustment was not found.",
         ErrorCategory.NotFound);
+
+    // LeaveEncashment (LV-070 through LV-074).
+    public static readonly Error EncashmentNotEntitled = new(
+        "Leave.EncashmentNotEntitled",
+        "Leave encashment is not available at this tenant's current pack maturity level. (LV-074)",
+        ErrorCategory.Entitlement);
+
+    public static readonly Error EncashmentNotCommutable = new(
+        "Leave.EncashmentNotCommutable",
+        "The effective policy for this leave type does not permit encashment. (LV-070)",
+        ErrorCategory.Domain);
+
+    public static readonly Error EncashmentExceedsCommutableCap = new(
+        "Leave.EncashmentExceedsCommutableCap",
+        "The requested amount exceeds the maximum commutable balance the effective policy permits. (LV-070)",
+        ErrorCategory.Domain);
+
+    public static readonly Error DuplicateEncashmentPending = new(
+        "Leave.DuplicateEncashmentPending",
+        "An encashment request is already pending against this balance. (LV-072)",
+        ErrorCategory.Domain);
+
+    public static readonly Error EncashmentNotPendingApproval = new(
+        "Leave.EncashmentNotPendingApproval",
+        "Only a request pending approval may be approved or rejected.",
+        ErrorCategory.Domain);
+
+    public static readonly Error EncashmentNotCancellable = new(
+        "Leave.EncashmentNotCancellable",
+        "Only a request pending approval may be cancelled.",
+        ErrorCategory.Domain);
+
+    public static readonly Error LeaveEncashmentNotFound = new(
+        "Leave.LeaveEncashmentNotFound",
+        "The requested leave encashment was not found.",
+        ErrorCategory.NotFound);
 }

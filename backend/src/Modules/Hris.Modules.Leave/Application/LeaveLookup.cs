@@ -73,4 +73,15 @@ internal static class LeaveLookup
             ? Result.Failure<LeaveAdjustment>(LeaveErrors.LeaveAdjustmentNotFound)
             : Result.Success(adjustment);
     }
+
+    public static async Task<Result<LeaveEncashment>> LoadLeaveEncashmentForTenantAsync(
+        ILeaveEncashmentRepository repository, Guid leaveEncashmentId, Guid tenantId, CancellationToken cancellationToken)
+    {
+        var encashment = await repository.GetByIdAsync(new LeaveEncashmentId(leaveEncashmentId), cancellationToken)
+            .ConfigureAwait(false);
+
+        return encashment is null || encashment.TenantId != tenantId
+            ? Result.Failure<LeaveEncashment>(LeaveErrors.LeaveEncashmentNotFound)
+            : Result.Success(encashment);
+    }
 }
