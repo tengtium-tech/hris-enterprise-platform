@@ -17,6 +17,7 @@ using Hris.Foundation.Identity;
 using Hris.Foundation.Integration;
 using Hris.Modules.Administration;
 using Hris.Modules.Attendance;
+using Hris.Modules.Leave;
 using Hris.Modules.Timekeeping;
 using Hris.Modules.Workflow;
 using Hris.Modules.Employee;
@@ -335,9 +336,20 @@ builder.Services.AddTimekeepingModule();
 // AttendanceAdjustment, OvertimeRequest, AttendancePolicy, AttendanceDevice,
 // BiometricEnrollment) so it must run before AddHrisInfrastructure() for the same
 // PersistenceAssemblyRegistry-ordering reason every persisted framework/module
-// above it is registered in this order. References Timekeeping only through its
-// public MediatR query types, never by joining to its tables.
+// above it is registered in this order. Carries no ProjectReference to Timekeeping
+// at all (CTR-ARC-002): shift and holiday determination arrives as already-resolved
+// fields on RunCalculationCommand, resolved by whichever caller dispatches it -- no
+// module has an HTTP endpoint wired yet to be that caller, the platform's current
+// state generally, not a gap specific to this command.
 builder.Services.AddAttendanceModule();
+// AddLeaveModule() is Phase 3 (Workforce Management) Sprint 5, the last Sprint of
+// Phase 3. It owns an employee's leave balance and the requests, adjustments, and
+// encashments that move it, reading Timekeeping's calendar facts and already
+// consumed by Attendance's own absence-exclusion logic (AT-061) -- the platform's
+// first live, not merely forward-documented, downstream module dependency. Scaffold
+// only for now; repository and MediatR registrations are added alongside each
+// aggregate as it is built.
+builder.Services.AddLeaveModule();
 builder.Services.AddHrisInfrastructure(builder.Configuration);
 
 // naming-conventions.md aside: this is a "readiness" check on the connection, not a
