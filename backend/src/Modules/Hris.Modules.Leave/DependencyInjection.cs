@@ -1,6 +1,8 @@
 using System.Reflection;
 using FluentValidation;
+using Hris.Foundation.Events.Domain;
 using Hris.Infrastructure.Persistence;
+using Hris.Modules.Leave.Application;
 using Hris.Modules.Leave.Domain;
 using Hris.Modules.Leave.Infrastructure.Persistence;
 using MediatR;
@@ -35,6 +37,15 @@ public static class ServiceCollectionExtensions
         services.AddScoped<ILeaveTypeRepository, LeaveTypeRepository>();
         services.AddScoped<ILeavePolicyRepository, LeavePolicyRepository>();
         services.AddScoped<ILeaveBalanceRepository, LeaveBalanceRepository>();
+        services.AddScoped<ILeaveRequestRepository, LeaveRequestRepository>();
+
+        // Two-phase request approval/cancellation subscribers (LV-040, LV-041). These
+        // implement the platform's IDomainEventSubscriber<TEvent> contract, not MediatR, so
+        // they are registered explicitly here. Registration is inert and harmless until the
+        // outbox dispatcher wires subscribers in, the same standing note Attendance's own
+        // equivalent registrations carry.
+        services.AddScoped<IDomainEventSubscriber<LeaveApproved>, LeaveApprovedSubscriber>();
+        services.AddScoped<IDomainEventSubscriber<LeaveCancelled>, LeaveCancelledSubscriber>();
 
         return services;
     }

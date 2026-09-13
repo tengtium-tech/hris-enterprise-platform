@@ -73,4 +73,28 @@ public static class LeaveMapper
             entry.Id.Value, entry.EntryType.ToString(), entry.Amount, entry.EffectiveDate, entry.SourceReference, entry.Actor,
             entry.RecordedAt);
     }
+
+    public static LeaveRequestDto ToDto(LeaveRequest request)
+    {
+        ArgumentNullException.ThrowIfNull(request);
+
+        return new LeaveRequestDto(
+            request.Id.Value,
+            request.TenantId,
+            request.EmployeeId,
+            request.LeaveTypeId.Value,
+            request.DateRange.StartDate,
+            request.DateRange.EndDate,
+            request.DateRange.HalfDayAtStart,
+            request.DateRange.HalfDayAtEnd,
+            request.DateRange.RequestedDays,
+            request.Status.ToString(),
+            request.PayTreatment?.ToString(),
+            request.PaidDays,
+            request.SubmittedBy,
+            request.SubmittedOn,
+            request.Decision?.ApproverId,
+            request.RejectionReason,
+            request.CancellationReason);
+    }
 }

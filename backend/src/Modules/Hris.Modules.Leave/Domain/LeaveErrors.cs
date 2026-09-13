@@ -105,4 +105,35 @@ public static class LeaveErrors
         "Leave.LeaveBalanceNotFound",
         "The requested leave balance was not found.",
         ErrorCategory.NotFound);
+
+    // LeaveRequest (LV-030 through LV-038).
+    public static readonly Error LeaveDateRangeInvalid = new(
+        "Leave.LeaveDateRangeInvalid",
+        "A leave request's end date cannot be before its start date.",
+        ErrorCategory.Validation);
+
+    public static readonly Error StatutoryDetailsRequired = new(
+        "Leave.StatutoryDetailsRequired",
+        "A request against this statutory leave type requires its matching statutory details. (LV-034)",
+        ErrorCategory.Validation);
+
+    public static readonly Error LeaveDateRangeOverlap = new(
+        "Leave.LeaveDateRangeOverlap",
+        "This date range overlaps an existing non-terminal leave request for this employee. (LV-031)",
+        ErrorCategory.Domain);
+
+    public static readonly Error LeaveRequestNotPendingApproval = new(
+        "Leave.LeaveRequestNotPendingApproval",
+        "Only a request pending approval may be approved or rejected.",
+        ErrorCategory.Domain);
+
+    public static readonly Error LeaveRequestNotCancellable = new(
+        "Leave.LeaveRequestNotCancellable",
+        "A rejected or already-cancelled request cannot be cancelled.",
+        ErrorCategory.Domain);
+
+    public static readonly Error LeaveRequestNotFound = new(
+        "Leave.LeaveRequestNotFound",
+        "The requested leave request was not found.",
+        ErrorCategory.NotFound);
 }
