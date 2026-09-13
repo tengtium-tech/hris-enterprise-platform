@@ -1,6 +1,8 @@
 using System.Reflection;
 using FluentValidation;
 using Hris.Infrastructure.Persistence;
+using Hris.Modules.Leave.Domain;
+using Hris.Modules.Leave.Infrastructure.Persistence;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -13,9 +15,9 @@ namespace Hris.Modules.Leave;
 /// and absence-detection state arrive as already-resolved fields on this module's own
 /// commands rather than being looked up from inside this module.
 ///
-/// Scaffolding only for now — repository, MediatR, and subscriber registrations are
-/// added alongside each aggregate as it is built, the same incremental sequence
-/// Attendance's own <c>AddAttendanceModule</c> followed.
+/// Registrations grow alongside each aggregate as it is built, the same incremental
+/// sequence Attendance's own <c>AddAttendanceModule</c> followed. <see cref="LeaveType"/>
+/// is the first (lowest-dependency) aggregate built this Sprint.
 /// </summary>
 public static class ServiceCollectionExtensions
 {
@@ -29,6 +31,8 @@ public static class ServiceCollectionExtensions
 
         services.AddMediatR(config => config.RegisterServicesFromAssembly(thisAssembly));
         services.AddValidatorsFromAssembly(thisAssembly);
+
+        services.AddScoped<ILeaveTypeRepository, LeaveTypeRepository>();
 
         return services;
     }

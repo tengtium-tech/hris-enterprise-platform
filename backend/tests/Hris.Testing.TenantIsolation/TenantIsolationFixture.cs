@@ -27,6 +27,7 @@ using Hris.Modules.Administration;
 using Hris.Modules.Attendance;
 using Hris.Modules.Employee;
 using Hris.Modules.Employment;
+using Hris.Modules.Leave;
 using Hris.Modules.Organization;
 using Hris.Modules.Position;
 using Hris.Modules.Timekeeping;
@@ -108,6 +109,7 @@ public sealed class TenantIsolationFixture : IAsyncLifetime
         services.AddWorkflowModule();
         services.AddTimekeepingModule();
         services.AddAttendanceModule();
+        services.AddLeaveModule();
 
         services.AddHrisInfrastructure(configuration);
 
