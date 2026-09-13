@@ -33,6 +33,7 @@ public static class ServiceCollectionExtensions
         services.AddValidatorsFromAssembly(thisAssembly);
 
         services.AddScoped<ILeaveTypeRepository, LeaveTypeRepository>();
+        services.AddScoped<ILeavePolicyRepository, LeavePolicyRepository>();
 
         return services;
     }

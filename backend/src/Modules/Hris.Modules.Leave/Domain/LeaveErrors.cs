@@ -38,4 +38,45 @@ public static class LeaveErrors
         "Leave.LeaveTypeNotFound",
         "The requested leave type was not found.",
         ErrorCategory.NotFound);
+
+    // LeavePolicy (LV-010 through LV-015).
+    public static readonly Error PolicyVersionNotDraft = new(
+        "Leave.PolicyVersionNotDraft",
+        "Only a Draft policy version may be published.",
+        ErrorCategory.Domain);
+
+    public static readonly Error PolicyVersionNotActive = new(
+        "Leave.PolicyVersionNotActive",
+        "Only an Active policy version may be revised. (LV-010)",
+        ErrorCategory.Domain);
+
+    public static readonly Error PolicyRevisionEffectiveDateMustAdvance = new(
+        "Leave.PolicyRevisionEffectiveDateMustAdvance",
+        "A policy revision's effective date must be later than the version it supersedes.",
+        ErrorCategory.Domain);
+
+    public static readonly Error LeavePolicyNotAssignable = new(
+        "Leave.LeavePolicyNotAssignable",
+        "Only a Draft or Active policy version may be assigned to a scope.",
+        ErrorCategory.Domain);
+
+    public static readonly Error PolicyAssignmentOverlap = new(
+        "Leave.PolicyAssignmentOverlap",
+        "Two policy assignments to the same scope target may not have overlapping effective periods. (LV-012)",
+        ErrorCategory.Domain);
+
+    public static readonly Error PolicyAssignmentNotFound = new(
+        "Leave.PolicyAssignmentNotFound",
+        "The requested policy assignment was not found.",
+        ErrorCategory.NotFound);
+
+    public static readonly Error PolicyBelowStatutoryMinimum = new(
+        "Leave.PolicyBelowStatutoryMinimum",
+        "A policy against a statutory leave type must configure an entitlement cap at or above that type's statutory minimum. (LV-013)",
+        ErrorCategory.Domain);
+
+    public static readonly Error LeavePolicyNotFound = new(
+        "Leave.LeavePolicyNotFound",
+        "The requested leave policy was not found.",
+        ErrorCategory.NotFound);
 }

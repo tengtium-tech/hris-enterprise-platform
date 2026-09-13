@@ -22,3 +22,29 @@ public sealed record LeaveTypeDeactivated(
     Guid TenantId,
     Guid ActorId,
     string Reason) : IDomainEvent;
+
+public sealed record LeavePolicyPublished(
+    Guid EventId,
+    DateTimeOffset OccurredOnUtc,
+    LeavePolicyId LeavePolicyId,
+    Guid TenantId,
+    DateOnly EffectiveFrom,
+    Guid ActorId) : IDomainEvent;
+
+public sealed record LeavePolicyAssigned(
+    Guid EventId,
+    DateTimeOffset OccurredOnUtc,
+    LeavePolicyId LeavePolicyId,
+    Guid TenantId,
+    PolicyAssignmentId PolicyAssignmentId,
+    string ScopeTargetId,
+    Guid ActorId) : IDomainEvent;
+
+/// <summary>Raised on the version <see cref="LeavePolicy.Revise"/> is called against, naming the version that supersedes it.</summary>
+public sealed record LeavePolicySuperseded(
+    Guid EventId,
+    DateTimeOffset OccurredOnUtc,
+    LeavePolicyId LeavePolicyId,
+    Guid TenantId,
+    LeavePolicyId SupersededByLeavePolicyId,
+    Guid ActorId) : IDomainEvent;

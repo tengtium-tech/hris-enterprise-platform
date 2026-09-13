@@ -29,4 +29,15 @@ internal static class LeaveLookup
             ? Result.Failure<LeaveType>(LeaveErrors.LeaveTypeNotFound)
             : Result.Success(leaveType);
     }
+
+    public static async Task<Result<LeavePolicy>> LoadLeavePolicyForTenantAsync(
+        ILeavePolicyRepository repository, Guid leavePolicyId, Guid tenantId, CancellationToken cancellationToken)
+    {
+        var policy = await repository.GetByIdAsync(new LeavePolicyId(leavePolicyId), cancellationToken)
+            .ConfigureAwait(false);
+
+        return policy is null || policy.TenantId != tenantId
+            ? Result.Failure<LeavePolicy>(LeaveErrors.LeavePolicyNotFound)
+            : Result.Success(policy);
+    }
 }
