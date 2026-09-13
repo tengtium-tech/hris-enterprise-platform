@@ -133,9 +133,19 @@ public static class AttendanceErrors
         "Two assignments of different policies to the same scope target may not overlap. (AT-011)",
         ErrorCategory.Conflict);
 
+    public static readonly Error PolicyAssignmentNotFound = new(
+        "Attendance.PolicyAssignmentNotFound",
+        "The policy assignment was not found.",
+        ErrorCategory.NotFound);
+
     public static readonly Error PolicyVersionNotDraft = new(
         "Attendance.PolicyVersionNotDraft",
         "A published or superseded policy version is never edited; author a new version. (AT-002)",
+        ErrorCategory.Domain);
+
+    public static readonly Error PolicyVersionNotActive = new(
+        "Attendance.PolicyVersionNotActive",
+        "Only an Active policy version may be revised into a new draft. (AT-002)",
         ErrorCategory.Domain);
 
     public static readonly Error PolicyRevisionEffectiveDateMustAdvance = new(

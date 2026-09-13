@@ -115,13 +115,15 @@ public sealed class AttendancePolicyApplicationTests : TenantIsolationTestBase
     [Fact]
     public async Task Revise_Fails_WhenTheCurrentVersionIsNotActive()
     {
+        // Regression: this case once returned PolicyVersionNotDraft -- the wrong error,
+        // since the condition being checked is "not Active," not "not Draft."
         var policyId = await DefineAndReturnIdAsync(); // still Draft
 
         var result = await Sender.Send(new ReviseAttendancePolicyCommand(
             _tenantId, policyId, TestAttendance.DefaultPolicy(), TestAttendance.Today.AddMonths(1), Guid.NewGuid()));
 
         result.IsFailure.Should().BeTrue();
-        result.Error.Should().Be(AttendanceErrors.PolicyVersionNotDraft);
+        result.Error.Should().Be(AttendanceErrors.PolicyVersionNotActive);
     }
 
     // ---- Assign / Unassign (AT-011) -------------------------------------
@@ -157,6 +159,20 @@ public sealed class AttendancePolicyApplicationTests : TenantIsolationTestBase
             "the end date itself is still covered");
         (await Sender.Send(new GetEffectiveAttendancePolicyQuery(_tenantId, ["dept-1"], endDate.AddDays(1)))).IsFailure.Should().BeTrue(
             "the assignment no longer covers a date past its new end");
+    }
+
+    [Fact]
+    public async Task Unassign_Fails_WhenTheAssignmentDoesNotExist()
+    {
+        // Regression: this case once returned PolicyAssignmentOverlap -- Assign's own
+        // duplicate-scope-period error, not a not-found condition.
+        var policyId = await DefineAndReturnIdAsync();
+
+        var result = await Sender.Send(new UnassignAttendancePolicyCommand(
+            _tenantId, policyId, Guid.NewGuid(), TestAttendance.Today, Guid.NewGuid()));
+
+        result.IsFailure.Should().BeTrue();
+        result.Error.Should().Be(AttendanceErrors.PolicyAssignmentNotFound);
     }
 
     // ---- Retire --------------------------------------------------------

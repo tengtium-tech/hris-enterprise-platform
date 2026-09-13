@@ -98,7 +98,7 @@ public sealed class AttendancePolicy : AggregateRoot<AttendancePolicyId>
     {
         if (Status != AttendancePolicyStatus.Active)
         {
-            return Result.Failure<AttendancePolicy>(AttendanceErrors.PolicyVersionNotDraft);
+            return Result.Failure<AttendancePolicy>(AttendanceErrors.PolicyVersionNotActive);
         }
 
         if (newEffectiveFrom <= EffectiveFrom)
@@ -153,7 +153,7 @@ public sealed class AttendancePolicy : AggregateRoot<AttendancePolicyId>
         var assignment = _policyAssignments.FirstOrDefault(a => a.Id == assignmentId);
         if (assignment is null)
         {
-            return Result.Failure(AttendanceErrors.PolicyAssignmentOverlap);
+            return Result.Failure(AttendanceErrors.PolicyAssignmentNotFound);
         }
 
         assignment.EndOn(effectiveTo);
