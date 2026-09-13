@@ -54,6 +54,15 @@ public static class AttendanceCalculationEngine
         var firstIn = ordered.FirstOrDefault(e => e.EventType == TimeEventType.ClockIn)?.TimestampUtc;
         var lastOut = ordered.LastOrDefault(e => e.EventType == TimeEventType.ClockOut)?.TimestampUtc;
 
+        // Step 13: absence is derived, never recorded (AT-060). Checked here, independently
+        // of the working-hours block below, because an absent employee has by definition no
+        // clock-in to derive hours from at all -- gating this check behind firstIn already
+        // being present (as an earlier version of this method did) makes it unreachable.
+        if (inputs.ShiftStart.HasValue && !firstIn.HasValue)
+        {
+            exceptions.Add("No clock-in on a scheduled work date; absence derived.");
+        }
+
         var workingHours = 0d;
         var unpaidBreaks = 0d;
         var lateMinutes = 0d;
@@ -95,7 +104,7 @@ public static class AttendanceCalculationEngine
                 }
             }
 
-            // Steps 12 & 13: overtime and absence detection.
+            // Step 12: overtime (absence detection, step 13, already ran above).
             if (inputs.ShiftEnd.HasValue && lastOut.Value.TimeOfDay > inputs.ShiftEnd.Value.ToTimeSpan())
             {
                 overtimeHours = (lastOut.Value.TimeOfDay - inputs.ShiftEnd.Value.ToTimeSpan()).TotalHours;
@@ -111,12 +120,6 @@ public static class AttendanceCalculationEngine
                 {
                     exceptions.Add("Overtime exceeds approved authorization; flagged per AT-042.");
                 }
-            }
-
-            // Step 13 (continued): absence is derived, never recorded (AT-060).
-            if (inputs.ShiftStart.HasValue && !firstIn.HasValue)
-            {
-                exceptions.Add("No clock-in on a scheduled work date; absence derived.");
             }
 
             // Holiday hours attribution (AT-060 family): a holiday's worked hours are
