@@ -97,4 +97,26 @@ public static class LeaveMapper
             request.RejectionReason,
             request.CancellationReason);
     }
+
+    public static LeaveAdjustmentDto ToDto(LeaveAdjustment adjustment)
+    {
+        ArgumentNullException.ThrowIfNull(adjustment);
+
+        return new LeaveAdjustmentDto(
+            adjustment.Id.Value,
+            adjustment.TenantId,
+            adjustment.LeaveBalanceId.Value,
+            adjustment.OriginalValueSnapshot,
+            adjustment.RequestedAmount,
+            adjustment.Reason,
+            adjustment.SupportingDocuments,
+            adjustment.Status.ToString(),
+            adjustment.SubmittedBy,
+            adjustment.SubmittedOn,
+            adjustment.ReviewerId,
+            adjustment.ReviewNotes,
+            adjustment.Decision?.ApproverId,
+            adjustment.RejectionReason,
+            adjustment.AppliedAt);
+    }
 }

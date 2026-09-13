@@ -136,4 +136,35 @@ public static class LeaveErrors
         "Leave.LeaveRequestNotFound",
         "The requested leave request was not found.",
         ErrorCategory.NotFound);
+
+    // LeaveAdjustment (LV-050 through LV-054).
+    public static readonly Error AdjustmentNotEntitled = new(
+        "Leave.AdjustmentNotEntitled",
+        "Leave balance adjustment is not available at this tenant's current pack maturity level. (LV-050)",
+        ErrorCategory.Entitlement);
+
+    public static readonly Error AdjustmentReasonRequired = new(
+        "Leave.AdjustmentReasonRequired",
+        "A leave balance adjustment requires a reason.",
+        ErrorCategory.Validation);
+
+    public static readonly Error DuplicateAdjustmentPending = new(
+        "Leave.DuplicateAdjustmentPending",
+        "An adjustment is already pending against this balance. (LV-053)",
+        ErrorCategory.Domain);
+
+    public static readonly Error AdjustmentNotInReviewableState = new(
+        "Leave.AdjustmentNotInReviewableState",
+        "This adjustment is not in a state that allows this transition.",
+        ErrorCategory.Domain);
+
+    public static readonly Error AdjustmentNotApproved = new(
+        "Leave.AdjustmentNotApproved",
+        "Only an approved adjustment may be marked applied.",
+        ErrorCategory.Domain);
+
+    public static readonly Error LeaveAdjustmentNotFound = new(
+        "Leave.LeaveAdjustmentNotFound",
+        "The requested leave adjustment was not found.",
+        ErrorCategory.NotFound);
 }

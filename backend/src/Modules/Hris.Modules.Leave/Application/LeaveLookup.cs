@@ -62,4 +62,15 @@ internal static class LeaveLookup
             ? Result.Failure<LeaveRequest>(LeaveErrors.LeaveRequestNotFound)
             : Result.Success(request);
     }
+
+    public static async Task<Result<LeaveAdjustment>> LoadLeaveAdjustmentForTenantAsync(
+        ILeaveAdjustmentRepository repository, Guid leaveAdjustmentId, Guid tenantId, CancellationToken cancellationToken)
+    {
+        var adjustment = await repository.GetByIdAsync(new LeaveAdjustmentId(leaveAdjustmentId), cancellationToken)
+            .ConfigureAwait(false);
+
+        return adjustment is null || adjustment.TenantId != tenantId
+            ? Result.Failure<LeaveAdjustment>(LeaveErrors.LeaveAdjustmentNotFound)
+            : Result.Success(adjustment);
+    }
 }

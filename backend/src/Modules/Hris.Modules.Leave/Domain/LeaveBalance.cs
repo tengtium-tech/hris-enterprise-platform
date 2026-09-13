@@ -122,7 +122,13 @@ public sealed class LeaveBalance : AggregateRoot<LeaveBalanceId>
     /// <summary>
     /// Applies an approved <c>LeaveAdjustment</c> (LV-052). <paramref name="amount"/> may be
     /// positive (a manual grant) or negative (a correction) per leave-adjustments.md; a
-    /// negative amount is still rejected if it would drive the balance below zero.
+    /// negative amount is still rejected if it would drive the balance below zero. Also
+    /// raises <see cref="LeaveAdjustmentApplied"/>, naming <paramref name="sourceReference"/>
+    /// as the adjustment id — this is the confirmation domain-events.md's own
+    /// LeaveAdjustment Events table documents as closing that aggregate to its terminal
+    /// state, mirroring <c>Hris.Modules.Attendance</c>'s identical
+    /// <c>AttendanceRecord.ApplyAdjustment</c>-raises-<c>AttendanceAdjustmentApplied</c>
+    /// shape: the *target* of a two-phase change confirms it, not the source.
     /// </summary>
     public Result RecordAdjustment(
         Guid sourceReference, decimal amount, DateOnly effectiveDate, Guid actorId, DateTimeOffset recordedOnUtc)
@@ -138,6 +144,7 @@ public sealed class LeaveBalance : AggregateRoot<LeaveBalanceId>
         }
 
         AppendEntry(LeaveLedgerEntryType.Adjustment, amount, effectiveDate, sourceReference, actorId, recordedOnUtc);
+        AddDomainEvent(new LeaveAdjustmentApplied(Guid.NewGuid(), recordedOnUtc, new LeaveAdjustmentId(sourceReference), Id, TenantId));
         return Result.Success();
     }
 

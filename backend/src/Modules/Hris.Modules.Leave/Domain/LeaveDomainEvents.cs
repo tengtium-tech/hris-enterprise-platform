@@ -162,3 +162,36 @@ public sealed record LWOPPeriodRecorded(
     Guid TenantId,
     Guid EmployeeId,
     LeaveDateRange DateRange) : IDomainEvent;
+
+public sealed record LeaveAdjustmentSubmitted(
+    Guid EventId,
+    DateTimeOffset OccurredOnUtc,
+    LeaveAdjustmentId LeaveAdjustmentId,
+    Guid TenantId,
+    LeaveBalanceId LeaveBalanceId,
+    Guid SubmittedBy) : IDomainEvent;
+
+public sealed record LeaveAdjustmentApproved(
+    Guid EventId,
+    DateTimeOffset OccurredOnUtc,
+    LeaveAdjustmentId LeaveAdjustmentId,
+    Guid TenantId,
+    LeaveBalanceId LeaveBalanceId,
+    decimal RequestedAmount,
+    Guid ApproverId) : IDomainEvent;
+
+public sealed record LeaveAdjustmentRejected(
+    Guid EventId,
+    DateTimeOffset OccurredOnUtc,
+    LeaveAdjustmentId LeaveAdjustmentId,
+    Guid TenantId,
+    Guid ApproverId,
+    string Reason) : IDomainEvent;
+
+/// <summary>Raised by <see cref="LeaveBalance.RecordAdjustment"/> — the target confirming incorporation, not the source (LV-052).</summary>
+public sealed record LeaveAdjustmentApplied(
+    Guid EventId,
+    DateTimeOffset OccurredOnUtc,
+    LeaveAdjustmentId LeaveAdjustmentId,
+    LeaveBalanceId LeaveBalanceId,
+    Guid TenantId) : IDomainEvent;
