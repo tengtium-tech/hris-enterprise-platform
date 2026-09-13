@@ -1,0 +1,75 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    Hris.Modules.Leave
+    Phase 3 (Workforce Management), Sprint 5, per IMPLEMENTATION-PLAN.md — the last
+    Sprint of Phase 3 ("leave without pay affects payroll... built last of the five
+    because it reads from Sprint 4's attendance records").
+
+    Source specification: docs/04-modules/leave/.
+
+    This module owns an employee's leave balance and the requests, adjustments, and
+    encashments that move it: a leave type catalog (platform-provided statutory types
+    plus tenant-defined company types), a versioned effective-dated policy, an
+    append-only balance ledger, and the request/adjustment/encashment transactions
+    that draw against or correct it. Timekeeping owns the working-day/holiday/rest-day
+    calendar this module reads to compute RequestedDays; Attendance owns absence
+    detection and already consumes this module's own LeaveApproved/LeaveCancelled
+    events for absence exclusion (AT-061) — the platform's first live, not merely
+    forward-documented, downstream dependency. Neither is referenced by project
+    (CTR-ARC-002); every cross-module fact this module needs arrives as a
+    caller-supplied, already-resolved primitive, the same shape Attendance's own
+    RunCalculationCommand was reshaped to use after the identical violation was found
+    and fixed during Attendance's own build.
+
+    Six Aggregate Roots per domain/aggregates.md: LeaveType, LeavePolicy, LeaveBalance,
+    LeaveRequest, LeaveAdjustment, LeaveEncashment. LeaveCarryoverProcessor is a
+    stateless domain service, not a seventh aggregate.
+
+    LeaveAdjustment (pack maturity Level 2 / MaturityLevel.Standard) and
+    LeaveEncashment (Level 3 / MaturityLevel.Advanced) are this platform's first real,
+    command-wired entitlement gates — Hris.Foundation.Entitlement already defines
+    ProcessPackCode.Leave and its own EvaluateEntitlementQuery, but no prior module has
+    called it from an actual command handler; every earlier module's own entitlement
+    references stopped at documentation.
+
+    The module's own root namespace segment is "Leave", and none of its six Aggregate
+    Roots is named Leave, so the CS0118 name-resolution collision Organization,
+    Position, Employment, and Employee each hit does not recur here — the same
+    precedent Attendance's own header comment already confirmed for itself.
+  -->
+
+  <PropertyGroup>
+    <RootNamespace>Hris.Modules.Leave</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MediatR" Version="12.4.1" />
+    <PackageReference Include="FluentValidation" Version="11.11.0" />
+    <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.11.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.4" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.4" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\BuildingBlocks\Hris.SharedKernel\Hris.SharedKernel.csproj" />
+    <ProjectReference Include="..\..\BuildingBlocks\Hris.Application\Hris.Application.csproj" />
+    <ProjectReference Include="..\..\BuildingBlocks\Hris.Infrastructure\Hris.Infrastructure.csproj" />
+    <!--
+      The two-phase request/adjustment/encashment subscribers implement the platform's
+      framework-agnostic IDomainEventSubscriber<TEvent> contract (foundation/events.md),
+      not MediatR's INotificationHandler, so this building block must be referenced
+      directly — the same reason Attendance's own .csproj references it.
+    -->
+    <ProjectReference Include="..\..\BuildingBlocks\Hris.Foundation.Events\Hris.Foundation.Events.csproj" />
+    <!--
+      LeaveAdjustment and LeaveEncashment submission dispatch EvaluateEntitlementQuery
+      against ProcessPackCode.Leave before authorization (LV-050, LV-074) — a
+      Foundation framework reference, not a sibling business module reference, so
+      CTR-ARC-002 does not apply the same way it would to a Timekeeping/Attendance
+      reference.
+    -->
+    <ProjectReference Include="..\..\BuildingBlocks\Hris.Foundation.Entitlement\Hris.Foundation.Entitlement.csproj" />
+  </ItemGroup>
+
+</Project>

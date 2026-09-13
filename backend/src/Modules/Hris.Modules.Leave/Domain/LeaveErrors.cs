@@ -1,0 +1,206 @@
+using Hris.SharedKernel;
+
+namespace Hris.Modules.Leave.Domain;
+
+/// <summary>
+/// Domain error catalog for the Leave module, grouped by aggregate as each is built.
+/// Source: docs/04-modules/leave/domain/business-rules.md.
+/// </summary>
+public static class LeaveErrors
+{
+    // LeaveType (LV-001 through LV-004).
+    public static readonly Error LeaveTypeCodeRequired = new(
+        "Leave.LeaveTypeCodeRequired",
+        "A leave type requires a code.",
+        ErrorCategory.Validation);
+
+    public static readonly Error LeaveTypeNameRequired = new(
+        "Leave.LeaveTypeNameRequired",
+        "A leave type requires a name.",
+        ErrorCategory.Validation);
+
+    public static readonly Error StatutoryBasisRequired = new(
+        "Leave.StatutoryBasisRequired",
+        "A statutory leave type requires its statutory citation.",
+        ErrorCategory.Validation);
+
+    public static readonly Error StatutoryMinimumMustNotBeNegative = new(
+        "Leave.StatutoryMinimumMustNotBeNegative",
+        "A statutory leave type's minimum entitlement cannot be negative.",
+        ErrorCategory.Validation);
+
+    public static readonly Error CannotDeactivateStatutoryLeaveType = new(
+        "Leave.CannotDeactivateStatutoryLeaveType",
+        "A statutory leave type cannot be deactivated; it remains available platform-wide as long as the underlying law is in force. (LV-004)",
+        ErrorCategory.Domain);
+
+    public static readonly Error LeaveTypeNotFound = new(
+        "Leave.LeaveTypeNotFound",
+        "The requested leave type was not found.",
+        ErrorCategory.NotFound);
+
+    // LeavePolicy (LV-010 through LV-015).
+    public static readonly Error PolicyVersionNotDraft = new(
+        "Leave.PolicyVersionNotDraft",
+        "Only a Draft policy version may be published.",
+        ErrorCategory.Domain);
+
+    public static readonly Error PolicyVersionNotActive = new(
+        "Leave.PolicyVersionNotActive",
+        "Only an Active policy version may be revised. (LV-010)",
+        ErrorCategory.Domain);
+
+    public static readonly Error PolicyRevisionEffectiveDateMustAdvance = new(
+        "Leave.PolicyRevisionEffectiveDateMustAdvance",
+        "A policy revision's effective date must be later than the version it supersedes.",
+        ErrorCategory.Domain);
+
+    public static readonly Error LeavePolicyNotAssignable = new(
+        "Leave.LeavePolicyNotAssignable",
+        "Only a Draft or Active policy version may be assigned to a scope.",
+        ErrorCategory.Domain);
+
+    public static readonly Error PolicyAssignmentOverlap = new(
+        "Leave.PolicyAssignmentOverlap",
+        "Two policy assignments to the same scope target may not have overlapping effective periods. (LV-012)",
+        ErrorCategory.Domain);
+
+    public static readonly Error PolicyAssignmentNotFound = new(
+        "Leave.PolicyAssignmentNotFound",
+        "The requested policy assignment was not found.",
+        ErrorCategory.NotFound);
+
+    public static readonly Error PolicyBelowStatutoryMinimum = new(
+        "Leave.PolicyBelowStatutoryMinimum",
+        "A policy against a statutory leave type must configure an entitlement cap at or above that type's statutory minimum. (LV-013)",
+        ErrorCategory.Domain);
+
+    public static readonly Error LeavePolicyNotFound = new(
+        "Leave.LeavePolicyNotFound",
+        "The requested leave policy was not found.",
+        ErrorCategory.NotFound);
+
+    // LeaveBalance (LV-020 through LV-025).
+    public static readonly Error EmployeeIdentifierRequired = new(
+        "Leave.EmployeeIdentifierRequired",
+        "An employee identifier is required.",
+        ErrorCategory.Validation);
+
+    public static readonly Error LedgerEntryAmountMustBePositive = new(
+        "Leave.LedgerEntryAmountMustBePositive",
+        "A ledger entry's magnitude must be greater than zero.",
+        ErrorCategory.Validation);
+
+    public static readonly Error LedgerEntryAmountMustNotBeZero = new(
+        "Leave.LedgerEntryAmountMustNotBeZero",
+        "An adjustment must be a non-zero grant or correction.",
+        ErrorCategory.Validation);
+
+    public static readonly Error InsufficientBalance = new(
+        "Leave.InsufficientBalance",
+        "This action would drive the balance below zero, and the effective policy does not permit that. (LV-022)",
+        ErrorCategory.Domain);
+
+    public static readonly Error LeaveBalanceNotFound = new(
+        "Leave.LeaveBalanceNotFound",
+        "The requested leave balance was not found.",
+        ErrorCategory.NotFound);
+
+    // LeaveRequest (LV-030 through LV-038).
+    public static readonly Error LeaveDateRangeInvalid = new(
+        "Leave.LeaveDateRangeInvalid",
+        "A leave request's end date cannot be before its start date.",
+        ErrorCategory.Validation);
+
+    public static readonly Error StatutoryDetailsRequired = new(
+        "Leave.StatutoryDetailsRequired",
+        "A request against this statutory leave type requires its matching statutory details. (LV-034)",
+        ErrorCategory.Validation);
+
+    public static readonly Error LeaveDateRangeOverlap = new(
+        "Leave.LeaveDateRangeOverlap",
+        "This date range overlaps an existing non-terminal leave request for this employee. (LV-031)",
+        ErrorCategory.Domain);
+
+    public static readonly Error LeaveRequestNotPendingApproval = new(
+        "Leave.LeaveRequestNotPendingApproval",
+        "Only a request pending approval may be approved or rejected.",
+        ErrorCategory.Domain);
+
+    public static readonly Error LeaveRequestNotCancellable = new(
+        "Leave.LeaveRequestNotCancellable",
+        "A rejected or already-cancelled request cannot be cancelled.",
+        ErrorCategory.Domain);
+
+    public static readonly Error LeaveRequestNotFound = new(
+        "Leave.LeaveRequestNotFound",
+        "The requested leave request was not found.",
+        ErrorCategory.NotFound);
+
+    // LeaveAdjustment (LV-050 through LV-054).
+    public static readonly Error AdjustmentNotEntitled = new(
+        "Leave.AdjustmentNotEntitled",
+        "Leave balance adjustment is not available at this tenant's current pack maturity level. (LV-050)",
+        ErrorCategory.Entitlement);
+
+    public static readonly Error AdjustmentReasonRequired = new(
+        "Leave.AdjustmentReasonRequired",
+        "A leave balance adjustment requires a reason.",
+        ErrorCategory.Validation);
+
+    public static readonly Error DuplicateAdjustmentPending = new(
+        "Leave.DuplicateAdjustmentPending",
+        "An adjustment is already pending against this balance. (LV-053)",
+        ErrorCategory.Domain);
+
+    public static readonly Error AdjustmentNotInReviewableState = new(
+        "Leave.AdjustmentNotInReviewableState",
+        "This adjustment is not in a state that allows this transition.",
+        ErrorCategory.Domain);
+
+    public static readonly Error AdjustmentNotApproved = new(
+        "Leave.AdjustmentNotApproved",
+        "Only an approved adjustment may be marked applied.",
+        ErrorCategory.Domain);
+
+    public static readonly Error LeaveAdjustmentNotFound = new(
+        "Leave.LeaveAdjustmentNotFound",
+        "The requested leave adjustment was not found.",
+        ErrorCategory.NotFound);
+
+    // LeaveEncashment (LV-070 through LV-074).
+    public static readonly Error EncashmentNotEntitled = new(
+        "Leave.EncashmentNotEntitled",
+        "Leave encashment is not available at this tenant's current pack maturity level. (LV-074)",
+        ErrorCategory.Entitlement);
+
+    public static readonly Error EncashmentNotCommutable = new(
+        "Leave.EncashmentNotCommutable",
+        "The effective policy for this leave type does not permit encashment. (LV-070)",
+        ErrorCategory.Domain);
+
+    public static readonly Error EncashmentExceedsCommutableCap = new(
+        "Leave.EncashmentExceedsCommutableCap",
+        "The requested amount exceeds the maximum commutable balance the effective policy permits. (LV-070)",
+        ErrorCategory.Domain);
+
+    public static readonly Error DuplicateEncashmentPending = new(
+        "Leave.DuplicateEncashmentPending",
+        "An encashment request is already pending against this balance. (LV-072)",
+        ErrorCategory.Domain);
+
+    public static readonly Error EncashmentNotPendingApproval = new(
+        "Leave.EncashmentNotPendingApproval",
+        "Only a request pending approval may be approved or rejected.",
+        ErrorCategory.Domain);
+
+    public static readonly Error EncashmentNotCancellable = new(
+        "Leave.EncashmentNotCancellable",
+        "Only a request pending approval may be cancelled.",
+        ErrorCategory.Domain);
+
+    public static readonly Error LeaveEncashmentNotFound = new(
+        "Leave.LeaveEncashmentNotFound",
+        "The requested leave encashment was not found.",
+        ErrorCategory.NotFound);
+}
