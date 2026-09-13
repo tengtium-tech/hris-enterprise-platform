@@ -103,7 +103,7 @@ public sealed class AttendancePolicy : AggregateRoot<AttendancePolicyId>
 
         if (newEffectiveFrom <= EffectiveFrom)
         {
-            return Result.Failure<AttendancePolicy>(AttendanceErrors.PolicyVersionNotDraft);
+            return Result.Failure<AttendancePolicy>(AttendanceErrors.PolicyRevisionEffectiveDateMustAdvance);
         }
 
         var next = new AttendancePolicy(

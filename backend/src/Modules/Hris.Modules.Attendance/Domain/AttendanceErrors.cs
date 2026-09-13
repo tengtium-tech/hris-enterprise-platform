@@ -138,6 +138,11 @@ public static class AttendanceErrors
         "A published or superseded policy version is never edited; author a new version. (AT-002)",
         ErrorCategory.Domain);
 
+    public static readonly Error PolicyRevisionEffectiveDateMustAdvance = new(
+        "Attendance.PolicyRevisionEffectiveDateMustAdvance",
+        "A revision's effective date must fall after the version it supersedes. (AT-002)",
+        ErrorCategory.Validation);
+
     public static readonly Error PolicyNameRequired = new(
         "Attendance.PolicyNameRequired",
         "An attendance policy requires a name.",
