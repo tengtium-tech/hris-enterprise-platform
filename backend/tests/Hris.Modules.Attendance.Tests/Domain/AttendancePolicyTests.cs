@@ -95,6 +95,9 @@ public sealed class AttendancePolicyTests
     [Fact]
     public void Revise_Fails_WhenTheCurrentVersionIsNotActive()
     {
+        // Regression: this case once returned PolicyVersionNotDraft -- the wrong error,
+        // since the condition being checked is "not Active," not "not Draft." It now has
+        // its own error, mirroring the fix already made to the effective-date guard below.
         var policy = NewPolicy(); // still Draft
 
         var result = policy.Revise(
@@ -102,7 +105,7 @@ public sealed class AttendancePolicyTests
             Guid.NewGuid(), TestAttendance.NowUtc);
 
         result.IsFailure.Should().BeTrue();
-        result.Error.Should().Be(AttendanceErrors.PolicyVersionNotDraft);
+        result.Error.Should().Be(AttendanceErrors.PolicyVersionNotActive);
     }
 
     [Fact]
@@ -187,11 +190,14 @@ public sealed class AttendancePolicyTests
     [Fact]
     public void Unassign_Fails_WhenTheAssignmentDoesNotExist()
     {
+        // Regression: this case once returned PolicyAssignmentOverlap -- Assign's own
+        // duplicate-scope-period error, not a not-found condition.
         var policy = NewPolicy();
 
         var result = policy.Unassign(new PolicyAssignmentId(Guid.NewGuid()), TestAttendance.Today, Guid.NewGuid(), TestAttendance.NowUtc);
 
         result.IsFailure.Should().BeTrue();
+        result.Error.Should().Be(AttendanceErrors.PolicyAssignmentNotFound);
     }
 
     // ---- Retire --------------------------------------------------------
