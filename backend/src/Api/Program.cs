@@ -16,6 +16,7 @@ using Hris.Foundation.FileStorage;
 using Hris.Foundation.Identity;
 using Hris.Foundation.Integration;
 using Hris.Modules.Administration;
+using Hris.Modules.Attendance;
 using Hris.Modules.Timekeeping;
 using Hris.Modules.Workflow;
 using Hris.Modules.Employee;
@@ -326,6 +327,17 @@ builder.Services.AddWorkflowModule();
 // consume Hris.Foundation.Scheduling, which is unrelated cron/job execution that
 // happens to share the word "schedule".
 builder.Services.AddTimekeepingModule();
+// AddAttendanceModule() is Phase 3 (Workforce Management) Sprint 4. It owns what
+// actually happened -- captured time events, calculated working hours, tardiness,
+// undertime, overtime amount, and absence -- evaluated against the rules the
+// Timekeeping module defines, which is why Timekeeping had to be built first.
+// Owns real EF Core persistence (AttendanceRecord with owned time events,
+// AttendanceAdjustment, OvertimeRequest, AttendancePolicy, AttendanceDevice,
+// BiometricEnrollment) so it must run before AddHrisInfrastructure() for the same
+// PersistenceAssemblyRegistry-ordering reason every persisted framework/module
+// above it is registered in this order. References Timekeeping only through its
+// public MediatR query types, never by joining to its tables.
+builder.Services.AddAttendanceModule();
 builder.Services.AddHrisInfrastructure(builder.Configuration);
 
 // naming-conventions.md aside: this is a "readiness" check on the connection, not a

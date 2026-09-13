@@ -1,0 +1,58 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    Hris.Modules.Attendance
+    Phase 3 (Workforce Management), Sprint 4, per IMPLEMENTATION-PLAN.md
+    ("Attendance records are evaluated against the rules Timekeeping defines").
+
+    Source specification: docs/04-modules/attendance/.
+
+    This module owns what actually happened on each work date — captured time
+    events, the calculation engine that turns them into working and payable hours,
+    attendance adjustments, overtime requests, the configurable attendance policy,
+    attendance-capture devices, and biometric enrollments. Timekeeping owns the
+    rules (shift, schedule, holiday); this module never queries its tables directly
+    (CTR-ARC-003) and, per CTR-ARC-002, carries no ProjectReference to it either —
+    no module in this solution has ever referenced a sibling module's project. The
+    shift and holiday determination RunCalculationCommand needs arrive already
+    resolved, as plain fields on the command itself; dispatching Timekeeping's own
+    ResolveShiftForEmployeeOnDateQuery / ResolveHolidayForScopeOnDateQuery is the
+    caller's responsibility — no module has an HTTP endpoint wired yet to be that
+    caller, which is the platform's current state generally, not a gap specific to
+    this command.
+
+    Six Aggregate Roots per domain/aggregates.md: AttendanceRecord,
+    AttendanceAdjustment, OvertimeRequest, AttendancePolicy, AttendanceDevice,
+    BiometricEnrollment. The calculation engine is a stateless domain service, not
+    a seventh aggregate.
+
+    The module's own root namespace segment is "Attendance", and none of its six
+    Aggregate Roots is named Attendance, so the CS0118 name-resolution collision
+    Organization, Position, Employment, and Employee each hit does not recur here.
+  -->
+
+  <PropertyGroup>
+    <RootNamespace>Hris.Modules.Attendance</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MediatR" Version="12.4.1" />
+    <PackageReference Include="FluentValidation" Version="11.11.0" />
+    <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.11.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.4" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.4" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\BuildingBlocks\Hris.SharedKernel\Hris.SharedKernel.csproj" />
+    <ProjectReference Include="..\..\BuildingBlocks\Hris.Application\Hris.Application.csproj" />
+    <ProjectReference Include="..\..\BuildingBlocks\Hris.Infrastructure\Hris.Infrastructure.csproj" />
+    <!--
+      The two-phase adjustment subscribers implement the platform's framework-agnostic
+      IDomainEventSubscriber<TEvent> contract (foundation/events.md), not MediatR's
+      INotificationHandler, so this building block must be referenced directly.
+    -->
+    <ProjectReference Include="..\..\BuildingBlocks\Hris.Foundation.Events\Hris.Foundation.Events.csproj" />
+  </ItemGroup>
+
+</Project>

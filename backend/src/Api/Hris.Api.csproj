@@ -58,6 +58,7 @@
     <ProjectReference Include="..\Modules\Hris.Modules.Administration\Hris.Modules.Administration.csproj" />
     <ProjectReference Include="..\Modules\Hris.Modules.Workflow\Hris.Modules.Workflow.csproj" />
     <ProjectReference Include="..\Modules\Hris.Modules.Timekeeping\Hris.Modules.Timekeeping.csproj" />
+    <ProjectReference Include="..\Modules\Hris.Modules.Attendance\Hris.Modules.Attendance.csproj" />
   </ItemGroup>
 
   <ItemGroup>
