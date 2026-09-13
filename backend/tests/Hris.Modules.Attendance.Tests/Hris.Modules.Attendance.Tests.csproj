@@ -12,6 +12,12 @@
     governs) and AttendanceCalculationEngine (the fifteen-step pipeline) — this
     module's own docs name both as its most intricate logic, and the module shipped
     with no tests at all until this project existed, unlike every prior module.
+    Domain/ now covers all six Aggregate Roots; Application/ tests command and query
+    handlers against the real Hris.Testing.TenantIsolation harness (HEP-111) rather
+    than NSubstitute doubles, per unit-and-integration-testing.md §3.1 ("An
+    in-memory provider is not acceptable") — Attendance is the first module built
+    after that harness existed, so it uses it from the start rather than repeating
+    the mocked-repository pattern every earlier module used.
 
     Attendance is not one of NFR-MT-001's three named 95%-floor areas (payroll,
     statutory calculation, authorization). This project targets the platform's own
@@ -41,6 +47,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\src\Modules\Hris.Modules.Attendance\Hris.Modules.Attendance.csproj" />
     <ProjectReference Include="..\..\src\BuildingBlocks\Hris.Infrastructure\Hris.Infrastructure.csproj" />
+    <ProjectReference Include="..\Hris.Testing.TenantIsolation\Hris.Testing.TenantIsolation.csproj" />
   </ItemGroup>
 
 </Project>
